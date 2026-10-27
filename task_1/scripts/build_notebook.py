@@ -1,154 +1,136 @@
-"""Generate notebooks/pa3_task1_kaggle.ipynb from the repository (keeps notebook and code in sync)."""
+"""Generate task_1/notebooks/pa3_task1_kaggle.ipynb — a thin Kaggle bootstrap that pulls the code
+from GitHub (or from an attached copy of the repo) and runs the deadline-aware pipeline."""
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[1]
-INCLUDE = ["README.md", "configs", "src", "scripts", "tests"]
-EXCLUDE_NAMES = {"__pycache__", ".pytest_cache"}
+TASK = Path(__file__).resolve().parents[1]
 
-INTRO = r"""# PA3 Task 1 — Qwen3-0.6B math fine-tuning: Full FT · L2-SP · LoRA-4/16 · OPLoRA-16
-**CS-6304 / EE-5102 Advanced Topics in ML · Danish Rasool (28100233)**
+INTRO = r"""# ATML PA3 · Task 1 — Qwen3-0.6B math fine-tuning (Full FT · L2-SP · LoRA-4/16 · OPLoRA-16)
+**CS-6304 / EE-5102 · Danish Rasool (28100233)** · code: https://github.com/danishrasool10/ATML-PA3 (`task_1/`, shared code in `common/`)
 
-This notebook writes the complete `pa3_task1` package to `/kaggle/working/pa3_task1` and runs **one stage** per
-Kaggle session. All results go to `/kaggle/working/pa3_outputs`.
+### Before running
+1. **Settings → Accelerator: GPU T4 ×2**, **Internet: On**.
+2. **Add Input** → a dataset containing `first_plot_questions.yaml` (any folder; it is found automatically).
+3. Use **Save Version → Save & Run All (Commit)** so the run continues with the browser closed and the outputs are saved.
 
-### Kaggle settings (every session)
-* **Accelerator:** GPU T4 ×2 · **Internet:** on · **Persistence:** none needed.
-* Attach `first_plot_questions.yaml` as an input (any dataset; it is found anywhere under `/kaggle/input`).
+### What happens
+`STAGE = "AUTO"` runs the whole task in one session, in this order, using **both GPUs** (DDP training; evaluations
+two at a time, one per GPU): downloads → data (40k MetaMathQA) / probe set / OPLoRA bases / activation cache →
+preflight (2-GPU check, FP16 check, worst-case-memory update with ZeRO-1 fallback) → Full FT → evals → L2-SP →
+evals → LoRA-4 → LoRA-16 → evals → OPLoRA-16 → eval ‖ diagnostics → qualitative sheet → report tables/figures.
 
-### Stages (run in order, one per session)
-| Stage | What it does | Approx. time |
-|---|---|---|
-| **S0** | Smoke test: env report, CPU test suite, data prep (40k), probe set, OPLoRA bases, FP16 sanity, GPU DDP-vs-single gradient check (+NCCL fallback), 20-update runs of all 5 methods (memory/throughput/projections, L2-SP ZeRO-1 fallback), merge check, activation cache, lm-eval + qualitative smoke | ~1 h |
-| **S1** | Full FT → eval baseline ‖ Full FT midpoint (parallel, one per GPU) → eval Full FT final | see S0 projections |
-| **S2** | Full FT + L2-SP → LoRA-4 → eval both (parallel) | |
-| **S3** | LoRA-16 → OPLoRA-16 → eval both → diagnostics → qualitative sheet (168 responses / 42-row annotation) → report assets | |
+It never runs into Kaggle's 12-hour kill: it stops starting new work when the budget (`BUDGET_HOURS`) runs low,
+training pauses with a recovery checkpoint, and the notebook finishes normally so **Kaggle saves the outputs**.
+Crashes are retried automatically (training resumes from its latest recovery checkpoint; evaluation OOM halves the
+batch size; finished evaluation parts are cached).
 
-### Carrying results between sessions
-After a stage finishes: **Save Version** (Save & Run All) → open the version's **Output** → **New Dataset**
-(e.g. `pa3-s0`, `pa3-s1`, …). In the next session **Add Input** → those datasets. Every directory named
-`pa3_outputs` under `/kaggle/input` is discovered automatically; finished work there is reused, never redone.
-If a session dies mid-training, attach its output and rerun the same stage: training resumes from the last
-recovery checkpoint (model, optimizer, scheduler, scaler, RNG, data position).
+### If the status at the end says "paused"
+Open the version → **Output** → **New Dataset** (e.g. `pa3-run1`), start a new session with that dataset attached
+(plus the questions YAML) and run again. Finished work is detected and skipped; paused training resumes exactly.
 """
 
+SETTINGS = '''# ============================ SETTINGS ============================
+import os, time
+os.environ.setdefault("PA3_SESSION_START", str(time.time()))   # the session budget starts now
+STAGE = "AUTO"              # "AUTO" (everything) | "S0" extended smoke test | "S1" / "S2" / "S3"
+BUDGET_HOURS = 11.25        # stop cleanly before Kaggle's 12 h limit (leaves time to save outputs)
+REPO_URL = "https://github.com/danishrasool10/ATML-PA3"
+REPO_REF = "main"           # branch, tag or commit to run
+CODE_DIR = "/kaggle/working/ATML-PA3"
+OUTPUT_ROOT = "/kaggle/working/pa3_outputs"
+S0_CPU_TESTS = True         # S0 only'''
 
-def file_cells() -> list[tuple[str, str]]:
-    out = []
-    for item in INCLUDE:
-        p = REPO / item
-        files = [p] if p.is_file() else sorted(f for f in p.rglob("*") if f.is_file())
-        for f in files:
-            if any(part in EXCLUDE_NAMES for part in f.parts) or f.suffix in (".pyc",) or f.name == "build_notebook.py":
-                continue
-            out.append((str(f.relative_to(REPO)), f.read_text()))
-    return out
+GET_CODE = '''# ============================ GET THE CODE ============================
+# Prefers a copy of the repository attached as a Kaggle input (no network needed); otherwise clones GitHub.
+import glob, shutil, subprocess, time
+def _attached_repo():
+    for p in sorted(glob.glob("/kaggle/input/**/task_1/src/pa3/orchestrate.py", recursive=True)):
+        return os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(p))))
+    return None
+src = _attached_repo()
+if os.path.exists(CODE_DIR):
+    shutil.rmtree(CODE_DIR)
+if src:
+    shutil.copytree(src, CODE_DIR, ignore=shutil.ignore_patterns(".git", "__pycache__"))
+    print("using attached repository copy:", src)
+else:
+    for i in range(4):
+        r = subprocess.run(["git", "clone", "--quiet", REPO_URL, CODE_DIR], capture_output=True, text=True)
+        if r.returncode == 0:
+            break
+        print("git clone failed, retrying:", r.stderr[-300:]); time.sleep(15 * (i + 1)); shutil.rmtree(CODE_DIR, ignore_errors=True)
+    else:
+        raise RuntimeError("could not clone the repository — is Internet enabled?")
+    subprocess.run(["git", "-C", CODE_DIR, "checkout", "--quiet", REPO_REF], check=True)
+commit = subprocess.run(["git", "-C", CODE_DIR, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+print("code commit:", commit or "(attached copy, no git metadata)")
+os.makedirs(OUTPUT_ROOT, exist_ok=True)
+open(f"{OUTPUT_ROOT}/code_commit.txt", "a").write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} {commit or src}\\n")'''
 
+INSTALL = '''# ============================ DEPENDENCIES ============================
+# Pinned versions; Kaggle's PyTorch (CUDA build) is kept as-is.
+import sys
+sys.path[:0] = [f"{CODE_DIR}/common", f"{CODE_DIR}/task_1/src"]
+from pa3common.kaggle import pip_install
+import torch
+torch_before = torch.__version__
+pip_install(["transformers==5.21.0", "peft==0.21.2", "lm_eval[hf]==0.4.13", "pytest", "safetensors", "matplotlib"])
+out = subprocess.run([sys.executable, "-c", "import torch, transformers, peft, lm_eval; print(torch.__version__, "
+                      "transformers.__version__, peft.__version__)"], capture_output=True, text=True)
+print("kernel torch:", torch_before, "| subprocess torch/transformers/peft:", out.stdout.strip(), out.stderr[-400:])
+assert out.stdout.split()[0] == torch_before, "pip changed torch — restart the kernel and rerun"
+assert tuple(int(x) for x in torch_before.split("+")[0].split(".")[:2]) >= (2, 6), "transformers 5.x needs torch >= 2.6"
+gpus = [torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())]
+print("GPUs:", gpus)
+if len(gpus) < 2:
+    print("!! WARNING: fewer than 2 GPUs visible — select 'GPU T4 x2' in the notebook settings")'''
+
+RUN = '''# ============================ RUN ============================
+os.chdir(f"{CODE_DIR}/task_1")
+from pa3 import orchestrate as O
+info = O.setup_env(OUTPUT_ROOT, budget_hours=BUDGET_HOURS)
+assert info["questions_yaml"], "first_plot_questions.yaml not found under /kaggle/input — attach it before running"
+runner = {"AUTO": O.stage_auto, "S1": O.stage_s1, "S2": O.stage_s2, "S3": O.stage_s3,
+          "S0": lambda: O.stage_s0(cpu_tests=S0_CPU_TESTS)}[STAGE]
+result = runner()'''
+
+SHOW = '''# ============================ RESULTS ============================
+import json
+from pathlib import Path
+from IPython.display import Markdown, Image, display
+R = Path(OUTPUT_ROOT)
+if (R / "status.json").exists():
+    print(json.dumps(json.loads((R / "status.json").read_text()), indent=1))
+for t in sorted((R / "report_assets/tables").glob("*.md")) if (R / "report_assets/tables").exists() else []:
+    display(Markdown(f"**{t.name}**\\n\\n" + t.read_text()))
+for f in sorted((R / "report_assets/figures").glob("*.png")) if (R / "report_assets/figures").exists() else []:
+    display(Image(filename=str(f)))'''
 
 _N = [0]
 
 
-def _id() -> str:
+def _cell(kind: str, src: str) -> dict:
     _N[0] += 1
-    return f"cell-{_N[0]:03d}"
-
-
-def md(src: str) -> dict:
-    return {"cell_type": "markdown", "id": _id(), "metadata": {}, "source": src.splitlines(keepends=True)}
-
-
-def code(src: str) -> dict:
-    return {"cell_type": "code", "id": _id(), "execution_count": None, "metadata": {}, "outputs": [],
-            "source": src.splitlines(keepends=True)}
+    c = {"cell_type": kind, "id": f"cell-{_N[0]:03d}", "metadata": {}, "source": src.splitlines(keepends=True)}
+    if kind == "code":
+        c.update({"execution_count": None, "outputs": []})
+    return c
 
 
 def build() -> dict:
-    cells = [md(INTRO)]
-    cells.append(code('''# ===================== SESSION SETTINGS =====================
-STAGE = "S0"            # "S0" (smoke) -> "S1" -> "S2" -> "S3"
-CPU_TESTS = "all"       # S0 only: "all" (~10-15 min on Kaggle CPUs), "quick" (skip DDP/resume tests), "none"
-SMOKE_UPDATES = 20      # S0 only
-CODE_DIR = "/kaggle/working/pa3_task1"
-OUTPUT_ROOT = "/kaggle/working/pa3_outputs"'''))
-    cells.append(md("## 1 · Pinned dependencies\nPyTorch is **not** reinstalled (Kaggle's CUDA build is kept)."))
-    cells.append(code('''import subprocess, sys
-import torch
-torch_before = torch.__version__
-subprocess.run([sys.executable, "-m", "pip", "install", "-q", "--upgrade-strategy", "only-if-needed",
-                "transformers==5.21.0", "peft==0.21.2", "lm_eval[hf]==0.4.13", "pytest", "safetensors"], check=True)
-out = subprocess.run([sys.executable, "-c", "import torch, transformers, peft, lm_eval; print(torch.__version__, "
-                      "transformers.__version__, peft.__version__)"], capture_output=True, text=True)
-print("torch (kernel) =", torch_before, "| subprocess torch/transformers/peft =", out.stdout.strip(), out.stderr[-500:])
-assert out.stdout.split()[0] == torch_before, "pip changed torch — restart the kernel and rerun"
-assert tuple(int(x) for x in torch_before.split("+")[0].split(".")[:2]) >= (2, 6), "transformers 5.x needs torch>=2.6"
-print("GPUs:", [torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())])'''))
-    cells.append(md("## 2 · Write the package to disk"))
-    files = file_cells()
-    dirs = sorted({str(Path(p).parent) for p, _ in files if str(Path(p).parent) != "."})
-    cells.append(code("import os\n" + "\n".join(f'os.makedirs(f"{{CODE_DIR}}/{d}", exist_ok=True)' for d in dirs)
-                      + '\nprint("directories ready")'))
-    for rel, text in files:
-        if not text.endswith("\n"):
-            text += "\n"
-        cells.append(code(f"%%writefile /kaggle/working/pa3_task1/{rel}\n{text}"))
-    cells.append(md("## 3 · Environment"))
-    cells.append(code('''import os, sys
-os.chdir(CODE_DIR)
-sys.path.insert(0, f"{CODE_DIR}/src")
-from pa3 import orchestrate as O
-info = O.setup_env(OUTPUT_ROOT)
-if not info["questions_yaml"]:
-    print("!! first_plot_questions.yaml not found under /kaggle/input — qualitative steps will be skipped")'''))
-    cells.append(md("## 4 · Run the selected stage"))
-    cells.append(code('''import time, json
-t0 = time.time()
-if STAGE == "S0":
-    if CPU_TESTS == "quick":
-        os.environ["PYTEST_ADDOPTS"] = "-k 'not ddp and not resume and not zero1'"
-    summary = O.stage_s0(cpu_tests=CPU_TESTS != "none", smoke_updates=SMOKE_UPDATES)
-elif STAGE == "S1":
-    O.stage_s1()
-elif STAGE == "S2":
-    O.stage_s2()
-elif STAGE == "S3":
-    O.stage_s3()
-else:
-    raise ValueError(STAGE)
-print(f"\\nStage {STAGE} finished in {(time.time() - t0) / 3600:.2f} h")'''))
-    cells.append(md("## 5 · Results so far"))
-    cells.append(code('''from pathlib import Path
-from IPython.display import Markdown, Image, display
-R = Path(OUTPUT_ROOT)
-if (R / "smoke/summary.json").exists() and STAGE == "S0":
-    s = json.loads((R / "smoke/summary.json").read_text())
-    rows = ["| run | peak alloc GiB/rank | s/update | projected h | tok/s | skipped |", "|---|---|---|---|---|---|"]
-    for k, v in s.get("smoke_runs", {}).items():
-        rows.append(f"| {k} | {v.get('peak_alloc_gib_per_rank')} | {v.get('sec_per_update_steady')} | "
-                    f"{v.get('projected_train_hours')} | {v.get('tokens_per_second')} | {v.get('skipped_updates')} |")
-    display(Markdown("\\n".join(rows)))
-    for key in ("fp16_sanity", "grad_equivalence_gpu", "merge_check_smoke", "eval_smoke", "data_report", "cpu_tests_rc"):
-        print(key, "=>", json.dumps(s.get(key), indent=1, default=str)[:1500])
-for t in sorted((R / "report_assets/tables").glob("*.md")) if (R / "report_assets/tables").exists() else []:
-    display(Markdown(f"**{t.name}**\\n\\n" + t.read_text()))
-for f in sorted((R / "report_assets/figures").glob("*.png")) if (R / "report_assets/figures").exists() else []:
-    display(Image(filename=str(f)))
-O.disk_report()'''))
-    cells.append(md("""## 6 · Next
-Save Version → Output → **New Dataset** → attach it in the next session and set `STAGE` to the next stage.
-Bring `report_assets/`, `eval/*/aggregate.json`, `qualitative/annotation_sheet.csv` and `diagnostics/` into the report."""))
-    return {"cells": cells, "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python",
-                                                        "name": "python3"},
-                                         "language_info": {"name": "python"},
-                                         "kaggle": {"accelerator": "nvidiaTeslaT4", "isInternetEnabled": True,
-                                                    "isGpuEnabled": True}},
+    cells = [_cell("markdown", INTRO), _cell("code", SETTINGS), _cell("code", GET_CODE), _cell("code", INSTALL),
+             _cell("code", RUN), _cell("code", SHOW)]
+    return {"cells": cells,
+            "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
+                         "language_info": {"name": "python"},
+                         "kaggle": {"accelerator": "nvidiaTeslaT4", "isInternetEnabled": True, "isGpuEnabled": True}},
             "nbformat": 4, "nbformat_minor": 5}
 
 
 if __name__ == "__main__":
-    nb = build()
-    out = REPO / "notebooks" / "pa3_task1_kaggle.ipynb"
+    out = TASK / "notebooks" / "pa3_task1_kaggle.ipynb"
     out.parent.mkdir(exist_ok=True)
-    out.write_text(json.dumps(nb, indent=1, ensure_ascii=False))
-    print(f"wrote {out} ({len(nb['cells'])} cells)")
+    out.write_text(json.dumps(build(), indent=1, ensure_ascii=False))
+    print(f"wrote {out}")

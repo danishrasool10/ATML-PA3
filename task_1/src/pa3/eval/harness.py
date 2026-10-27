@@ -102,19 +102,23 @@ def summarise(results: dict) -> dict:
     return out
 
 
+def _part(path: Path):
+    return json.loads(path.read_text()) if path.exists() else None
+
+
 def run_lm_eval(model, tok, out_dir: str | Path, limit: int | None = None, gen_batch: int = 64,
                 ll_batch: int = 32, max_gen_toks: int = 1024, tasks: list[str] | None = None) -> dict:
+    """Runs GSM8K and the likelihood tasks as two cached parts (part_gsm8k.json / part_ll.json), so a
+    crash or OOM retry only redoes the part that failed; aggregate.json is written when both exist."""
     from lm_eval import simple_evaluate
 
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     tasks = tasks or [GSM_TASK] + LL_TASKS
     cls = _recording_hflm_cls()
-    agg: dict[str, Any] = {"settings": {"limit": limit, "gen_batch": gen_batch, "ll_batch": ll_batch,
-                                         "max_gen_toks": max_gen_toks, "dtype": str(next(model.parameters()).dtype)}}
     model.eval()
     tok.padding_side = "left"
-    if GSM_TASK in tasks:
+    if GSM_TASK in tasks and _part(out_dir / "part_gsm8k.json") is None:
         lm = cls(pretrained=model, tokenizer=tok, batch_size=gen_batch, enable_thinking=False)
         r = simple_evaluate(model=lm, tasks=[GSM_TASK], num_fewshot=0, apply_chat_template=True,
                            gen_kwargs={"max_gen_toks": max_gen_toks}, log_samples=True, limit=limit)
@@ -123,7 +127,7 @@ def run_lm_eval(model, tok, out_dir: str | Path, limit: int | None = None, gen_b
         audit = gsm8k_audit(samples, lm)
         _dump_samples(audit, out_dir / "gsm8k_audit.jsonl")
         n = len(audit)
-        agg["gsm8k_audit"] = {
+        part = {"gsm8k_audit": {
             "n": n,
             "truncated_rate": sum(bool(a["truncated"]) for a in audit) / max(1, n),
             "flexible_unextractable_rate": sum(a["flexible_unextractable"] for a in audit) / max(1, n),
@@ -134,24 +138,35 @@ def run_lm_eval(model, tok, out_dir: str | Path, limit: int | None = None, gen_b
             "accuracy_given_not_truncated": (
                 sum(a["correct_flexible-extract"] for a in audit if not a["truncated"]) /
                 max(1, sum(not a["truncated"] for a in audit))),
-        }
-        agg.setdefault("results", {}).update(summarise(r))
-        agg.setdefault("n_samples", {}).update(r.get("n-samples", {}))
-        agg.setdefault("configs", {}).update(r.get("configs", {}))
-        agg["versions"] = r.get("versions", {})
+        }, "results": summarise(r), "n_samples": r.get("n-samples", {}), "configs": r.get("configs", {}),
+            "versions": r.get("versions", {}), "gen_batch": gen_batch}
+        write_json(out_dir / "part_gsm8k.json", part)
         del lm
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
     ll = [t for t in tasks if t in LL_TASKS]
-    if ll:
+    if ll and _part(out_dir / "part_ll.json") is None:
         lm = cls(pretrained=model, tokenizer=tok, batch_size=ll_batch)
         r = simple_evaluate(model=lm, tasks=ll, num_fewshot=0, apply_chat_template=False,
                            log_samples=True, limit=limit)
         for t in ll:
             _dump_samples(r["samples"][t], out_dir / f"samples_{t}.jsonl")
-        agg.setdefault("results", {}).update(summarise(r))
-        agg.setdefault("n_samples", {}).update(r.get("n-samples", {}))
-        agg.setdefault("configs", {}).update(r.get("configs", {}))
-        agg["versions"] = {**agg.get("versions", {}), **r.get("versions", {})}
+        write_json(out_dir / "part_ll.json", {"results": summarise(r), "n_samples": r.get("n-samples", {}),
+                                              "configs": r.get("configs", {}), "versions": r.get("versions", {}),
+                                              "ll_batch": ll_batch})
         del lm
+    agg: dict[str, Any] = {"settings": {"limit": limit, "max_gen_toks": max_gen_toks,
+                                         "dtype": str(next(model.parameters()).dtype)},
+                           "results": {}, "n_samples": {}, "configs": {}, "versions": {}}
+    for name in ("part_gsm8k.json", "part_ll.json"):
+        part = _part(out_dir / name)
+        if part is None:
+            continue
+        for k in ("results", "n_samples", "configs", "versions"):
+            agg[k].update(part.get(k, {}))
+        if "gsm8k_audit" in part:
+            agg["gsm8k_audit"] = part["gsm8k_audit"]
+        agg["settings"][name.replace("part_", "").replace(".json", "") + "_batch"] = part.get("gen_batch", part.get("ll_batch"))
     agg["primary"] = {}
     for t in tasks:
         m, f = PRIMARY[t]
@@ -164,7 +179,7 @@ def run_lm_eval(model, tok, out_dir: str | Path, limit: int | None = None, gen_b
             agg["primary"][t]["strict_match"] = res.get("exact_match,strict-match")
     if limit is None:
         for t in tasks:
-            got = agg.get("n_samples", {}).get(t, {}).get("effective")
+            got = agg["n_samples"].get(t, {}).get("effective")
             agg.setdefault("split_check", {})[t] = {"expected": EXPECTED_N[t], "effective": got,
                                                     "ok": got == EXPECTED_N[t]}
     write_json(out_dir / "aggregate.json", agg)

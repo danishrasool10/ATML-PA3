@@ -56,7 +56,7 @@ def main(argv: list[str] | None = None) -> None:
     model = build_eval_model(cond, a.model_id, device)
     timing["build_seconds"] = time.perf_counter() - t0
 
-    if not a.skip_lmeval and not (out_dir / "aggregate.json").exists():
+    if not a.skip_lmeval:  # parts already finished (part_gsm8k.json / part_ll.json) are reused
         t0 = time.perf_counter()
         agg = run_lm_eval(model, tok, out_dir, limit=a.limit, gen_batch=a.gen_batch, ll_batch=a.ll_batch,
                           tasks=a.tasks)

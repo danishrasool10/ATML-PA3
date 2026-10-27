@@ -112,3 +112,30 @@ def test_resume_is_exact(out_root, tiny_dir, bases_rel, method, extra):
     assert rec == ["u0004"], rec  # rolling: only the newest recovery checkpoint is kept
     res = json.loads((out_root / f"runs/resumeB_{method}/resources.json").read_text())
     assert [c["update"] for c in res["checkpoints"]] == [2, 4]
+
+
+def test_deadline_pause_and_resume_on_scratch(out_root, tiny_dir, tmp_path):
+    """Session deadline -> clean pause with a recovery checkpoint on scratch -> next run resumes exactly."""
+    import time
+
+    from pa3.models.load import load_safetensors
+
+    kw = dict(METHODS["lora"]) | {"lora_dropout": 0.05, "recovery_updates": [], "weight_snapshot_updates": [4],
+                                  "drop_final_recovery": False, "insurance_minutes": None}
+    ca = write_cfg(out_root, tiny_dir, run_name="pauseA", **kw)
+    cb = write_cfg(out_root, tiny_dir, run_name="pauseB", **kw)
+    run_train(out_root, ca, 2)
+    scratch = tmp_path / "scratch"
+    r = run_train(out_root, cb, 2, f"recovery_root={scratch}", f"deadline_unix={time.time() + 1}")
+    assert "PAUSED at update 1" in r.stdout, r.stdout[-2000:]
+    assert (out_root / "runs/pauseB/PAUSED").exists()
+    assert (scratch / "pauseB/recovery/u0001/COMPLETE").exists()
+    assert not (out_root / "runs/pauseB/DONE").exists()
+    run_train(out_root, cb, 2, f"recovery_root={scratch}")
+    assert (out_root / "runs/pauseB/DONE").exists() and not (out_root / "runs/pauseB/PAUSED").exists()
+    A = load_safetensors(out_root / "runs/pauseA/weights_u0004/adapter.safetensors")
+    B = load_safetensors(out_root / "runs/pauseB/weights_u0004/adapter.safetensors")
+    for k in A:
+        assert torch.equal(A[k], B[k]), k
+    kinds = [json.loads(x)["kind"] for x in (out_root / "runs/pauseB/checkpoints.jsonl").read_text().splitlines()]
+    assert kinds == ["pause"], kinds

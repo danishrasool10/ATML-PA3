@@ -15,7 +15,8 @@ import pytest
 import torch
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+COMMON = ROOT.parent / "common"
+sys.path[:0] = [str(ROOT / "src"), str(COMMON)]
 
 TINY = dict(vocab_size=151936, hidden_size=64, intermediate_size=128, num_hidden_layers=28,
             num_attention_heads=4, num_key_value_heads=2, head_dim=16, max_position_embeddings=4096,
@@ -106,7 +107,7 @@ def write_cfg(root: Path, tiny_dir: Path, **kw) -> Path:
 def run_train(root: Path, cfg_path: Path, nproc: int, *sets: str, check: bool = True):
     import subprocess
 
-    env = {**os.environ, "PA3_OUTPUT_ROOT": str(root), "PYTHONPATH": str(ROOT / "src"),
+    env = {**os.environ, "PA3_OUTPUT_ROOT": str(root), "PYTHONPATH": os.pathsep.join([str(ROOT / "src"), str(COMMON)]),
            "OMP_NUM_THREADS": "1", "CUDA_VISIBLE_DEVICES": ""}
     cmd = [sys.executable, "-m", "torch.distributed.run", "--standalone", f"--nproc_per_node={nproc}",
            "-m", "pa3.train.loop", "--config", str(cfg_path), "--set", *sets]

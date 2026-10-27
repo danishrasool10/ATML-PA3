@@ -1,0 +1,6 @@
+# Keep LF line endings in the repo regardless of OS/editor (avoids whole-file diffs from CRLF)
+* text=auto eol=lf
+*.ipynb text eol=lf
+*.png binary
+*.pt binary
+*.safetensors binary

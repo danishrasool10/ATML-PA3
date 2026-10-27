@@ -65,6 +65,10 @@ class RunConfig:
     recovery_updates: tuple[int, ...] = (312, 625, 937, 1250)
     weight_snapshot_updates: tuple[int, ...] = (1250,)  # Full FT adds 625
     keep_last_recovery: int = 1  # rolling recovery checkpoints kept on disk
+    recovery_root: str | None = None  # where recovery dirs live (Kaggle: large non-persisted scratch disk)
+    insurance_minutes: float | None = 40.0  # extra time-based recovery checkpoint (crash insurance)
+    deadline_unix: float | None = None  # pause cleanly (checkpoint + PAUSED marker) before this time
+    max_consecutive_skips: int = 50  # abort if FP16 overflow keeps skipping updates
     drop_final_recovery: bool = True  # delete optimizer state once the run finished + exported
 
     # ---- debugging / smoke ----------------------------------------------------------------
@@ -90,6 +94,13 @@ class RunConfig:
         if not root.is_absolute():
             root = Path(os.environ.get("PA3_OUTPUT_ROOT", "outputs")) / root
         return root / self.run_name
+
+    @property
+    def recovery_dir(self) -> Path:
+        """Root holding <recovery_dir>/recovery/uXXXX checkpoints for this run."""
+        if self.recovery_root:
+            return Path(self.recovery_root) / self.run_name
+        return self.run_dir
 
     @property
     def lora_scale(self) -> float:

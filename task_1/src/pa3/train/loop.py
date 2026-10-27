@@ -31,7 +31,7 @@ from ..models.load import load_model, load_tokenizer, save_safetensors, trainabl
 from ..models.lora import export_factors, inject_adapters, save_adapter_meta
 from ..models.oplora import load_bases, read_bases_meta
 from ..utils.common import (
-    JsonlLogger, all_gather_object, all_reduce_sum, barrier, cleanup_distributed, count_params,
+    JsonlLogger, all_gather_object, all_reduce_sum, barrier, broadcast_int, cleanup_distributed, count_params,
     find_artifact, gpu_mem_stats, init_distributed, read_json, seed_everything, write_json,
 )
 from . import checkpoint as ck
@@ -154,13 +154,16 @@ def train(cfg: RunConfig) -> dict:
     start = 0
     counters = {"train_seconds": 0.0, "ckpt_seconds": 0.0, "skipped_updates": [], "optimizer_steps_applied": 0,
                 "tokens_seen": 0}
-    comp = ck.list_complete(run_dir) if cfg.max_updates is None else []
+    rec_root = cfg.recovery_dir
+    comp = ck.list_complete(rec_root) if cfg.max_updates is None else []
     if comp:
         st = ck.load_recovery(comp[-1], model, opt, sched, scaler, rank, device)
         start = int(st["update"])
         counters.update(st.get("counters", {}))
         if is_main:
-            print(f"[{cfg.run_name}] resumed from {comp[-1].name} (update {start})")
+            print(f"[{cfg.run_name}] resumed from {comp[-1]} (update {start})", flush=True)
+    if is_main:
+        (run_dir / "PAUSED").unlink(missing_ok=True)
     log = JsonlLogger(run_dir / ("smoke_log.jsonl" if cfg.max_updates else "train_log.jsonl"), is_main,
                       truncate_after=start)
     ck_log = JsonlLogger(run_dir / "checkpoints.jsonl", is_main and cfg.max_updates is None, truncate_after=start)
@@ -169,6 +172,10 @@ def train(cfg: RunConfig) -> dict:
 
     end = cfg.num_updates if cfg.max_updates is None else min(cfg.num_updates, start + cfg.max_updates)
     autocast = _autocast(cfg, device)
+    last_save = time.time()
+    est_save = 0.0  # measured duration of the last recovery save (pause decisions budget for it)
+    upd_times: list[float] = []
+    skip_streak = 0
     for k in range(start, end):
         if device.type == "cuda":
             torch.cuda.synchronize(device)
@@ -218,8 +225,14 @@ def train(cfg: RunConfig) -> dict:
         counters["tokens_seen"] += tok_all
         if skipped:
             counters["skipped_updates"].append(k + 1)
+            skip_streak += 1
+            if skip_streak > cfg.max_consecutive_skips:
+                raise RuntimeError(f"{skip_streak} consecutive skipped updates (persistent FP16 overflow) at "
+                                   f"update {k + 1}; aborting instead of wasting the session")
         else:
             counters["optimizer_steps_applied"] += 1
+            skip_streak = 0
+        upd_times.append(dt)
         row = {"update": k + 1, "examples_seen": (k + 1) * cfg.effective_batch, "sft_loss": sft_loss,
                "lr": lr_used, "grad_norm": float(grad_norm), "loss_scale": scale_before, "skipped": skipped,
                "n_sup_tokens": plan.n_tokens, "n_tokens": tok_all, "sec": dt}
@@ -239,7 +252,6 @@ def train(cfg: RunConfig) -> dict:
         # ------------------------------------------------------------ snapshots + recovery
         u = k + 1
         if cfg.max_updates is None:
-            snap_ref = None
             if u in cfg.weight_snapshot_updates:
                 tt = time.perf_counter()
                 if is_main:
@@ -247,19 +259,39 @@ def train(cfg: RunConfig) -> dict:
                     counters.setdefault("exports", {})[str(u)] = info
                 barrier()
                 counters["ckpt_seconds"] += time.perf_counter() - tt
-                if not cfg.is_adapter:
-                    snap_ref = run_dir / f"weights_u{u:04d}" / "model.safetensors"
-            if u in cfg.recovery_updates:
+            # rank 0 decides (wall clocks differ slightly per rank); every rank follows its decision
+            kind = 0  # 0 none, 1 spec checkpoint, 2 insurance, 3 pause before the session deadline
+            if is_main:
+                avg = sum(upd_times[-20:]) / len(upd_times[-20:])
+                if u < end and cfg.deadline_unix and time.time() + 3 * avg + 1.5 * est_save + 120 > cfg.deadline_unix:
+                    kind = 3
+                elif u in cfg.recovery_updates:
+                    kind = 1
+                elif u < end and cfg.insurance_minutes and time.time() - last_save > 60 * cfg.insurance_minutes:
+                    kind = 2
+            kind = broadcast_int(kind, device)
+            if kind:
                 tt = time.perf_counter()
                 state = {"update": u, "counters": counters}
-                d = ck.save_recovery(run_dir, u, model, opt, sched, scaler, state, rank, snap_ref)
+                d = ck.save_recovery(rec_root, u, model, opt, sched, scaler, state, rank)
                 size = ck.recovery_size(d) if is_main else 0
-                removed = ck.rotate(run_dir, cfg.keep_last_recovery, rank)
-                counters["ckpt_seconds"] += time.perf_counter() - tt
+                removed = ck.rotate(rec_root, cfg.keep_last_recovery, rank)
+                est_save = time.perf_counter() - tt
+                counters["ckpt_seconds"] += est_save
+                last_save = time.time()
+                label = {1: "spec", 2: "insurance", 3: "pause"}[kind]
                 if is_main:
                     ck_log.log({"update": u, "examples": u * cfg.effective_batch, "bytes": size, "dir": d.name,
-                                "seconds": time.perf_counter() - tt, "removed": removed})
-                    print(f"[{cfg.run_name}] recovery u{u} saved ({size / 2**30:.2f} GiB); removed {removed}")
+                                "kind": label, "seconds": est_save, "removed": removed})
+                    print(f"[{cfg.run_name}] {label} recovery u{u} saved to {d} ({size / 2**30:.2f} GiB, "
+                          f"{est_save:.0f}s); removed {removed}", flush=True)
+                if kind == 3:
+                    if is_main:
+                        write_json(run_dir / "PAUSED", {"update": u, "recovery": str(d), "reason": "session deadline"})
+                        print(f"[{cfg.run_name}] PAUSED at update {u} to respect the session deadline", flush=True)
+                    barrier()
+                    cleanup_distributed()
+                    return {"paused_at": u}
             if cfg.crash_after_update is not None and u == cfg.crash_after_update:
                 if is_main:
                     print(f"[{cfg.run_name}] simulated crash after update {u}")
@@ -293,7 +325,7 @@ def train(cfg: RunConfig) -> dict:
         write_json(run_dir / ("smoke_resources.json" if cfg.max_updates else "resources.json"), res)
     if cfg.max_updates is None and end == cfg.num_updates:
         if cfg.drop_final_recovery and is_main:
-            for d in ck.list_complete(run_dir):
+            for d in ck.list_complete(rec_root):
                 res["checkpoints_deleted_after_completion"] = res.get("checkpoints_deleted_after_completion", []) + [
                     {"dir": d.name, "bytes": ck.recovery_size(d)}]
                 # keep only the optimizer-free part: drop the whole recovery dir (weights live in snapshots)

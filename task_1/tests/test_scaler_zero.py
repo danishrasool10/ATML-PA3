@@ -21,7 +21,8 @@ def _worker(rank, port, use_zero, q):
     os.environ.update(MASTER_ADDR="127.0.0.1", MASTER_PORT=str(port))
     dist.init_process_group("gloo", rank=rank, world_size=2)
     import sys
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+    sys.path[:0] = [os.path.join(os.path.dirname(__file__), "..", "src"),
+                    os.path.join(os.path.dirname(__file__), "..", "..", "common")]
     from pa3.train.optim import build_optimizer
 
     torch.manual_seed(0)

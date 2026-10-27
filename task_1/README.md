@@ -16,10 +16,12 @@ src/pa3/
   eval/                   conditions.py (7 conditions), harness.py (lm-eval + GSM8K audit + exact truncation),
                           merge.py (merged vs unmerged logits), qualitative.py (24 prompts, 42-row sheet), run.py
   diagnostics/            probe_set.py, activations.py (hooks), weights.py (rho_k, eta, R(z)), run.py
-  smoke.py, orchestrate.py   S0 smoke checks and the S0/S1/S2/S3 stage drivers
-scripts/      compute_bases.py, make_report_assets.py, build_notebook.py
+  smoke.py, prefetch.py      GPU sanity checks; one-time downloads with retries
+  orchestrate.py           deadline-aware Kaggle pipeline (AUTO, or S0/S1/S2/S3)
+scripts/      compute_bases.py, make_report_assets.py, build_notebook.py (regenerates the notebook)
 tests/        CPU test suite (tiny 28-layer Qwen3 + real tokenizer; DDP via gloo)
-notebooks/pa3_task1_kaggle.ipynb   writes everything above to disk and runs a selected stage
+notebooks/pa3_task1_kaggle.ipynb   clones the repo (or uses an attached copy) and runs the pipeline
+../common/pa3common/     shared helpers (utils, Kaggle job queue / deadline / scratch, NCCL check)
 ```
 
 All artifacts live under `$PA3_OUTPUT_ROOT` (`/kaggle/working/pa3_outputs` on Kaggle):
@@ -53,8 +55,21 @@ All artifacts live under `$PA3_OUTPUT_ROOT` (`/kaggle/working/pa3_outputs` on Ka
 
 ## Running on Kaggle
 
-See the first cell of the notebook. Stage order: S0 (smoke, ~1 h) -> S1 -> S2 -> S3, each a separate
-session; after each stage turn the version's output into a dataset and attach it to the next session.
+Open the notebook on Kaggle (GPU T4 x2, Internet on, `first_plot_questions.yaml` attached as an input) and
+use **Save & Run All**. `STAGE = "AUTO"` runs everything with both GPUs (DDP training; evaluations two at a
+time, one per GPU) under a session budget (`BUDGET_HOURS = 11.25`):
+
+* nothing is started that cannot finish before the budget; training pauses with a recovery checkpoint
+  instead of being killed, so the notebook always ends normally and Kaggle saves `pa3_outputs/`;
+* rolling recovery checkpoints (spec checkpoints at 312/625/937/1250 plus a 40-minute insurance
+  checkpoint) live on the scratch disk (`/kaggle/temp` or `/tmp`), keeping `/kaggle/working` small; on a
+  pause the latest one is copied into `pa3_outputs/runs/<run>/recovery/`;
+* crashes are retried (training resumes from the latest recovery checkpoint; L2-SP/Full FT switch to
+  ZeRO-1 on OOM; evaluation OOM halves batch sizes; finished evaluation parts are cached);
+* everything is downloaded once up front (with retries) so parallel jobs never race on the HF cache.
+
+If `status.json` says something is still `todo`, turn the version's output into a Dataset, attach it, and
+run again; finished work is skipped and paused training resumes exactly (bit-identical in CPU tests).
 
 ## Tests (CPU)
 

@@ -7,7 +7,7 @@ from pathlib import Path
 
 import torch
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+sys.path[:0] = [str(Path(__file__).resolve().parents[1] / "src"), str(Path(__file__).resolve().parents[2] / "common")]
 from pa3.config import TARGET_MODULES  # noqa: E402
 from pa3.models.load import load_model  # noqa: E402
 from pa3.models.oplora import compute_bases, save_bases  # noqa: E402
