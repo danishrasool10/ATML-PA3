@@ -1,0 +1,7 @@
+run_name: lora_r16
+method: lora
+lr: 2.0e-4
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.05
+weight_snapshot_updates: [1250]

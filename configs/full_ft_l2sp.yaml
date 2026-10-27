@@ -1,0 +1,7 @@
+run_name: full_ft_l2sp
+method: l2sp
+lr: 2.0e-5
+l2sp_lambda: 1.0e-3
+l2sp_ref_device: cuda    # set to cpu to stream theta0 from pinned host memory
+zero1: false             # flipped to true by the S0 smoke test if L2-SP runs out of memory
+weight_snapshot_updates: [1250]

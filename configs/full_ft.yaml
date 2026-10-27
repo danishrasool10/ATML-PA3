@@ -1,0 +1,5 @@
+run_name: full_ft
+method: full
+lr: 2.0e-5
+l2sp_lambda: 0.0
+weight_snapshot_updates: [625, 1250]   # midpoint + final, FP32

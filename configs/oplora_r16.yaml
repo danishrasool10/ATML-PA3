@@ -1,0 +1,9 @@
+run_name: oplora_r16
+method: oplora
+lr: 2.0e-4
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.05
+oplora_k: 128
+bases_path: bases/oplora_bases_k128.safetensors
+weight_snapshot_updates: [1250]
