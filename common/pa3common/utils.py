@@ -202,6 +202,21 @@ def output_root() -> Path:
 
 
 # ----------------------------------------------------------------------------- memory / time
+def host_mem_stats() -> dict:
+    """Process RSS / peak RSS and machine MemAvailable in GiB (Linux /proc), for host-OOM diagnosis."""
+    out = {}
+    try:
+        for line in open("/proc/self/status"):
+            if line.startswith(("VmRSS:", "VmHWM:")):
+                out["rss_gib" if line.startswith("VmRSS") else "peak_rss_gib"] = int(line.split()[1]) / 2**20
+        for line in open("/proc/meminfo"):
+            if line.startswith(("MemAvailable:", "MemTotal:")):
+                out[line.split(":")[0].lower() + "_gib"] = int(line.split()[1]) / 2**20
+    except OSError:
+        pass
+    return out
+
+
 def gpu_mem_stats(device: torch.device) -> dict:
     if device.type != "cuda":
         return {}

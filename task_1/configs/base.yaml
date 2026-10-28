@@ -15,7 +15,7 @@ clip_norm: 1.0
 amp: true
 init_scale: 65536.0
 grad_checkpointing: true
-ce_chunk: 1024
+ce_chunk: 256           # logits rows per lm_head/CE chunk (~150 MB fp32 each)
 attn_impl: sdpa
 recovery_updates: [312, 625, 937, 1250]
 keep_last_recovery: 1

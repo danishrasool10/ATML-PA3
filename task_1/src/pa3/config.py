@@ -45,7 +45,7 @@ class RunConfig:
     amp: bool = True  # FP16 autocast + dynamic GradScaler (auto-disabled on CPU)
     init_scale: float = 65536.0
     grad_checkpointing: bool = True
-    ce_chunk: int = 1024  # response positions per lm_head/CE chunk
+    ce_chunk: int = 256  # response positions per lm_head/CE chunk
     attn_impl: str = "sdpa"
 
     # ---- L2-SP ----------------------------------------------------------------------------

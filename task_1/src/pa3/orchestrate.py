@@ -21,8 +21,8 @@ import sys
 import time
 from pathlib import Path
 
-from pa3common.kaggle import (Deadline, StagePaused, discover_prior_roots, disk_report, is_oom, log_has,
-                              n_gpus, run_on_gpus, scratch_root, sh)
+from pa3common.kaggle import (Deadline, StagePaused, discover_prior_roots, disk_report, is_host_oom, is_oom,
+                              log_has, n_gpus, run_on_gpus, scratch_root, sh)
 
 TASK = Path(__file__).resolve().parents[2]  # .../task_1
 ROOT = TASK.parent  # repository root
@@ -155,8 +155,9 @@ def nccl_check() -> None:
 
 
 def preflight() -> None:
-    """~10 min: NCCL, FP16 numerics, and one worst-case update (32 longest examples) for the two
-    memory-heavy runs, choosing ZeRO-1 (approved fallback) before the real runs if needed."""
+    """~10 min: NCCL, FP16 numerics, and for the two memory-heavy runs two worst-case updates (32 longest
+    examples; the 2nd runs with AdamW state allocated = steady state) followed by a real recovery-checkpoint
+    save (GPU + host RAM + disk), choosing ZeRO-1 (approved fallback) before the real runs if needed."""
     nccl_check()
     if "fp16_ok" not in decisions():
         sh(py("-m", "pa3.smoke", "fp16"), logs() / "fp16.log", cwd=TASK)
@@ -165,7 +166,7 @@ def preflight() -> None:
         assert res.get("ok"), f"FP16 forward of Qwen3 is not sane on this GPU: {res}"
         set_decision("fp16_ok", True)
     for run in ("full_ft", "full_ft_l2sp"):
-        key = f"{run}_preflight"
+        key = f"{run}_preflight_v2"
         if key in decisions() or find(f"runs/{run}/DONE"):
             continue
         for attempt in ("ddp", "zero1", "zero1+host_ref"):
@@ -176,13 +177,22 @@ def preflight() -> None:
                     break
                 set_decision(f"{run}_ref_device", "cpu")
             name = f"{run}_preflight"
-            rc = _torchrun(run, name, ["max_updates=1", "extra={smoke_longest: true}"], timeout=1800)
             log = logs() / f"train_{name}.log"
+            if log.exists():
+                log.unlink()  # judge each attempt by its own log
+            rc = _torchrun(run, name, ["max_updates=2", "extra={smoke_longest: true, smoke_ckpt: true}",
+                                       f"recovery_root={_scratch_runs() / 'preflight'}"], timeout=2400)
+            shutil.rmtree(_scratch_runs() / "preflight", ignore_errors=True)
             if rc == 0:
                 res = json.loads((out_root() / "runs" / name / "smoke_resources.json").read_text())
-                set_decision(key, {"mode": attempt, "peak": res["peak_memory_per_rank"]})
-                print(f"[preflight] {run}: worst-case update OK with {attempt}: {res['peak_memory_per_rank']}")
+                info = {"mode": attempt, "gpu_peak": res["peak_memory_per_rank"], "smoke_ckpt": res.get("smoke_ckpt"),
+                        "sec_per_update_worst_case": res["train_seconds"] / max(1, res["updates_completed"])}
+                set_decision(key, info)
+                print(f"[preflight] {run}: steady-state worst case + checkpoint save OK with {attempt}: "
+                      f"{json.dumps(info)}", flush=True)
                 break
+            if is_host_oom(log):
+                raise RuntimeError(f"preflight of {run}: host RAM exhausted (SIGKILL) — see {log}")
             if not is_oom(log):
                 raise RuntimeError(f"preflight of {run} failed (not OOM); see {log}")
             print(f"[preflight] {run}: OOM with {attempt}", flush=True)
@@ -258,6 +268,9 @@ def train(run: str, max_attempts: int = 3) -> None:
             f"deadline_unix={DEADLINE.end - FINALIZE_RESERVE if DEADLINE else 'null'}"]
     for attempt in range(1, max_attempts + 1):
         print(f"[train] {run}: attempt {attempt} ({DEADLINE})", flush=True)
+        log = logs() / f"train_{run}.log"
+        if log.exists():  # keep earlier attempts' logs, judge this attempt by its own
+            log.rename(log.with_name(f"train_{run}.attempt{attempt - 1}.{int(time.time())}.log"))
         rc = _torchrun(run, run, sets)
         run_dir = out_root() / "runs" / run
         if (run_dir / "DONE").exists():
@@ -268,11 +281,13 @@ def train(run: str, max_attempts: int = 3) -> None:
         if (run_dir / "PAUSED").exists():
             _persist_recovery(run)
             raise StagePaused(f"{run} paused before the session deadline")
-        log = logs() / f"train_{run}.log"
         if is_oom(log) and run in ("full_ft", "full_ft_l2sp") and not decisions().get(f"{run}_zero1"):
             print(f"[train] {run}: OOM -> enabling ZeRO-1 (approved fallback) and resuming", flush=True)
             set_decision(f"{run}_zero1", True)
             shutil.rmtree(_scratch_runs() / run / "recovery", ignore_errors=True)  # optimizer format changes
+        elif is_host_oom(log):
+            print(f"[train] {run}: processes were SIGKILLed (host RAM exhausted); host memory per checkpoint is "
+                  f"logged in runs/{run}/checkpoints.jsonl", flush=True)
         elif log_has(log, "consecutive skipped updates"):
             raise RuntimeError(f"{run}: persistent FP16 overflow; see {log}")
         print(f"[train] {run}: exit code {rc}; resuming from the latest recovery checkpoint", flush=True)

@@ -122,6 +122,11 @@ def is_oom(log: Path) -> bool:
     return log_has(log, "OutOfMemoryError", "CUDA out of memory")
 
 
+def is_host_oom(log: Path) -> bool:
+    """All ranks SIGKILLed without a Python traceback = the kernel's OOM killer (host RAM)."""
+    return log_has(log, "Signal 9 (SIGKILL)", "exitcode: -9") and not is_oom(log)
+
+
 def retry(fn: Callable, tries: int = 4, wait: float = 20.0, what: str = ""):
     for i in range(tries):
         try:
@@ -147,6 +152,9 @@ def scratch_root(name: str = "pa3_scratch") -> Path:
     env = os.environ.get("PA3_SCRATCH")
     cands = [Path(env)] if env else [Path("/kaggle/temp") / name, Path("/tmp") / name]
     for c in cands:
+        if _is_tmpfs(c):
+            print(f"[scratch] {c} is RAM-backed (tmpfs); skipping", flush=True)
+            continue
         try:
             c.mkdir(parents=True, exist_ok=True)
             probe = c / ".w"
@@ -157,6 +165,21 @@ def scratch_root(name: str = "pa3_scratch") -> Path:
         except OSError:
             continue
     raise RuntimeError("no writable scratch directory")
+
+
+def _is_tmpfs(path: Path) -> bool:
+    """True if `path` would live on a RAM-backed filesystem (writing GB-sized checkpoints there eats RAM)."""
+    try:
+        best, fstype = "", ""
+        target = str(Path(path).resolve())
+        for line in open("/proc/mounts"):
+            parts = line.split()
+            mnt, fs = parts[1], parts[2]
+            if (target == mnt or target.startswith(mnt.rstrip("/") + "/")) and len(mnt) > len(best):
+                best, fstype = mnt, fs
+        return fstype in ("tmpfs", "ramfs")
+    except OSError:
+        return False
 
 
 def free_gib(path: str | Path) -> float:

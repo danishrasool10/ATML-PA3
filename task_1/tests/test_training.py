@@ -86,31 +86,37 @@ def test_zero1_matches_adamw(out_root, tiny_dir, bases_rel):
     assert e < 1e-4, e
 
 
-@pytest.mark.parametrize("method,extra", [("lora", {"lora_dropout": 0.05}), ("full", {})])
+@pytest.mark.parametrize("method,extra", [("lora", {"lora_dropout": 0.05}), ("full", {}),
+                                          ("l2sp", {"zero1": True}), ("l2sp", {}), ("full", {"zero1": True})])
 def test_resume_is_exact(out_root, tiny_dir, bases_rel, method, extra):
     from pa3.models.load import load_safetensors
 
+    tag = method + "".join(f"_{k}" for k in extra)  # unique run names per parametrization
+
     kw = dict(METHODS[method]) | extra | {"recovery_updates": [2, 4], "weight_snapshot_updates": [4],
                                           "drop_final_recovery": False}
-    ca = write_cfg(out_root, tiny_dir, run_name=f"resumeA_{method}", **kw)
-    cb = write_cfg(out_root, tiny_dir, run_name=f"resumeB_{method}", **kw)
+    ca = write_cfg(out_root, tiny_dir, run_name=f"resumeA_{tag}", **kw)
+    cb = write_cfg(out_root, tiny_dir, run_name=f"resumeB_{tag}", **kw)
     run_train(out_root, ca, 2)
     r = run_train(out_root, cb, 2, "crash_after_update=2")
     assert "simulated crash" in r.stdout
     run_train(out_root, cb, 2)
     fn = "adapter.safetensors" if method == "lora" else "model.safetensors"
-    A = load_safetensors(out_root / f"runs/resumeA_{method}/weights_u0004/{fn}")
-    B = load_safetensors(out_root / f"runs/resumeB_{method}/weights_u0004/{fn}")
+    if extra.get("zero1"):  # ZeRO-1 checkpoints hold one optimizer shard per rank, nothing consolidated
+        names = sorted(p.name for p in (out_root / f"runs/resumeB_{tag}/recovery/u0004").iterdir())
+        assert "optimizer_rank0.pt" in names and "optimizer_rank1.pt" in names and "optimizer.pt" not in names
+    A = load_safetensors(out_root / f"runs/resumeA_{tag}/weights_u0004/{fn}")
+    B = load_safetensors(out_root / f"runs/resumeB_{tag}/weights_u0004/{fn}")
     assert A.keys() == B.keys()
     for k in A:
         assert torch.equal(A[k], B[k]), k
-    la = [json.loads(l) for l in (out_root / f"runs/resumeA_{method}/train_log.jsonl").read_text().splitlines()]
-    lb = [json.loads(l) for l in (out_root / f"runs/resumeB_{method}/train_log.jsonl").read_text().splitlines()]
+    la = [json.loads(l) for l in (out_root / f"runs/resumeA_{tag}/train_log.jsonl").read_text().splitlines()]
+    lb = [json.loads(l) for l in (out_root / f"runs/resumeB_{tag}/train_log.jsonl").read_text().splitlines()]
     assert [r["update"] for r in lb] == [1, 2, 3, 4]
     assert [r["sft_loss"] for r in la] == [r["sft_loss"] for r in lb]
-    rec = sorted(p.name for p in (out_root / f"runs/resumeB_{method}/recovery").iterdir())
+    rec = sorted(p.name for p in (out_root / f"runs/resumeB_{tag}/recovery").iterdir())
     assert rec == ["u0004"], rec  # rolling: only the newest recovery checkpoint is kept
-    res = json.loads((out_root / f"runs/resumeB_{method}/resources.json").read_text())
+    res = json.loads((out_root / f"runs/resumeB_{tag}/resources.json").read_text())
     assert [c["update"] for c in res["checkpoints"]] == [2, 4]
 
 
@@ -139,3 +145,17 @@ def test_deadline_pause_and_resume_on_scratch(out_root, tiny_dir, tmp_path):
         assert torch.equal(A[k], B[k]), k
     kinds = [json.loads(x)["kind"] for x in (out_root / "runs/pauseB/checkpoints.jsonl").read_text().splitlines()]
     assert kinds == ["pause"], kinds
+
+
+def test_smoke_probe_saves_checkpoint(out_root, tiny_dir, tmp_path):
+    """Preflight mode: worst-case batch on every update + a real recovery save, reported and cleaned up."""
+    cfg = write_cfg(out_root, tiny_dir, run_name="probe", **METHODS["l2sp"])
+    run_train(out_root, cfg, 2, "max_updates=2", "zero1=true", "extra={smoke_longest: true, smoke_ckpt: true}",
+              f"recovery_root={tmp_path}")
+    res = json.loads((out_root / "runs/probe/smoke_resources.json").read_text())
+    sc = res["smoke_ckpt"]
+    assert sc["verified"] and sc["bytes"] > 0 and len(sc["host_mem_per_rank"]) == 2
+    assert "rss_gib" in sc["host_mem_per_rank"][0]
+    assert not (tmp_path / "probe" / "recovery" / "u0002").exists()
+    rows = [json.loads(x) for x in (out_root / "runs/probe/smoke_log.jsonl").read_text().splitlines()]
+    assert len(rows) == 2 and rows[0]["n_sup_tokens"] == rows[1]["n_sup_tokens"]  # same longest batch twice

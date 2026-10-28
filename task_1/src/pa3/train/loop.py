@@ -32,7 +32,7 @@ from ..models.lora import export_factors, inject_adapters, save_adapter_meta
 from ..models.oplora import load_bases, read_bases_meta
 from ..utils.common import (
     JsonlLogger, all_gather_object, all_reduce_sum, barrier, broadcast_int, cleanup_distributed, count_params,
-    find_artifact, gpu_mem_stats, init_distributed, read_json, seed_everything, write_json,
+    find_artifact, gpu_mem_stats, host_mem_stats, init_distributed, read_json, seed_everything, write_json,
 )
 from . import checkpoint as ck
 from .loss import CausalLMTokenLoss
@@ -180,8 +180,9 @@ def train(cfg: RunConfig) -> dict:
         if device.type == "cuda":
             torch.cuda.synchronize(device)
         t0 = time.perf_counter()
-        if cfg.max_updates is not None and cfg.extra.get("smoke_longest") and k == start:
-            plan = plan_longest(store, rank, world, cfg.micro_bs, cfg.grad_accum)  # worst-case memory first
+        if cfg.max_updates is not None and cfg.extra.get("smoke_longest"):
+            # worst case on every smoke update: update 1 has no AdamW state yet, update 2+ is steady state
+            plan = plan_longest(store, rank, world, cfg.micro_bs, cfg.grad_accum)
         else:
             plan = plan_update(store, k, rank, world, cfg.micro_bs, cfg.grad_accum)
         lr_used = sched.get_last_lr()[0]
@@ -282,7 +283,7 @@ def train(cfg: RunConfig) -> dict:
                 label = {1: "spec", 2: "insurance", 3: "pause"}[kind]
                 if is_main:
                     ck_log.log({"update": u, "examples": u * cfg.effective_batch, "bytes": size, "dir": d.name,
-                                "kind": label, "seconds": est_save, "removed": removed})
+                                "kind": label, "seconds": est_save, "removed": removed, "host_mem": host_mem_stats()})
                     print(f"[{cfg.run_name}] {label} recovery u{u} saved to {d} ({size / 2**30:.2f} GiB, "
                           f"{est_save:.0f}s); removed {removed}", flush=True)
                 if kind == 3:
@@ -298,6 +299,18 @@ def train(cfg: RunConfig) -> dict:
                 cleanup_distributed()
                 return {"crashed_at": u}
 
+    smoke_ckpt = None
+    if cfg.max_updates is not None and cfg.extra.get("smoke_ckpt"):
+        # exercise a full recovery save (GPU + host RAM + disk) exactly as the real run will at update 312
+        tt = time.perf_counter()
+        d = ck.save_recovery(rec_root, end, model, opt, sched, scaler, {"update": end, "counters": counters}, rank)
+        hm = all_gather_object(host_mem_stats())
+        smoke_ckpt = {"seconds": time.perf_counter() - tt, "bytes": ck.recovery_size(d) if is_main else 0,
+                      "verified": ck.verify_recovery(d) if is_main else None, "host_mem_per_rank": hm}
+        barrier()
+        if is_main:
+            from ..utils.common import rmtree
+            rmtree(d)
     if cfg.max_updates is not None and cfg.extra.get("smoke_export") and is_main:
         counters.setdefault("exports", {})[str(end)] = export_final(cfg, model, end, run_dir)
     barrier()
@@ -318,6 +331,7 @@ def train(cfg: RunConfig) -> dict:
         "exports": counters.get("exports", {}), **minfo,
         "device_name": torch.cuda.get_device_name(device) if device.type == "cuda" else "cpu",
         "zero1": bool(cfg.zero1 and world > 1), "torch": torch.__version__,
+        "host_mem_per_rank": all_gather_object(host_mem_stats()), "smoke_ckpt": smoke_ckpt,
     }
     if l2sp is not None:
         res["l2sp"] = l2sp.stats()
