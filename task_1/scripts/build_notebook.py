@@ -40,16 +40,18 @@ REPO_URL = "https://github.com/danishrasool10/ATML-PA3"
 REPO_REF = "main"           # branch, tag or commit to run
 CODE_DIR = "/kaggle/working/ATML-PA3"
 OUTPUT_ROOT = "/kaggle/working/pa3_outputs"
-S0_CPU_TESTS = True         # S0 only'''
+S0_CPU_TESTS = True         # S0 only
+USE_ATTACHED_REPO = False   # True = run a repo copy attached as a dataset instead of cloning GitHub'''
 
 GET_CODE = '''# ============================ GET THE CODE ============================
-# Prefers a copy of the repository attached as a Kaggle input (no network needed); otherwise clones GitHub.
+# Clones GitHub (REPO_REF). Set USE_ATTACHED_REPO=True to run a copy of the repo attached as a dataset instead.
+# (Attached earlier-run outputs also contain an old ATML-PA3 copy, so GitHub is the default.)
 import glob, shutil, subprocess, time
 def _attached_repo():
     for p in sorted(glob.glob("/kaggle/input/**/task_1/src/pa3/orchestrate.py", recursive=True)):
         return os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(p))))
     return None
-src = _attached_repo()
+src = _attached_repo() if USE_ATTACHED_REPO else None
 if os.path.exists(CODE_DIR):
     shutil.rmtree(CODE_DIR)
 if src:

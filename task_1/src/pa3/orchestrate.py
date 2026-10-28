@@ -469,6 +469,26 @@ def status() -> dict:
     return st
 
 
+SMALL_ZIP_EXCLUDE = ("weights_u", "/recovery/", "/bases/", "z_cache.pt", "/samples_", "/smoke/grad_")
+
+
+def bundle_small_results() -> Path:
+    """One small zip of everything needed for the report (no model weights, checkpoints, bases or the large
+    per-example lm-eval sample dumps; GSM8K per-example audits are included). Download this one file."""
+    import zipfile
+
+    root = out_root()
+    dst = root.parent / "pa3_results_small.zip"
+    with zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED) as zf:
+        for f in sorted(root.rglob("*")):
+            rel = "/" + str(f.relative_to(root)).replace("\\", "/")
+            if not f.is_file() or any(x in rel for x in SMALL_ZIP_EXCLUDE) or (rel.startswith("/data/") and f.suffix == ".npy"):
+                continue
+            zf.write(f, "pa3_outputs" + rel)
+    print(f"[finish] small results bundle: {dst} ({dst.stat().st_size / 2**20:.1f} MiB)", flush=True)
+    return dst
+
+
 def _finish(paused: StagePaused | None) -> dict:
     try:
         collect_qualitative()
@@ -477,6 +497,10 @@ def _finish(paused: StagePaused | None) -> dict:
         print(f"[finish] report step failed: {ex}", flush=True)
     disk_report()
     st = status()
+    try:
+        bundle_small_results()
+    except Exception as ex:  # noqa: BLE001
+        print(f"[finish] could not build the small results zip: {ex}", flush=True)
     print("\n================ STATUS ================\n" + json.dumps(st, indent=1), flush=True)
     if paused is not None:
         print(f"\n>>> Session budget reached: {paused}\n>>> Save Version, make the output a Dataset, attach it,"
