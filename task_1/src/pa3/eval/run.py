@@ -40,6 +40,13 @@ def main(argv: list[str] | None = None) -> None:
     sub = a.out_name or (f"eval_smoke/{cond.name}" if a.limit else f"eval/{cond.name}")
     out_dir = root / sub
     out_dir.mkdir(parents=True, exist_ok=True)
+    # reuse finished parts (part_gsm8k.json, part_ll.json, samples, merge check) from attached earlier sessions
+    import os as _os
+    from pa3common.kaggle import copytree_merge
+    for prior in [r for r in _os.environ.get("PA3_PRIOR_ROOTS", "").split(_os.pathsep) if r]:
+        if (Path(prior) / sub).is_dir():
+            copytree_merge(Path(prior) / sub, out_dir)
+            print(f"[{cond.name}] reusing finished evaluation parts from {prior}", flush=True)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     tok = load_tokenizer(a.model_id)
     timing: dict = {}
@@ -68,7 +75,8 @@ def main(argv: list[str] | None = None) -> None:
     qpath = Path(a.questions) if a.questions else find_artifact("first_plot_questions.yaml")
     qual_dir = root / ("qualitative_smoke" if a.limit else "qualitative") / "per_condition"
     qfile = qual_dir / f"{cond.name}.jsonl"
-    if not a.skip_qual and not qfile.exists():
+    if not a.skip_qual and not qfile.exists() and not (not a.limit and find_artifact(
+            f"qualitative/per_condition/{cond.name}.jsonl")):
         if qpath is None or not Path(qpath).exists():
             print("[qualitative] first_plot_questions.yaml not found; skipping")
         else:

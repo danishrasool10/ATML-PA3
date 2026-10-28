@@ -290,7 +290,8 @@ def train(run: str, max_attempts: int = 3) -> None:
                   f"logged in runs/{run}/checkpoints.jsonl", flush=True)
         elif log_has(log, "consecutive skipped updates"):
             raise RuntimeError(f"{run}: persistent FP16 overflow; see {log}")
-        print(f"[train] {run}: exit code {rc}; resuming from the latest recovery checkpoint", flush=True)
+        print(f"[train] {run}: exit code {rc}; last error:\n{error_tail(log)}\n"
+              f"[train] {run}: resuming from the latest recovery checkpoint", flush=True)
         _need(1200, f"retrying {run}")
     raise RuntimeError(f"{run} failed {max_attempts} times; see {logs() / f'train_{run}.log'}")
 
@@ -324,21 +325,60 @@ def _eval_cmd(c: str, gen_batch: int, ll_batch: int, limit: int | None = None) -
     return cmd
 
 
+def _weights_available(c: str) -> bool:
+    from pa3.eval.conditions import CONDITIONS
+
+    cond = CONDITIONS[c]
+    return cond.kind == "base" or bool(find(cond.weights_rel))
+
+
+def _rotate_log(log: Path) -> None:
+    """Keep earlier attempts' logs but judge each attempt (OOM or not) by its own log only."""
+    if log.exists():
+        log.rename(log.with_name(f"{log.stem}.prev{int(time.time())}{log.suffix}"))
+
+
+def error_tail(log: Path, n: int = 25) -> str:
+    """The last traceback (or last n lines) of a log, for printing in the notebook."""
+    if not Path(log).exists():
+        return "(no log)"
+    lines = Path(log).read_text(errors="ignore").splitlines()
+    starts = [k for k, l in enumerate(lines) if "Traceback (most recent call last)" in l]
+    seg = lines[starts[-1]:] if starts else lines
+    return "\n".join(seg[-n:])
+
+
+FAILURES: list[dict] = []
+
+
+def _record_failure(what: str, log: Path | None, err: str) -> None:
+    FAILURES.append({"step": what, "log": str(log) if log else None, "error": err[-3000:]})
+    print(f"\n!!!! {what} FAILED — continuing with the rest of the pipeline\n{err[-3000:]}\n", flush=True)
+
+
 def evaluate(conds: list[str], extra_jobs: list | None = None, limit: int | None = None) -> None:
-    """Evaluate conditions concurrently (one per GPU), with OOM back-off and one generic retry."""
-    todo = [c for c in conds if limit or not _eval_done(c)]
+    """Evaluate conditions concurrently (one per GPU). Real OOM -> halve batch sizes; other errors -> one
+    retry; a condition that keeps failing is recorded and skipped instead of aborting the session."""
+    todo = []
     for c in conds:
-        if c not in todo:
+        if not limit and _eval_done(c):
             print(f"[eval] {c}: done; skipping", flush=True)
+        elif not _weights_available(c):
+            _record_failure(f"eval {c}", None, f"weights for {c} are missing (its training did not finish)")
+        else:
+            todo.append(c)
     if not todo and not extra_jobs:
         return
-    batches = {c: [64, 32] for c in todo}
+    batches = {c: [64, 16] for c in todo}  # GSM8K generation batch, likelihood batch
     tries = {c: 0 for c in todo}
     extra_jobs = list(extra_jobs or [])
     while todo or extra_jobs:
         _need(_eval_estimate(), f"evaluating {todo}")
-        jobs = [(c, _eval_cmd(c, *batches[c], limit), logs() / f"eval_{c}{'_smoke' if limit else ''}.log") for c in todo]
-        jobs += extra_jobs
+        logs_of = {c: logs() / f"eval_{c}{'_smoke' if limit else ''}.log" for c in todo}
+        for lg in list(logs_of.values()) + [j[2] for j in extra_jobs]:
+            _rotate_log(Path(lg))
+        jobs = [(c, _eval_cmd(c, *batches[c], limit), logs_of[c]) for c in todo] + extra_jobs
+        extra_names = [j[0] for j in extra_jobs]
         extra_jobs = []
         cwd = os.getcwd()
         os.chdir(TASK)
@@ -346,6 +386,9 @@ def evaluate(conds: list[str], extra_jobs: list | None = None, limit: int | None
             rcs = run_on_gpus(jobs, kill_at=DEADLINE.end - FINALIZE_RESERVE / 2 if DEADLINE else None)
         finally:
             os.chdir(cwd)
+        for name in extra_names:
+            if rcs.get(name) != 0:
+                _record_failure(name, logs() / f"{name}.log", error_tail(logs() / f"{name}.log"))
         if DEADLINE is not None and DEADLINE.remaining() < FINALIZE_RESERVE:
             raise StagePaused("session deadline reached during evaluation (finished parts are cached)")
         nxt = []
@@ -353,13 +396,17 @@ def evaluate(conds: list[str], extra_jobs: list | None = None, limit: int | None
             if rcs.get(c) == 0 and (limit or _eval_done(c)):
                 continue
             tries[c] += 1
-            log = logs() / f"eval_{c}{'_smoke' if limit else ''}.log"
-            if is_oom(log) and batches[c][0] > 8:
-                batches[c] = [max(8, batches[c][0] // 2), max(4, batches[c][1] // 2)]
-                print(f"[eval] {c}: OOM -> retry with batch sizes {batches[c]}", flush=True)
-            elif tries[c] > 2:
-                raise RuntimeError(f"evaluation of {c} failed repeatedly; see {log}")
-            nxt.append(c)
+            log = logs_of[c]
+            tail = error_tail(log)
+            print(f"[eval] {c}: attempt {tries[c]} failed (rc={rcs.get(c)}):\n{tail}", flush=True)
+            if is_oom(log) and batches[c][1] > 2:
+                batches[c] = [max(8, batches[c][0] // 2), max(2, batches[c][1] // 2)]
+                print(f"[eval] {c}: CUDA OOM -> retry with batch sizes {batches[c]}", flush=True)
+                nxt.append(c)
+            elif tries[c] < 2:
+                nxt.append(c)
+            else:
+                _record_failure(f"eval {c}", log, tail)
         todo = nxt
 
 
@@ -414,6 +461,7 @@ def status() -> dict:
         "diagnostics": "done" if diagnostics_done() else "todo",
         "qualitative_sheet": "done" if find("qualitative/annotation_sheet.csv") else "todo",
         "session_hours_used": round((time.time() - DEADLINE.start) / 3600, 2) if DEADLINE else None,
+        "failures_this_session": FAILURES,
     }
     st["complete"] = all(v == "done" for v in st["runs"].values()) and all(v == "done" for v in st["evals"].values()) \
         and st["diagnostics"] == "done"
@@ -440,56 +488,69 @@ def _finish(paused: StagePaused | None) -> dict:
 
 # ------------------------------------------------------------------ stages
 def _pipeline(steps) -> dict:
+    """Run steps in order. A step that fails is recorded (with its error) and the pipeline moves on, so one
+    bad evaluation or run never costs the rest of the session; only the session budget stops it."""
+    import traceback
+
     paused = None
-    try:
-        for step in steps:
+    for name, step in steps:
+        try:
             step()
-    except StagePaused as ex:
-        paused = ex
+        except StagePaused as ex:
+            paused = ex
+            break
+        except Exception:  # noqa: BLE001
+            _record_failure(name, None, traceback.format_exc())
     return _finish(paused)
 
 
 def stage_auto() -> dict:
     return _pipeline([
-        ensure_common, preflight,
-        lambda: train("full_ft"),
-        lambda: evaluate(["baseline", "fullft_u0625"]),
-        lambda: train("full_ft_l2sp"),
-        lambda: evaluate(["fullft_u1250", "l2sp_u1250"]),
-        lambda: train("lora_r4"),
-        lambda: train("lora_r16"),
-        lambda: evaluate(["lora4_u1250", "lora16_u1250"]),
-        lambda: train("oplora_r16"),
-        lambda: evaluate(["oplora16_u1250"], extra_jobs=[] if diagnostics_done() else [diagnostics_job()]),
-        _catch_up,
+        ("prepare", ensure_common), ("preflight", preflight),
+        ("train full_ft", lambda: train("full_ft")),
+        ("eval baseline+fullft_u0625", lambda: evaluate(["baseline", "fullft_u0625"])),
+        ("train full_ft_l2sp", lambda: train("full_ft_l2sp")),
+        ("eval fullft_u1250+l2sp", lambda: evaluate(["fullft_u1250", "l2sp_u1250"])),
+        ("train lora_r4", lambda: train("lora_r4")),
+        ("train lora_r16", lambda: train("lora_r16")),
+        ("eval lora4+lora16", lambda: evaluate(["lora4_u1250", "lora16_u1250"])),
+        ("train oplora_r16", lambda: train("oplora_r16")),
+        ("eval oplora16 | diagnostics",
+         lambda: evaluate(["oplora16_u1250"], extra_jobs=[] if diagnostics_done() else [diagnostics_job()])),
+        ("catch-up", _catch_up),
     ])
 
 
 def _catch_up() -> None:
     from pa3.eval.conditions import ORDER
 
-    missing = [c for c in ORDER if not _eval_done(c)]
+    missing = [c for c in ORDER if not _eval_done(c) and _weights_available(c)]
     if missing:
         evaluate(missing)
     if not diagnostics_done():
         _need(1800, "diagnostics")
-        sh(py("-m", "pa3.diagnostics.run", "analyze"), logs() / "diagnostics.log", cwd=TASK,
-           timeout=DEADLINE.remaining() - FINALIZE_RESERVE if DEADLINE else None)
+        rc = sh(py("-m", "pa3.diagnostics.run", "analyze"), logs() / "diagnostics.log", cwd=TASK,
+                timeout=DEADLINE.remaining() - FINALIZE_RESERVE if DEADLINE else None)
+        if rc != 0:
+            _record_failure("diagnostics", logs() / "diagnostics.log", error_tail(logs() / "diagnostics.log"))
 
 
 def stage_s1() -> dict:
-    return _pipeline([ensure_common, preflight, lambda: train("full_ft"),
-                      lambda: evaluate(["baseline", "fullft_u0625"]), lambda: evaluate(["fullft_u1250"])])
+    return _pipeline([("prepare", ensure_common), ("preflight", preflight), ("train full_ft", lambda: train("full_ft")),
+                      ("eval", lambda: evaluate(["baseline", "fullft_u0625"])),
+                      ("eval", lambda: evaluate(["fullft_u1250"]))])
 
 
 def stage_s2() -> dict:
-    return _pipeline([ensure_common, preflight, lambda: train("full_ft_l2sp"), lambda: train("lora_r4"),
-                      lambda: evaluate(["l2sp_u1250", "lora4_u1250"])])
+    return _pipeline([("prepare", ensure_common), ("preflight", preflight),
+                      ("train full_ft_l2sp", lambda: train("full_ft_l2sp")), ("train lora_r4", lambda: train("lora_r4")),
+                      ("eval", lambda: evaluate(["l2sp_u1250", "lora4_u1250"]))])
 
 
 def stage_s3() -> dict:
-    return _pipeline([ensure_common, lambda: train("lora_r16"), lambda: train("oplora_r16"),
-                      lambda: evaluate(["lora16_u1250", "oplora16_u1250"]), _catch_up])
+    return _pipeline([("prepare", ensure_common), ("train lora_r16", lambda: train("lora_r16")),
+                      ("train oplora_r16", lambda: train("oplora_r16")),
+                      ("eval", lambda: evaluate(["lora16_u1250", "oplora16_u1250"])), ("catch-up", _catch_up)])
 
 
 def stage_s0(cpu_tests: bool = True, smoke_updates: int = 20) -> dict:

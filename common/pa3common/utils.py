@@ -143,7 +143,11 @@ def _json_default(o: Any) -> Any:
         return o.item() if o.numel() == 1 else o.tolist()
     if isinstance(o, Path):
         return str(o)
-    raise TypeError(type(o))
+    if isinstance(o, (set, frozenset, tuple)):
+        return list(o)
+    if callable(o):  # e.g. functions nested inside lm-eval task configs (hellaswag)
+        return f"<callable {getattr(o, '__module__', '')}.{getattr(o, '__qualname__', repr(o))}>"
+    return str(o)  # logging must never crash a multi-hour run
 
 
 def write_json(path: str | Path, obj: Any) -> None:
