@@ -1,0 +1,21 @@
+{
+  "examples": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    808
+  ],
+  "fp32_loss_mean": 0.9614452756941319,
+  "fp16_loss_mean": 0.9612235277891159,
+  "max_abs_loss_diff": 0.0008716583251953125,
+  "max_abs_logit_diff_last64": 0.1772376298904419,
+  "fp16_nonfinite": false,
+  "fp16_max_hidden_abs": 8168.0,
+  "fp32_max_hidden_abs": 8156.8427734375,
+  "fp16_headroom_vs_65504": 8.030558123948607,
+  "ok": true
+}

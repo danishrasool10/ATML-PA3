@@ -1,0 +1,4 @@
+
+===== 2026-10-28 07:49:40 $ /usr/bin/python3 -m pa3.data.prepare --out_dir /kaggle/working/pa3_outputs/data
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+{'counts': {'rows_examined': 40002, 'retained': 40000, 'last_src_index': 40001, 'empty': 0, 'too_long': 2, 'gsm8k_test_match': 0}, 'total_tokens': 9908423, 'supervised_tokens': 7100056, 'mean_len': 247.710575, 'sha256': '2146a251bdfcafd66436c152bd5af3d0381b7523b407116b5302345c58d09561'}

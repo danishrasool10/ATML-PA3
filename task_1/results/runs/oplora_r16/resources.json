@@ -1,0 +1,149 @@
+{
+  "run_name": "oplora_r16",
+  "method": "oplora",
+  "world_size": 2,
+  "per_rank_accum": 8,
+  "updates_completed": 1250,
+  "examples_seen": 40000,
+  "train_seconds": 6334.384605059928,
+  "ckpt_seconds": 1.504755654008477,
+  "tokens_seen": 9908423,
+  "tokens_per_second": 1564.228195440662,
+  "skipped_updates": [],
+  "optimizer_steps_applied": 1250,
+  "peak_memory_per_rank": [
+    {
+      "peak_alloc_gib": 2.2872161865234375,
+      "peak_reserved_gib": 2.431640625,
+      "total_gib": 14.56219482421875
+    },
+    {
+      "peak_alloc_gib": 2.255295753479004,
+      "peak_reserved_gib": 2.43359375,
+      "total_gib": 14.56219482421875
+    }
+  ],
+  "checkpoints": [
+    {
+      "update": 312,
+      "examples": 9984,
+      "bytes": 121513744,
+      "dir": "u0312",
+      "kind": "spec",
+      "seconds": 0.4730352100013988,
+      "removed": [],
+      "host_mem": {
+        "peak_rss_gib": 3.99737548828125,
+        "rss_gib": 2.6549758911132812,
+        "memtotal_gib": 31.346599578857422,
+        "memavailable_gib": 25.026039123535156
+      }
+    },
+    {
+      "update": 625,
+      "examples": 20000,
+      "bytes": 121513744,
+      "dir": "u0625",
+      "kind": "spec",
+      "seconds": 0.2725330270041013,
+      "removed": [
+        {
+          "dir": "u0312",
+          "bytes": 121513744
+        }
+      ],
+      "host_mem": {
+        "peak_rss_gib": 3.99737548828125,
+        "rss_gib": 2.668487548828125,
+        "memtotal_gib": 31.346599578857422,
+        "memavailable_gib": 24.964950561523438
+      }
+    },
+    {
+      "update": 937,
+      "examples": 29984,
+      "bytes": 121513744,
+      "dir": "u0937",
+      "kind": "spec",
+      "seconds": 0.25916684600088047,
+      "removed": [
+        {
+          "dir": "u0625",
+          "bytes": 121513744
+        }
+      ],
+      "host_mem": {
+        "peak_rss_gib": 3.99737548828125,
+        "rss_gib": 2.6783447265625,
+        "memtotal_gib": 31.346599578857422,
+        "memavailable_gib": 24.958393096923828
+      }
+    },
+    {
+      "update": 1250,
+      "examples": 40000,
+      "bytes": 121513872,
+      "dir": "u1250",
+      "kind": "spec",
+      "seconds": 0.2631196509973961,
+      "removed": [
+        {
+          "dir": "u0937",
+          "bytes": 121513744
+        }
+      ],
+      "host_mem": {
+        "peak_rss_gib": 3.99737548828125,
+        "rss_gib": 2.6860275268554688,
+        "memtotal_gib": 31.346599578857422,
+        "memavailable_gib": 24.90640640258789
+      }
+    }
+  ],
+  "exports": {
+    "1250": {
+      "export_seconds": 0.22933021700009704,
+      "projection_seconds": 0.16894671600311995,
+      "file_bytes": 80823336,
+      "effective_factor_bytes": 40370176
+    }
+  },
+  "backbone_dtype": "float16",
+  "bases_load_seconds": 0.8219724909977231,
+  "bases_file": "/kaggle/working/pa3_outputs/bases/oplora_bases_k128.safetensors",
+  "bases_meta": {
+    "device": "cuda",
+    "svd_seconds": "31.57218064799997",
+    "n_modules": "196",
+    "k": "128",
+    "basis_bytes_fp32": "322961408"
+  },
+  "basis_bytes_on_device": 322961408,
+  "trainable_params": 10092544,
+  "total_params_unique": 606142464,
+  "build_seconds": 7.122172406998288,
+  "device_name": "Tesla T4",
+  "zero1": false,
+  "torch": "2.11.0+cu128",
+  "host_mem_per_rank": [
+    {
+      "peak_rss_gib": 3.99737548828125,
+      "rss_gib": 2.6860313415527344,
+      "memtotal_gib": 31.346599578857422,
+      "memavailable_gib": 24.90640640258789
+    },
+    {
+      "peak_rss_gib": 3.9972152709960938,
+      "rss_gib": 2.7253379821777344,
+      "memtotal_gib": 31.346599578857422,
+      "memavailable_gib": 24.90640640258789
+    }
+  ],
+  "smoke_ckpt": null,
+  "checkpoints_deleted_after_completion": [
+    {
+      "dir": "u1250",
+      "bytes": 121513872
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+
+===== 2026-10-28 07:50:21 $ /usr/bin/python3 /kaggle/working/ATML-PA3/task_1/scripts/compute_bases.py
+
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]
+Loading weights:   0%|          | 1/311 [00:00<01:58,  2.61it/s]
+Loading weights:   1%|          | 2/311 [00:00<01:09,  4.46it/s]
+Loading weights:  60%|█████▉    | 186/311 [00:00<00:00, 501.01it/s]
+Loading weights:  86%|████████▌ | 268/311 [00:00<00:00, 539.56it/s]
+Loading weights: 100%|██████████| 311/311 [00:00<00:00, 388.61it/s]
+{'k': 128, 'n_modules': 196, 'svd_seconds': 31.57218064799997, 'basis_bytes_fp32': 322961408, 'device': 'cuda', 'file_bytes': 323123464, 'model_id': 'Qwen/Qwen3-0.6B'}

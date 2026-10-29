@@ -1,0 +1,24 @@
+
+===== 2026-10-28 07:54:11 $ /usr/bin/python3 -m torch.distributed.run --standalone --nproc_per_node=2 -m pa3.train.loop --config /kaggle/working/ATML-PA3/task_1/configs/base.yaml /kaggle/working/ATML-PA3/task_1/configs/full_ft_l2sp.yaml --set run_name=full_ft_l2sp_preflight zero1=true l2sp_ref_device=cuda max_updates=2 extra={smoke_longest: true, smoke_ckpt: true} recovery_root=/kaggle/temp/pa3_scratch/runs/preflight
+
+*****************************************
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+*****************************************
+/usr/local/lib/python3.13/dist-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.
+  return func(*args, **kwargs)
+[rank0]:[W1028 07:54:16.170466329 ProcessGroupNCCL.cpp:5188] Guessing device ID based on global rank. This can cause a hang if rank to GPU mapping is heterogeneous. You can specify device_id in init_process_group()
+
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]
+Loading weights:   0%|          | 1/311 [00:00<04:29,  1.15it/s]
+Loading weights:   1%|          | 2/311 [00:01<03:07,  1.65it/s]
+Loading weights:   0%|          | 1/311 [00:01<06:07,  1.19s/it]
+Loading weights:  77%|███████▋  | 241/311 [00:01<00:00, 290.72it/s]
+Loading weights:  69%|██████▉   | 214/311 [00:01<00:00, 227.05it/s]
+Loading weights: 100%|██████████| 311/311 [00:01<00:00, 190.79it/s]
+
+Loading weights: 100%|██████████| 311/311 [00:01<00:00, 200.53it/s]
+[full_ft_l2sp_preflight] u1/1250 loss=0.3943 lr=0.00e+00 gn=9.037 scale=65536 skip=False 23.41s Omega=0.0000e+00
+[full_ft_l2sp_preflight] u2/1250 loss=0.3943 lr=5.26e-07 gn=9.037 scale=65536 skip=False 21.40s Omega=0.0000e+00
+/usr/local/lib/python3.13/dist-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.
+  return func(*args, **kwargs)

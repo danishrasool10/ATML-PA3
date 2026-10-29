@@ -1,0 +1,7 @@
+{
+  "build_seconds": 6.0533895139997185,
+  "lm_eval_seconds": 2455.8446984229977,
+  "qualitative_seconds": 196.87586717000158,
+  "peak_mem_gib": 12.619722366333008,
+  "device": "Tesla T4"
+}

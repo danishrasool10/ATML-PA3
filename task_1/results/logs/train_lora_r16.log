@@ -1,0 +1,77 @@
+
+===== 2026-10-28 13:57:54 $ /usr/bin/python3 -m torch.distributed.run --standalone --nproc_per_node=2 -m pa3.train.loop --config /kaggle/working/ATML-PA3/task_1/configs/base.yaml /kaggle/working/ATML-PA3/task_1/configs/lora_r16.yaml --set run_name=lora_r16 recovery_root=/kaggle/temp/pa3_scratch/runs deadline_unix=1793213261.3100832
+
+*****************************************
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+*****************************************
+/usr/local/lib/python3.13/dist-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.
+  return func(*args, **kwargs)
+[rank0]:[W1028 13:57:58.715604376 ProcessGroupNCCL.cpp:5188] Guessing device ID based on global rank. This can cause a hang if rank to GPU mapping is heterogeneous. You can specify device_id in init_process_group()
+
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]
+Loading weights:   0%|          | 1/311 [00:00<04:36,  1.12it/s]
+Loading weights:  12%|█▏        | 36/311 [00:00<00:05, 48.99it/s]
+Loading weights:  79%|███████▉  | 246/311 [00:01<00:00, 383.90it/s]
+Loading weights:   0%|          | 1/311 [00:00<04:55,  1.05it/s]
+Loading weights: 100%|██████████| 311/311 [00:01<00:00, 245.43it/s]
+
+Loading weights:  69%|██████▉   | 215/311 [00:01<00:00, 279.02it/s]
+Loading weights: 100%|██████████| 311/311 [00:01<00:00, 257.46it/s]
+[lora_r16] u1/1250 loss=1.0286 lr=0.00e+00 gn=4.064 scale=65536 skip=False 4.59s
+[lora_r16] u25/1250 loss=0.2781 lr=1.26e-04 gn=0.414 scale=65536 skip=False 3.70s
+[lora_r16] u50/1250 loss=0.2558 lr=2.00e-04 gn=0.305 scale=65536 skip=False 3.99s
+[lora_r16] u75/1250 loss=0.2548 lr=2.00e-04 gn=0.316 scale=65536 skip=False 3.75s
+[lora_r16] u100/1250 loss=0.2595 lr=1.99e-04 gn=0.319 scale=65536 skip=False 4.38s
+[lora_r16] u125/1250 loss=0.2791 lr=1.98e-04 gn=0.340 scale=65536 skip=False 4.15s
+[lora_r16] u150/1250 loss=0.2427 lr=1.96e-04 gn=0.299 scale=65536 skip=False 3.70s
+[lora_r16] u175/1250 loss=0.2173 lr=1.94e-04 gn=0.282 scale=65536 skip=False 3.95s
+[lora_r16] u200/1250 loss=0.2102 lr=1.91e-04 gn=0.292 scale=65536 skip=False 3.69s
+[lora_r16] u225/1250 loss=0.2535 lr=1.89e-04 gn=0.310 scale=65536 skip=False 4.22s
+[lora_r16] u250/1250 loss=0.2497 lr=1.85e-04 gn=0.332 scale=65536 skip=False 3.67s
+[lora_r16] u275/1250 loss=0.2407 lr=1.82e-04 gn=0.251 scale=65536 skip=False 5.10s
+[lora_r16] u300/1250 loss=0.2165 lr=1.78e-04 gn=0.286 scale=65536 skip=False 3.66s
+/usr/local/lib/python3.13/dist-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.
+  return func(*args, **kwargs)
+[lora_r16] spec recovery u312 saved to /kaggle/temp/pa3_scratch/runs/lora_r16/recovery/u0312 (0.11 GiB, 0s); removed []
+[lora_r16] u325/1250 loss=0.2440 lr=1.74e-04 gn=0.286 scale=65536 skip=False 3.69s
+[lora_r16] u350/1250 loss=0.2285 lr=1.69e-04 gn=0.255 scale=65536 skip=False 4.12s
+[lora_r16] u375/1250 loss=0.1916 lr=1.64e-04 gn=0.256 scale=65536 skip=False 3.75s
+[lora_r16] u400/1250 loss=0.2109 lr=1.59e-04 gn=0.274 scale=65536 skip=False 3.74s
+[lora_r16] u425/1250 loss=0.2312 lr=1.54e-04 gn=0.288 scale=65536 skip=False 3.51s
+[lora_r16] u450/1250 loss=0.2317 lr=1.48e-04 gn=0.283 scale=65536 skip=False 3.65s
+[lora_r16] u475/1250 loss=0.1810 lr=1.43e-04 gn=0.227 scale=65536 skip=False 4.01s
+[lora_r16] u500/1250 loss=0.2114 lr=1.37e-04 gn=0.257 scale=65536 skip=False 4.25s
+[lora_r16] u525/1250 loss=0.2030 lr=1.31e-04 gn=0.258 scale=65536 skip=False 4.17s
+[lora_r16] u550/1250 loss=0.2037 lr=1.24e-04 gn=0.268 scale=65536 skip=False 3.67s
+[lora_r16] u575/1250 loss=0.2051 lr=1.18e-04 gn=0.280 scale=65536 skip=False 4.18s
+[lora_r16] u600/1250 loss=0.2016 lr=1.12e-04 gn=0.272 scale=65536 skip=False 3.62s
+[lora_r16] u625/1250 loss=0.2052 lr=1.05e-04 gn=0.244 scale=65536 skip=False 4.49s
+[lora_r16] spec recovery u625 saved to /kaggle/temp/pa3_scratch/runs/lora_r16/recovery/u0625 (0.11 GiB, 0s); removed [{'dir': 'u0312', 'bytes': 121513744}]
+[lora_r16] u650/1250 loss=0.1806 lr=9.87e-05 gn=0.267 scale=65536 skip=False 3.83s
+[lora_r16] u675/1250 loss=0.2159 lr=9.22e-05 gn=0.270 scale=65536 skip=False 3.72s
+[lora_r16] u700/1250 loss=0.2125 lr=8.58e-05 gn=0.255 scale=65536 skip=False 3.97s
+[lora_r16] u725/1250 loss=0.1953 lr=7.94e-05 gn=0.252 scale=65536 skip=False 4.05s
+[lora_r16] u750/1250 loss=0.1595 lr=7.31e-05 gn=0.250 scale=65536 skip=False 3.77s
+[lora_r16] u775/1250 loss=0.1855 lr=6.69e-05 gn=0.241 scale=65536 skip=False 3.90s
+[lora_r16] u800/1250 loss=0.1816 lr=6.09e-05 gn=0.258 scale=65536 skip=False 3.83s
+[lora_r16] u825/1250 loss=0.2280 lr=5.50e-05 gn=0.284 scale=65536 skip=False 3.71s
+[lora_r16] u850/1250 loss=0.2034 lr=4.93e-05 gn=0.245 scale=65536 skip=False 3.62s
+[lora_r16] u875/1250 loss=0.1895 lr=4.39e-05 gn=0.258 scale=65536 skip=False 3.61s
+[lora_r16] u900/1250 loss=0.1829 lr=3.86e-05 gn=0.258 scale=65536 skip=False 3.51s
+[lora_r16] u925/1250 loss=0.1936 lr=3.36e-05 gn=0.247 scale=65536 skip=False 3.87s
+[lora_r16] spec recovery u937 saved to /kaggle/temp/pa3_scratch/runs/lora_r16/recovery/u0937 (0.11 GiB, 0s); removed [{'dir': 'u0625', 'bytes': 121513744}]
+[lora_r16] u950/1250 loss=0.2061 lr=2.89e-05 gn=0.289 scale=65536 skip=False 3.79s
+[lora_r16] u975/1250 loss=0.2199 lr=2.45e-05 gn=0.281 scale=65536 skip=False 3.85s
+[lora_r16] u1000/1250 loss=0.2203 lr=2.04e-05 gn=0.262 scale=65536 skip=False 3.96s
+[lora_r16] u1025/1250 loss=0.1932 lr=1.67e-05 gn=0.240 scale=65536 skip=False 3.93s
+[lora_r16] u1050/1250 loss=0.2319 lr=1.33e-05 gn=0.286 scale=65536 skip=False 3.68s
+[lora_r16] u1075/1250 loss=0.1793 lr=1.02e-05 gn=0.271 scale=65536 skip=False 3.58s
+[lora_r16] u1100/1250 loss=0.2108 lr=7.56e-06 gn=0.279 scale=65536 skip=False 3.72s
+[lora_r16] u1125/1250 loss=0.2069 lr=5.29e-06 gn=0.261 scale=65536 skip=False 4.15s
+[lora_r16] u1150/1250 loss=0.1719 lr=3.41e-06 gn=0.254 scale=65536 skip=False 3.83s
+[lora_r16] u1175/1250 loss=0.1827 lr=1.93e-06 gn=0.248 scale=65536 skip=False 3.60s
+[lora_r16] u1200/1250 loss=0.1785 lr=8.73e-07 gn=0.258 scale=65536 skip=False 3.72s
+[lora_r16] u1225/1250 loss=0.2410 lr=2.27e-07 gn=0.282 scale=65536 skip=False 3.56s
+[lora_r16] u1250/1250 loss=0.1784 lr=3.36e-10 gn=0.255 scale=65536 skip=False 3.56s
+[lora_r16] spec recovery u1250 saved to /kaggle/temp/pa3_scratch/runs/lora_r16/recovery/u1250 (0.11 GiB, 0s); removed [{'dir': 'u0937', 'bytes': 121513744}]

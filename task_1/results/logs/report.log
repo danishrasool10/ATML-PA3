@@ -1,0 +1,3 @@
+
+===== 2026-10-28 21:40:23 $ /usr/bin/python3 /kaggle/working/ATML-PA3/task_1/scripts/make_report_assets.py
+report assets: ['report_assets/figures/activation_ratios.png', 'report_assets/figures/benchmark_deltas.png', 'report_assets/figures/l2sp_penalty.png', 'report_assets/figures/lr.png', 'report_assets/figures/sft_loss.png', 'report_assets/tables/benchmarks.csv', 'report_assets/tables/benchmarks.md', 'report_assets/tables/diagnostics_activations.md', 'report_assets/tables/diagnostics_weights.md', 'report_assets/tables/regularization.md', 'report_assets/tables/resources.md']

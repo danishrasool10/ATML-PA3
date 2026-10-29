@@ -1,0 +1,33 @@
+
+===== 2026-10-28 07:51:46 $ /usr/bin/python3 -m pa3.smoke fp16
+
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]
+Loading weights:   0%|          | 1/311 [00:00<02:32,  2.03it/s]
+Loading weights:  65%|██████▍   | 202/311 [00:00<00:00, 447.61it/s]
+Loading weights: 100%|██████████| 311/311 [00:00<00:00, 389.11it/s]
+
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]
+Loading weights:   0%|          | 1/311 [00:00<02:33,  2.02it/s]
+Loading weights:  79%|███████▉  | 247/311 [00:00<00:00, 551.00it/s]
+Loading weights: 100%|██████████| 311/311 [00:00<00:00, 466.85it/s]
+{
+ "examples": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  808
+ ],
+ "fp32_loss_mean": 0.9614452756941319,
+ "fp16_loss_mean": 0.9612235277891159,
+ "max_abs_loss_diff": 0.0008716583251953125,
+ "max_abs_logit_diff_last64": 0.1772376298904419,
+ "fp16_nonfinite": false,
+ "fp16_max_hidden_abs": 8168.0,
+ "fp32_max_hidden_abs": 8156.8427734375,
+ "fp16_headroom_vs_65504": 8.030558123948607,
+ "ok": true
+}

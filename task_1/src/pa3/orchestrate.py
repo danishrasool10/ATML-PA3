@@ -479,12 +479,18 @@ def bundle_small_results() -> Path:
 
     root = out_root()
     dst = root.parent / "pa3_results_small.zip"
+    # this session's files win; files that only exist in attached earlier sessions are included too
+    roots = [root] + [Path(r) for r in os.environ.get("PA3_PRIOR_ROOTS", "").split(os.pathsep) if r]
+    seen: set[str] = set()
     with zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED) as zf:
-        for f in sorted(root.rglob("*")):
-            rel = "/" + str(f.relative_to(root)).replace("\\", "/")
-            if not f.is_file() or any(x in rel for x in SMALL_ZIP_EXCLUDE) or (rel.startswith("/data/") and f.suffix == ".npy"):
-                continue
-            zf.write(f, "pa3_outputs" + rel)
+        for r in roots:
+            for f in sorted(r.rglob("*")):
+                rel = "/" + str(f.relative_to(r)).replace("\\", "/")
+                if (not f.is_file() or rel in seen or any(x in rel for x in SMALL_ZIP_EXCLUDE)
+                        or (rel.startswith("/data/") and f.suffix == ".npy")):
+                    continue
+                seen.add(rel)
+                zf.write(f, "pa3_outputs" + rel)
     print(f"[finish] small results bundle: {dst} ({dst.stat().st_size / 2**20:.1f} MiB)", flush=True)
     return dst
 

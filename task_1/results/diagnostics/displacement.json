@@ -1,0 +1,11 @@
+{
+  "note": "Full FT variants: ||theta - theta0||_2 over all unique params (FP32). Adapters: Frobenius norm of the merged correction over all targeted matrices.",
+  "values": {
+    "fullft_u0625": 10.077379609288851,
+    "fullft_u1250": 10.724523428154255,
+    "l2sp_u1250": 6.275538621135736,
+    "lora4_u1250": 9.150531111565792,
+    "lora16_u1250": 13.221214254407968,
+    "oplora16_u1250": 12.405659548542928
+  }
+}

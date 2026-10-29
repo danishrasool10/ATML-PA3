@@ -1,0 +1,112 @@
+
+===== 2026-10-28 07:48:46 $ /usr/bin/python3 -m pa3.prefetch
+
+Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+Fetching 10 files:  10%|█         | 1/10 [00:00<00:01,  8.49it/s]
+Fetching 10 files:  70%|███████   | 7/10 [00:00<00:00, 34.85it/s]
+Fetching 10 files: 100%|██████████| 10/10 [00:09<00:00,  1.01it/s]
+[prefetch] model Qwen/Qwen3-0.6B cached
+
+Generating train split:   0%|          | 0/7473 [00:00<?, ? examples/s]
+Generating train split: 100%|██████████| 7473/7473 [00:00<00:00, 76991.37 examples/s]
+
+Generating test split:   0%|          | 0/1319 [00:00<?, ? examples/s]
+Generating test split: 100%|██████████| 1319/1319 [00:00<00:00, 264134.02 examples/s]
+
+Generating train split:   0%|          | 0/395000 [00:00<?, ? examples/s]
+Generating train split: 100%|██████████| 395000/395000 [00:06<00:00, 61613.75 examples/s]
+Generating train split: 100%|██████████| 395000/395000 [00:06<00:00, 61047.67 examples/s]
+[prefetch] training data cached
+/kaggle/working/ATML-PA3/task_1/src/pa3/prefetch.py:29: DeprecationWarning: get_task_dict is deprecated. Use TaskManager.load() instead.
+  td = get_task_dict(["gsm8k_cot", "hellaswag", "boolq", "arc_easy"], TaskManager())
+
+Generating train split:   0%|          | 0/39905 [00:00<?, ? examples/s]
+Generating train split:  75%|███████▌  | 30000/39905 [00:00<00:00, 285409.00 examples/s]
+Generating train split: 100%|██████████| 39905/39905 [00:00<00:00, 284534.47 examples/s]
+
+Generating test split:   0%|          | 0/10003 [00:00<?, ? examples/s]
+Generating test split: 100%|██████████| 10003/10003 [00:00<00:00, 275934.88 examples/s]
+
+Generating validation split:   0%|          | 0/10042 [00:00<?, ? examples/s]
+Generating validation split: 100%|██████████| 10042/10042 [00:00<00:00, 301618.41 examples/s]
+
+Map:   0%|          | 0/39905 [00:00<?, ? examples/s]
+Map:   2%|▏         | 905/39905 [00:00<00:04, 8872.07 examples/s]
+Map:   5%|▌         | 2000/39905 [00:00<00:04, 7651.12 examples/s]
+Map:   8%|▊         | 3000/39905 [00:00<00:04, 7806.39 examples/s]
+Map:  10%|█         | 4063/39905 [00:00<00:07, 5119.02 examples/s]
+Map:  13%|█▎        | 5000/39905 [00:00<00:05, 5827.46 examples/s]
+Map:  15%|█▍        | 5977/39905 [00:00<00:05, 6737.87 examples/s]
+Map:  18%|█▊        | 7005/39905 [00:01<00:04, 6774.38 examples/s]
+Map:  20%|██        | 8000/39905 [00:01<00:04, 7296.54 examples/s]
+Map:  23%|██▎       | 9000/39905 [00:01<00:03, 7743.73 examples/s]
+Map:  25%|██▌       | 10000/39905 [00:01<00:03, 8058.68 examples/s]
+Map:  28%|██▊       | 11000/39905 [00:01<00:03, 8289.24 examples/s]
+Map:  30%|███       | 12000/39905 [00:01<00:03, 8413.78 examples/s]
+Map:  33%|███▎      | 13000/39905 [00:01<00:03, 8455.64 examples/s]
+Map:  35%|███▌      | 14000/39905 [00:01<00:03, 8564.96 examples/s]
+Map:  37%|███▋      | 14961/39905 [00:01<00:02, 8843.20 examples/s]
+Map:  40%|████      | 16000/39905 [00:02<00:03, 7932.25 examples/s]
+Map:  42%|████▏     | 16896/39905 [00:02<00:02, 8190.29 examples/s]
+Map:  45%|████▌     | 17976/39905 [00:02<00:02, 7840.46 examples/s]
+Map:  48%|████▊     | 19000/39905 [00:02<00:02, 7309.77 examples/s]
+Map:  50%|████▉     | 19924/39905 [00:02<00:02, 7764.31 examples/s]
+Map:  53%|█████▎    | 21000/39905 [00:02<00:02, 7257.49 examples/s]
+Map:  55%|█████▍    | 21928/39905 [00:02<00:02, 7730.09 examples/s]
+Map:  58%|█████▊    | 23000/39905 [00:03<00:02, 7428.98 examples/s]
+Map:  60%|██████    | 23970/39905 [00:03<00:01, 7970.25 examples/s]
+Map:  63%|██████▎   | 25088/39905 [00:03<00:01, 7792.20 examples/s]
+Map:  65%|██████▌   | 26000/39905 [00:03<00:01, 7908.06 examples/s]
+Map:  68%|██████▊   | 26959/39905 [00:03<00:01, 8332.99 examples/s]
+Map:  70%|███████   | 28080/39905 [00:03<00:01, 8024.36 examples/s]
+Map:  73%|███████▎  | 29000/39905 [00:03<00:01, 7961.14 examples/s]
+Map:  75%|███████▍  | 29926/39905 [00:03<00:01, 8291.33 examples/s]
+Map:  78%|███████▊  | 31000/39905 [00:04<00:01, 7457.14 examples/s]
+Map:  80%|███████▉  | 31879/39905 [00:04<00:01, 7778.13 examples/s]
+Map:  83%|████████▎ | 32982/39905 [00:04<00:00, 7630.25 examples/s]
+Map:  85%|████████▌ | 34000/39905 [00:04<00:00, 7163.82 examples/s]
+Map:  88%|████████▊ | 34922/39905 [00:04<00:00, 7642.14 examples/s]
+Map:  90%|█████████ | 36000/39905 [00:04<00:00, 7404.05 examples/s]
+Map:  93%|█████████▎| 36937/39905 [00:04<00:00, 7870.35 examples/s]
+Map:  95%|█████████▌| 38000/39905 [00:04<00:00, 7566.41 examples/s]
+Map:  98%|█████████▊| 38969/39905 [00:05<00:00, 8078.53 examples/s]
+Map: 100%|█████████▉| 39807/39905 [00:05<00:00, 8153.40 examples/s]
+Map: 100%|██████████| 39905/39905 [00:05<00:00, 7642.68 examples/s]
+
+Map:   0%|          | 0/10042 [00:00<?, ? examples/s]
+Map:   9%|▉         | 895/10042 [00:00<00:01, 8793.50 examples/s]
+Map:  20%|█▉        | 2000/10042 [00:00<00:01, 7344.91 examples/s]
+Map:  30%|██▉       | 2973/10042 [00:00<00:00, 8239.55 examples/s]
+Map:  40%|███▉      | 4000/10042 [00:00<00:00, 7348.87 examples/s]
+Map:  49%|████▊     | 4876/10042 [00:00<00:00, 7758.30 examples/s]
+Map:  60%|█████▉    | 6000/10042 [00:00<00:00, 7400.26 examples/s]
+Map:  69%|██████▉   | 6947/10042 [00:00<00:00, 7937.80 examples/s]
+Map:  80%|███████▉  | 8008/10042 [00:01<00:00, 7624.32 examples/s]
+Map:  89%|████████▉ | 8973/10042 [00:01<00:00, 8136.47 examples/s]
+Map: 100%|██████████| 10042/10042 [00:01<00:00, 7853.81 examples/s]
+Map: 100%|██████████| 10042/10042 [00:01<00:00, 7762.25 examples/s]
+[Task: boolq] metric acc is defined, but aggregation is not. using default aggregation=mean
+[Task: boolq] metric acc is defined, but higher_is_better is not. using default higher_is_better=True
+
+Generating train split:   0%|          | 0/9427 [00:00<?, ? examples/s]
+Generating train split: 100%|██████████| 9427/9427 [00:00<00:00, 370833.06 examples/s]
+
+Generating validation split:   0%|          | 0/3270 [00:00<?, ? examples/s]
+Generating validation split: 100%|██████████| 3270/3270 [00:00<00:00, 353981.68 examples/s]
+
+Generating test split:   0%|          | 0/3245 [00:00<?, ? examples/s]
+Generating test split: 100%|██████████| 3245/3245 [00:00<00:00, 343977.87 examples/s]
+
+Generating train split:   0%|          | 0/2251 [00:00<?, ? examples/s]
+Generating train split: 100%|██████████| 2251/2251 [00:00<00:00, 312731.97 examples/s]
+
+Generating test split:   0%|          | 0/2376 [00:00<?, ? examples/s]
+Generating test split: 100%|██████████| 2376/2376 [00:00<00:00, 381723.92 examples/s]
+
+Generating validation split:   0%|          | 0/570 [00:00<?, ? examples/s]
+Generating validation split: 100%|██████████| 570/570 [00:00<00:00, 158097.69 examples/s]
+[prefetch] lm-eval arc_easy: 2376 eval docs
+[prefetch] lm-eval boolq: 3270 eval docs
+[prefetch] lm-eval hellaswag: 10042 eval docs
+[prefetch] lm-eval gsm8k_cot: 1319 eval docs

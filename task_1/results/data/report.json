@@ -1,0 +1,26 @@
+{
+  "counts": {
+    "rows_examined": 40002,
+    "retained": 40000,
+    "last_src_index": 40001,
+    "empty": 0,
+    "too_long": 2,
+    "gsm8k_test_match": 0
+  },
+  "decontam_examples": [],
+  "n_examples": 40000,
+  "max_len": 2048,
+  "total_tokens": 9908423,
+  "supervised_tokens": 7100056,
+  "mean_len": 247.710575,
+  "max_len_retained": 1941,
+  "p50_len": 219.0,
+  "p99_len": 681.0,
+  "sha256": "2146a251bdfcafd66436c152bd5af3d0381b7523b407116b5302345c58d09561",
+  "model_id": "Qwen/Qwen3-0.6B",
+  "metamath_rows": 395000,
+  "metamath_fingerprint": "7fea5e64bb080f6e",
+  "gsm8k_test_rows": 1319,
+  "seconds": 31.688930988311768,
+  "example_0_text": "<|im_start|>user\nGracie and Joe are choosing numbers on the complex plane. Joe chooses the point $1+2i$. Gracie chooses $-1+i$. How far apart are Gracie and Joe's points?<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\nThe distance between two points $(x_1,y_1)$ and $(x_2,y_2)$ in the complex plane is given by the formula $\\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}$.\nIn this case, Joe's point is $(1,2)$ and Gracie's point is $(-1,1)$.\nSo the distance between their points is $\\sqrt{((-1)-(1))^2+((1)-(2))^2}=\\sqrt{(-2)^2+(-1)^2}=\\sqrt{4+1}=\\sqrt{5}$.\nTherefore, Gracie and Joe's points are $\\boxed{\\sqrt{5}}$ units apart.\nThe answer is: \\sqrt{5}<|im_end|>"
+}

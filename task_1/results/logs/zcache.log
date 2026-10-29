@@ -1,0 +1,11 @@
+
+===== 2026-10-28 07:51:04 $ /usr/bin/python3 -m pa3.diagnostics.run cache
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]
+Loading weights:   0%|          | 1/311 [00:00<01:44,  2.96it/s]
+Loading weights:  48%|████▊     | 149/311 [00:00<00:00, 439.97it/s]
+Loading weights:  76%|███████▌  | 235/311 [00:00<00:00, 503.16it/s]
+Loading weights: 100%|█████████▉| 310/311 [00:00<00:00, 533.70it/s]
+Loading weights: 100%|██████████| 311/311 [00:00<00:00, 440.39it/s]
+cached z (64, 3, 3072) -> /kaggle/working/pa3_outputs/diagnostics/z_cache.pt

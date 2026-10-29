@@ -1,0 +1,8 @@
+{
+  "merge_check_seconds": 19.128978143002314,
+  "build_seconds": 4.496970192001754,
+  "lm_eval_seconds": 2239.972580630998,
+  "qualitative_seconds": 206.86419260299954,
+  "peak_mem_gib": 12.619722366333008,
+  "device": "Tesla T4"
+}

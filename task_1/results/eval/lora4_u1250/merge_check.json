@@ -1,0 +1,14 @@
+{
+  "fp32": {
+    "max_abs_logit_diff": 9.018182754516602e-05,
+    "mean_abs_logit_diff": 5.2222444537619594e-06,
+    "top1_agreement": 1.0,
+    "exported_vs_recomputed_factor_max_err": 0.0
+  },
+  "fp16": {
+    "max_abs_logit_diff": 0.17578125,
+    "mean_abs_logit_diff": 0.007904676720499992,
+    "top1_agreement": 1.0,
+    "exported_vs_recomputed_factor_max_err": 0.0
+  }
+}

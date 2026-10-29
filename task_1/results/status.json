@@ -1,0 +1,23 @@
+{
+ "runs": {
+  "full_ft": "done",
+  "full_ft_l2sp": "done",
+  "lora_r4": "done",
+  "lora_r16": "done",
+  "oplora_r16": "done"
+ },
+ "evals": {
+  "baseline": "done",
+  "fullft_u0625": "done",
+  "fullft_u1250": "done",
+  "l2sp_u1250": "done",
+  "lora4_u1250": "done",
+  "lora16_u1250": "done",
+  "oplora16_u1250": "done"
+ },
+ "diagnostics": "done",
+ "qualitative_sheet": "done",
+ "session_hours_used": 0.71,
+ "failures_this_session": [],
+ "complete": true
+}
