@@ -1,0 +1,38 @@
+# Shared recipe (PA3 Task 2). Relative paths are under $PA3_OUTPUT_ROOT; feature/image caches under $PA3_SCRATCH.
+seed: 6304
+model_id: Qwen/Qwen3-0.6B
+vision_id: google/siglip-base-patch16-224
+data_dir: data
+features_dir: features            # under scratch
+run_name: vt196
+pool: 1                           # 1 -> 196 visual tokens; 2 -> 49 (2x2 average of the 14x14 grid)
+dtype: float16                    # frozen backbone dtype on GPU (float32 on CPU tests)
+micro_bs: 8
+grad_accum: 2                     # effective batch 16
+stages:
+  - {name: caption, updates: 2250, lr_connector: 1.0e-3, lr_lora: null, mix: null}
+  - {name: instruct, updates: 1500, lr_connector: 1.0e-4, lr_lora: 2.0e-5,
+     mix: {presence: 0.5, counting: 0.25, caption: 0.25}}
+  - {name: vqa, updates: 750, lr_connector: 5.0e-5, lr_lora: 1.0e-5,
+     mix: {vqa: 0.7, presence: 0.1, counting: 0.1, caption: 0.1}}
+caption_passes: 2
+warmup_frac: 0.05                 # ceil(5% of stage updates) -> 113 / 75 / 38
+final_lr_frac: 0.1                # cosine to 10% of peak at the stage's last update
+weight_decay: 0.01                # weights only (no biases)
+betas: [0.9, 0.999]
+eps: 1.0e-8
+clip_norm: 1.0
+init_scale: 65536.0
+grad_checkpointing: true
+attn_impl: sdpa
+lora: {r: 16, alpha: 32, dropout: 0.05, targets: [q_proj, k_proj, v_proj, o_proj]}
+caps: {question: 80, caption: 64, answer: 16}
+calib_images: 1024
+dev_every: 500
+ckpt_every: 250
+keep_resumable: 2
+eval_bs: 8
+max_new_tokens: 16
+bootstrap: 4000
+deadline_margin_min: 35           # training pauses when less than this is left in the session budget
+stop_after_update: null           # tests only: pause after this global update

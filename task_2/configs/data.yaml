@@ -1,0 +1,14 @@
+# Data selection (seed 6304). Sizes from the PA3 manual.
+seed: 6304
+caption_train_images: 6000
+captions_per_train_image: 3
+caption_dev_images: 96
+vqa_train: {"yes/no": 640, "number": 256, "other": 640}
+vqa_dev: {"yes/no": 12, "number": 8, "other": 12}
+vqa_test: {"yes/no": 36, "number": 24, "other": 36}
+vqa_min_agree: 8
+grounding_dev: {presence: 12, counting: 12}
+grounding_test: {presence: 32, counting: 32}
+min_area: 1024                    # 32 x 32 px (COCO small/medium boundary)
+max_count: 4
+pool_cap_per_category: 400        # presence entries / counting pairs per category in the train pools
