@@ -30,7 +30,8 @@ complementary pairs; IDs saved) + image download → label audit sheets → SigL
 GPU, timed separately; SigLIP then leaves GPU memory) → preflight (3 updates per stage type) → **training: GPU0 =
 196-token main run, GPU1 = 49-token run, concurrently** (4,500 updates each, dev eval every 500 + stage ends,
 resumable checkpoints every 250) → final evaluation under correct / complementary swap / mismatched / no image
-(pair-bootstrap CIs) → report figures and tables → `results_task2.zip`.
+(pair-bootstrap CIs) → report figures and tables. The last cell zips the outputs into
+`/kaggle/working/results_task2.zip` and prints a **download link** (also when the pipeline failed part-way).
 
 Training pauses itself before the session budget (`BUDGET_HOURS`) runs out and the notebook ends normally, so
 Kaggle keeps the outputs. If `status.json` says **paused**: Output → New Dataset, attach it to a new session, run
@@ -63,11 +64,18 @@ if len(gpus) < 2:
     print("!! WARNING: fewer than 2 GPUs visible — the two runs will execute one after the other")'''
 
 RUN = '''# ============================ RUN ============================
+# Errors are caught so the RESULTS and DOWNLOAD cells still run (the error is re-raised at the very end).
+import traceback
+RUN_ERROR = None
 os.chdir(f"{CODE_DIR}/task_2")
 from pa3vlm import orchestrate as O
-info = O.setup_env(OUTPUT_ROOT, budget_hours=BUDGET_HOURS)
-result = O.stage_auto(run_cpu_tests=RUN_CPU_TESTS, run_49=RUN_49_TOKENS)
-print(result)'''
+try:
+    info = O.setup_env(OUTPUT_ROOT, budget_hours=BUDGET_HOURS)
+    result = O.stage_auto(run_cpu_tests=RUN_CPU_TESTS, run_49=RUN_49_TOKENS)
+    print(result)
+except Exception as ex:  # noqa: BLE001
+    traceback.print_exc()
+    RUN_ERROR = ex'''
 
 SHOW = '''# ============================ RESULTS ============================
 import json
@@ -81,6 +89,25 @@ for t in sorted(T.glob("*.md")) if T.exists() else []:
     display(Markdown(f"**{t.name}**\\n\\n" + t.read_text()))
 for f in sorted(F.glob("*.png")) if F.exists() else []:
     display(Image(filename=str(f)))'''
+
+DOWNLOAD = '''# ============================ DOWNLOAD RESULTS ============================
+# Zips everything in the outputs folder (except resumable checkpoints) and shows a download link.
+import os, zipfile
+from pathlib import Path
+from IPython.display import FileLink, display
+OUT = Path(globals().get("OUTPUT_ROOT", "/kaggle/working/pa3_task2_outputs"))
+ZIP = Path("/kaggle/working/results_task2.zip")
+n = 0
+with zipfile.ZipFile(ZIP, "w", zipfile.ZIP_DEFLATED) as zf:
+    for f in sorted(OUT.rglob("*")) if OUT.exists() else []:
+        if f.is_file() and "checkpoints" not in f.parts and f.suffix not in (".tmp", ".part") and f.suffix != ".zip":
+            zf.write(f, f.relative_to(OUT.parent))
+            n += 1
+print(f"{ZIP}: {n} files, {ZIP.stat().st_size / 2**20:.1f} MiB")
+os.chdir("/kaggle/working")
+display(FileLink(ZIP.name))
+if globals().get("RUN_ERROR") is not None:
+    raise RuntimeError("the pipeline failed earlier (see the RUN cell); partial results are in the zip") from RUN_ERROR'''
 
 _N = [0]
 
@@ -125,7 +152,8 @@ def build() -> dict:
              f"       if hashlib.sha256(open('{CODE_DIR}/' + r, 'rb').read().rstrip(b'\\n')).hexdigest() != h]\n"
              "assert not bad, f'files differ from the embedded sources: {bad}'\n"
              "print(f'{len(EXPECTED)} files written and verified')")
-    cells += [_cell("code", check), _cell("code", INSTALL), _cell("code", RUN), _cell("code", SHOW)]
+    cells += [_cell("code", check), _cell("code", INSTALL), _cell("code", RUN), _cell("code", SHOW),
+              _cell("code", DOWNLOAD)]
     return {"cells": cells,
             "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
                          "language_info": {"name": "python"},

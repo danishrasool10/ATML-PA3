@@ -3,7 +3,8 @@
 Order: [optional CPU tests] -> hub prefetch -> data selection + image download -> label audit ->
 SigLIP feature cache (two shards, one per GPU; separate processes, timed separately) -> preflight (3 updates
 per stage type for both runs: s/update, memory, FP16 sanity) -> training (GPU0: vt196, GPU1: vt49,
-concurrently) -> final evaluation (one run per GPU) -> report assets -> results zip.
+concurrently) -> final evaluation (one run per GPU) -> report assets.  The notebook's last cell zips the
+outputs and shows a download link.
 
 Each step is skipped when its outputs already exist (including outputs of an earlier session attached under
 /kaggle/input, which are merged into the output root first).  Training pauses itself with a resumable
@@ -131,7 +132,6 @@ def stage_auto(run_cpu_tests: bool = False, run_49: bool = True) -> dict:
         _status("final_eval", "done" if all(v == 0 for v in rcs.values()) else "failed", rcs=rcs)
     if dl.fits(120, margin=60):
         _run("report", [PY, str(TASK / "scripts" / "make_report_assets.py")], tries=1, fatal=False)
-    zip_results()
     final = {"runs": states, "main_run_done": states.get("vt196") == "done",
              "state": "done" if all((R / "runs" / r / "final_eval" / "summary.json").exists() for r in runs)
              else "paused"}
@@ -140,7 +140,8 @@ def stage_auto(run_cpu_tests: bool = False, run_49: bool = True) -> dict:
 
 
 def zip_results() -> Path:
-    """results_task2.zip = everything in the output root except resumable checkpoints and logs of the zip itself."""
+    """results_task2.zip = everything in the output root except resumable checkpoints (manual use; the notebook's
+    DOWNLOAD cell builds /kaggle/working/results_task2.zip itself)."""
     R = STATE["root"]
     z = R / "results_task2.zip"
     with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:
