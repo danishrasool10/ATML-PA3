@@ -29,7 +29,7 @@ src/pa3vlm/
   eval/         dev, generate (KV-cache greedy), conditions, metrics, bootstrap, final, qualitative
   orchestrate.py  Kaggle pipeline (prefetch → data → audit → features → preflight → train → eval → report)
 scripts/        build_notebook.py, label_audit.py, make_report_assets.py
-tests/          CPU tests (tiny 28-layer Qwen3, synthetic COCO/VQA): 23 tests
+tests/          CPU tests (tiny 28-layer Qwen3, synthetic COCO/VQA, orchestrator flow): 25 tests
 ```
 
 ## Outputs (`/kaggle/working/pa3_task2_outputs`)

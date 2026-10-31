@@ -135,7 +135,7 @@ def stage_auto(run_cpu_tests: bool = False, run_49: bool = True) -> dict:
     final = {"runs": states, "main_run_done": states.get("vt196") == "done",
              "state": "done" if all((R / "runs" / r / "final_eval" / "summary.json").exists() for r in runs)
              else "paused"}
-    _status("pipeline", final["state"], **final)
+    _status("pipeline", **final)
     return final
 
 

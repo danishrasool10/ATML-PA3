@@ -1,0 +1,37 @@
+# PA3 Task 3 — test-time compute (approved design: see the design summary given in chat, 2026-10-31)
+seed: 6304
+data_root: /kaggle/input/atml-pa3-data      # searched recursively for generations.parquet; /kaggle/input as fallback
+n_rollouts: 32
+n_questions_expected: 1000
+n_dev: 200
+n_live: 50
+budgets: [1, 2, 4, 8, 16, 32]
+n_orders: 10
+n_boot: 1000
+mv_timeout_s: 5                 # math-verify parse/verify timeout (seconds)
+max_misaligned_frac: 0.01       # >1% rollouts with misaligned token lists -> data stage fails
+# Optional column-name overrides if auto-detection picks the wrong column, e.g.
+# columns: {math: {text: response, extracted: pred}, mathvista: {attn_image: image_attn}}
+columns: {}
+mathvista_metadata_hf: AI4Math/MathVista   # used only if the supplied files lack the metadata columns
+
+adaptive:
+  checks: [4, 8, 16]
+  taus: [0.5, 0.625, 0.75, 0.875, 1.0]
+  gammas: [0.0, 0.1, 0.25, 0.5]
+  tolerance_pp: 1.0
+
+live:
+  model: Qwen/Qwen2.5-3B-Instruct
+  revision: main
+  dtype: float16
+  system: "You are a helpful assistant."
+  instruction: "Think step by step inside <think> </think> tags, then give your final answer inside \\boxed{}."
+  review: "Review the solution above. Identify and correct any errors; if it is correct, retain its answer. Give your final answer inside \\boxed{}."
+  caps: {single: 3072, parallel: 1024, revision: 2048}
+  n_parallel: 3
+  temperature: 0.7
+  top_p: 0.8
+  top_k: 20
+  repetition_penalty: 1.0
+  stop_margin_min: 20          # the worker pauses when less session time than this remains
