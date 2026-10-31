@@ -1,0 +1,602 @@
+[
+  {
+    "kind": "presence",
+    "category": "toaster",
+    "question": "Does this image contain a toaster?",
+    "examples": [
+      {
+        "image": "val2014:229837",
+        "image_id": 229837,
+        "target": "yes",
+        "canonical": "yes",
+        "answers": null,
+        "ex_id": "grounding_dev-0000/0"
+      },
+      {
+        "image": "val2014:227582",
+        "image_id": 227582,
+        "target": "no",
+        "canonical": "no",
+        "answers": null,
+        "ex_id": "grounding_dev-0000/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0000",
+    "suite": "grounding"
+  },
+  {
+    "kind": "presence",
+    "category": "scissors",
+    "question": "Does this image contain scissors?",
+    "examples": [
+      {
+        "image": "val2014:264769",
+        "image_id": 264769,
+        "target": "yes",
+        "canonical": "yes",
+        "answers": null,
+        "ex_id": "grounding_dev-0001/0"
+      },
+      {
+        "image": "val2014:483999",
+        "image_id": 483999,
+        "target": "no",
+        "canonical": "no",
+        "answers": null,
+        "ex_id": "grounding_dev-0001/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0001",
+    "suite": "grounding"
+  },
+  {
+    "kind": "presence",
+    "category": "chair",
+    "question": "Does this image contain a chair?",
+    "examples": [
+      {
+        "image": "val2014:263014",
+        "image_id": 263014,
+        "target": "no",
+        "canonical": "no",
+        "answers": null,
+        "ex_id": "grounding_dev-0002/0"
+      },
+      {
+        "image": "val2014:384625",
+        "image_id": 384625,
+        "target": "yes",
+        "canonical": "yes",
+        "answers": null,
+        "ex_id": "grounding_dev-0002/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0002",
+    "suite": "grounding"
+  },
+  {
+    "kind": "presence",
+    "category": "skateboard",
+    "question": "Does this image contain a skateboard?",
+    "examples": [
+      {
+        "image": "val2014:465180",
+        "image_id": 465180,
+        "target": "no",
+        "canonical": "no",
+        "answers": null,
+        "ex_id": "grounding_dev-0003/0"
+      },
+      {
+        "image": "val2014:392382",
+        "image_id": 392382,
+        "target": "yes",
+        "canonical": "yes",
+        "answers": null,
+        "ex_id": "grounding_dev-0003/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0003",
+    "suite": "grounding"
+  },
+  {
+    "kind": "presence",
+    "category": "keyboard",
+    "question": "Does this image contain a keyboard?",
+    "examples": [
+      {
+        "image": "val2014:545289",
+        "image_id": 545289,
+        "target": "no",
+        "canonical": "no",
+        "answers": null,
+        "ex_id": "grounding_dev-0004/0"
+      },
+      {
+        "image": "val2014:125076",
+        "image_id": 125076,
+        "target": "yes",
+        "canonical": "yes",
+        "answers": null,
+        "ex_id": "grounding_dev-0004/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0004",
+    "suite": "grounding"
+  },
+  {
+    "kind": "presence",
+    "category": "car",
+    "question": "Does this image contain a car?",
+    "examples": [
+      {
+        "image": "val2014:221864",
+        "image_id": 221864,
+        "target": "no",
+        "canonical": "no",
+        "answers": null,
+        "ex_id": "grounding_dev-0005/0"
+      },
+      {
+        "image": "val2014:503232",
+        "image_id": 503232,
+        "target": "yes",
+        "canonical": "yes",
+        "answers": null,
+        "ex_id": "grounding_dev-0005/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0005",
+    "suite": "grounding"
+  },
+  {
+    "kind": "presence",
+    "category": "refrigerator",
+    "question": "Does this image contain a refrigerator?",
+    "examples": [
+      {
+        "image": "val2014:262476",
+        "image_id": 262476,
+        "target": "yes",
+        "canonical": "yes",
+        "answers": null,
+        "ex_id": "grounding_dev-0006/0"
+      },
+      {
+        "image": "val2014:261777",
+        "image_id": 261777,
+        "target": "no",
+        "canonical": "no",
+        "answers": null,
+        "ex_id": "grounding_dev-0006/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0006",
+    "suite": "grounding"
+  },
+  {
+    "kind": "presence",
+    "category": "remote",
+    "question": "Does this image contain a remote control?",
+    "examples": [
+      {
+        "image": "val2014:208830",
+        "image_id": 208830,
+        "target": "no",
+        "canonical": "no",
+        "answers": null,
+        "ex_id": "grounding_dev-0007/0"
+      },
+      {
+        "image": "val2014:205370",
+        "image_id": 205370,
+        "target": "yes",
+        "canonical": "yes",
+        "answers": null,
+        "ex_id": "grounding_dev-0007/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0007",
+    "suite": "grounding"
+  },
+  {
+    "kind": "presence",
+    "category": "person",
+    "question": "Does this image contain a person?",
+    "examples": [
+      {
+        "image": "val2014:124601",
+        "image_id": 124601,
+        "target": "no",
+        "canonical": "no",
+        "answers": null,
+        "ex_id": "grounding_dev-0008/0"
+      },
+      {
+        "image": "val2014:356427",
+        "image_id": 356427,
+        "target": "yes",
+        "canonical": "yes",
+        "answers": null,
+        "ex_id": "grounding_dev-0008/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0008",
+    "suite": "grounding"
+  },
+  {
+    "kind": "presence",
+    "category": "sheep",
+    "question": "Does this image contain a sheep?",
+    "examples": [
+      {
+        "image": "val2014:499143",
+        "image_id": 499143,
+        "target": "no",
+        "canonical": "no",
+        "answers": null,
+        "ex_id": "grounding_dev-0009/0"
+      },
+      {
+        "image": "val2014:32587",
+        "image_id": 32587,
+        "target": "yes",
+        "canonical": "yes",
+        "answers": null,
+        "ex_id": "grounding_dev-0009/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0009",
+    "suite": "grounding"
+  },
+  {
+    "kind": "presence",
+    "category": "bicycle",
+    "question": "Does this image contain a bicycle?",
+    "examples": [
+      {
+        "image": "val2014:566324",
+        "image_id": 566324,
+        "target": "no",
+        "canonical": "no",
+        "answers": null,
+        "ex_id": "grounding_dev-0010/0"
+      },
+      {
+        "image": "val2014:154830",
+        "image_id": 154830,
+        "target": "yes",
+        "canonical": "yes",
+        "answers": null,
+        "ex_id": "grounding_dev-0010/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0010",
+    "suite": "grounding"
+  },
+  {
+    "kind": "presence",
+    "category": "cake",
+    "question": "Does this image contain a cake?",
+    "examples": [
+      {
+        "image": "val2014:541478",
+        "image_id": 541478,
+        "target": "no",
+        "canonical": "no",
+        "answers": null,
+        "ex_id": "grounding_dev-0011/0"
+      },
+      {
+        "image": "val2014:292769",
+        "image_id": 292769,
+        "target": "yes",
+        "canonical": "yes",
+        "answers": null,
+        "ex_id": "grounding_dev-0011/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0011",
+    "suite": "grounding"
+  },
+  {
+    "kind": "counting",
+    "category": "toaster",
+    "question": "How many toasters can you see?",
+    "examples": [
+      {
+        "image": "val2014:514294",
+        "image_id": 514294,
+        "target": "2",
+        "canonical": "2",
+        "answers": null,
+        "ex_id": "grounding_dev-0012/0"
+      },
+      {
+        "image": "val2014:181179",
+        "image_id": 181179,
+        "target": "1",
+        "canonical": "1",
+        "answers": null,
+        "ex_id": "grounding_dev-0012/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0012",
+    "suite": "grounding"
+  },
+  {
+    "kind": "counting",
+    "category": "chair",
+    "question": "How many chairs can you see?",
+    "examples": [
+      {
+        "image": "val2014:61967",
+        "image_id": 61967,
+        "target": "1",
+        "canonical": "1",
+        "answers": null,
+        "ex_id": "grounding_dev-0013/0"
+      },
+      {
+        "image": "val2014:399791",
+        "image_id": 399791,
+        "target": "3",
+        "canonical": "3",
+        "answers": null,
+        "ex_id": "grounding_dev-0013/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0013",
+    "suite": "grounding"
+  },
+  {
+    "kind": "counting",
+    "category": "skateboard",
+    "question": "How many skateboards can you see?",
+    "examples": [
+      {
+        "image": "val2014:34597",
+        "image_id": 34597,
+        "target": "4",
+        "canonical": "4",
+        "answers": null,
+        "ex_id": "grounding_dev-0014/0"
+      },
+      {
+        "image": "val2014:366484",
+        "image_id": 366484,
+        "target": "1",
+        "canonical": "1",
+        "answers": null,
+        "ex_id": "grounding_dev-0014/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0014",
+    "suite": "grounding"
+  },
+  {
+    "kind": "counting",
+    "category": "keyboard",
+    "question": "How many keyboards can you see?",
+    "examples": [
+      {
+        "image": "val2014:325838",
+        "image_id": 325838,
+        "target": "3",
+        "canonical": "3",
+        "answers": null,
+        "ex_id": "grounding_dev-0015/0"
+      },
+      {
+        "image": "val2014:488401",
+        "image_id": 488401,
+        "target": "2",
+        "canonical": "2",
+        "answers": null,
+        "ex_id": "grounding_dev-0015/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0015",
+    "suite": "grounding"
+  },
+  {
+    "kind": "counting",
+    "category": "car",
+    "question": "How many cars can you see?",
+    "examples": [
+      {
+        "image": "val2014:424641",
+        "image_id": 424641,
+        "target": "4",
+        "canonical": "4",
+        "answers": null,
+        "ex_id": "grounding_dev-0016/0"
+      },
+      {
+        "image": "val2014:472598",
+        "image_id": 472598,
+        "target": "2",
+        "canonical": "2",
+        "answers": null,
+        "ex_id": "grounding_dev-0016/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0016",
+    "suite": "grounding"
+  },
+  {
+    "kind": "counting",
+    "category": "refrigerator",
+    "question": "How many refrigerators can you see?",
+    "examples": [
+      {
+        "image": "val2014:556030",
+        "image_id": 556030,
+        "target": "3",
+        "canonical": "3",
+        "answers": null,
+        "ex_id": "grounding_dev-0017/0"
+      },
+      {
+        "image": "val2014:180274",
+        "image_id": 180274,
+        "target": "4",
+        "canonical": "4",
+        "answers": null,
+        "ex_id": "grounding_dev-0017/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0017",
+    "suite": "grounding"
+  },
+  {
+    "kind": "counting",
+    "category": "remote",
+    "question": "How many remote controls can you see?",
+    "examples": [
+      {
+        "image": "val2014:444304",
+        "image_id": 444304,
+        "target": "2",
+        "canonical": "2",
+        "answers": null,
+        "ex_id": "grounding_dev-0018/0"
+      },
+      {
+        "image": "val2014:382309",
+        "image_id": 382309,
+        "target": "1",
+        "canonical": "1",
+        "answers": null,
+        "ex_id": "grounding_dev-0018/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0018",
+    "suite": "grounding"
+  },
+  {
+    "kind": "counting",
+    "category": "person",
+    "question": "How many people can you see?",
+    "examples": [
+      {
+        "image": "val2014:381895",
+        "image_id": 381895,
+        "target": "1",
+        "canonical": "1",
+        "answers": null,
+        "ex_id": "grounding_dev-0019/0"
+      },
+      {
+        "image": "val2014:78858",
+        "image_id": 78858,
+        "target": "3",
+        "canonical": "3",
+        "answers": null,
+        "ex_id": "grounding_dev-0019/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0019",
+    "suite": "grounding"
+  },
+  {
+    "kind": "counting",
+    "category": "sheep",
+    "question": "How many sheep can you see?",
+    "examples": [
+      {
+        "image": "val2014:169683",
+        "image_id": 169683,
+        "target": "1",
+        "canonical": "1",
+        "answers": null,
+        "ex_id": "grounding_dev-0020/0"
+      },
+      {
+        "image": "val2014:459437",
+        "image_id": 459437,
+        "target": "4",
+        "canonical": "4",
+        "answers": null,
+        "ex_id": "grounding_dev-0020/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0020",
+    "suite": "grounding"
+  },
+  {
+    "kind": "counting",
+    "category": "bicycle",
+    "question": "How many bicycles can you see?",
+    "examples": [
+      {
+        "image": "val2014:70774",
+        "image_id": 70774,
+        "target": "3",
+        "canonical": "3",
+        "answers": null,
+        "ex_id": "grounding_dev-0021/0"
+      },
+      {
+        "image": "val2014:534887",
+        "image_id": 534887,
+        "target": "2",
+        "canonical": "2",
+        "answers": null,
+        "ex_id": "grounding_dev-0021/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0021",
+    "suite": "grounding"
+  },
+  {
+    "kind": "counting",
+    "category": "cake",
+    "question": "How many cakes can you see?",
+    "examples": [
+      {
+        "image": "val2014:570471",
+        "image_id": 570471,
+        "target": "4",
+        "canonical": "4",
+        "answers": null,
+        "ex_id": "grounding_dev-0022/0"
+      },
+      {
+        "image": "val2014:381382",
+        "image_id": 381382,
+        "target": "2",
+        "canonical": "2",
+        "answers": null,
+        "ex_id": "grounding_dev-0022/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0022",
+    "suite": "grounding"
+  },
+  {
+    "kind": "counting",
+    "category": "toilet",
+    "question": "How many toilets can you see?",
+    "examples": [
+      {
+        "image": "val2014:292810",
+        "image_id": 292810,
+        "target": "4",
+        "canonical": "4",
+        "answers": null,
+        "ex_id": "grounding_dev-0023/0"
+      },
+      {
+        "image": "val2014:485628",
+        "image_id": 485628,
+        "target": "3",
+        "canonical": "3",
+        "answers": null,
+        "ex_id": "grounding_dev-0023/1"
+      }
+    ],
+    "pair_id": "grounding_dev-0023",
+    "suite": "grounding"
+  }
+]

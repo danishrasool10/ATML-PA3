@@ -1,0 +1,54 @@
+{
+  "steps": {
+    "prefetch": {
+      "state": "done",
+      "time": "19:57:32",
+      "seconds": 17
+    },
+    "data": {
+      "state": "done",
+      "time": "20:02:31",
+      "seconds": 299
+    },
+    "label_audit": {
+      "state": "done",
+      "time": "20:02:58",
+      "seconds": 28
+    },
+    "features": {
+      "state": "done",
+      "time": "20:04:19",
+      "seconds": 80
+    },
+    "preflight": {
+      "state": "done",
+      "time": "20:04:49",
+      "rcs": {
+        "preflight_vt196": 0,
+        "preflight_vt49": 0
+      }
+    },
+    "train": {
+      "state": "done",
+      "time": "21:45:59",
+      "runs": {
+        "vt196": "done",
+        "vt49": "done"
+      }
+    },
+    "final_eval": {
+      "state": "done",
+      "time": "21:47:29",
+      "rcs": {
+        "final_vt49": 0,
+        "final_vt196": 0
+      }
+    },
+    "report": {
+      "state": "done",
+      "time": "21:47:37",
+      "seconds": 8
+    }
+  },
+  "deadline": "9.40 h left of session budget"
+}

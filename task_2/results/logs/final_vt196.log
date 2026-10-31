@@ -1,0 +1,12 @@
+
+===== 2026-10-30 21:45:59 GPU0 $ /usr/bin/python3 -m pa3vlm.eval.final --config vt196
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:   0%|          | 1/311 [00:00<03:18,  1.56it/s]Loading weights:  43%|████▎     | 135/311 [00:00<00:00, 245.89it/s]Loading weights:  74%|███████▍  | 230/311 [00:00<00:00, 390.81it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 317.97it/s]
+[final] vt196 grounding_test correct: acc=0.719 (8s)
+[final] vt196 grounding_test swap: acc=0.133 (7s)
+[final] vt196 grounding_test mismatched: acc=0.352 (7s)
+[final] vt196 grounding_test none: acc=0.383 (4s)
+[final] vt196 vqa_test correct: acc=0.594 (12s)
+[final] vt196 vqa_test swap: acc=0.294 (12s)
+[final] vt196 vqa_test mismatched: acc=0.361 (12s)
+[final] vt196 vqa_test none: acc=0.357 (5s)
+[final] vt196: summary written

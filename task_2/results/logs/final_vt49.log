@@ -1,0 +1,12 @@
+
+===== 2026-10-30 21:45:59 GPU1 $ /usr/bin/python3 -m pa3vlm.eval.final --config vt49
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:   0%|          | 1/311 [00:00<04:04,  1.27it/s]Loading weights:  51%|█████▏    | 160/311 [00:00<00:00, 240.02it/s]Loading weights:  78%|███████▊  | 243/311 [00:01<00:00, 279.60it/s]Loading weights:  98%|█████████▊| 305/311 [00:01<00:00, 305.39it/s]Loading weights: 100%|██████████| 311/311 [00:01<00:00, 238.54it/s]
+[final] vt49 grounding_test correct: acc=0.680 (5s)
+[final] vt49 grounding_test swap: acc=0.172 (4s)
+[final] vt49 grounding_test mismatched: acc=0.336 (4s)
+[final] vt49 grounding_test none: acc=0.383 (4s)
+[final] vt49 vqa_test correct: acc=0.530 (7s)
+[final] vt49 vqa_test swap: acc=0.310 (7s)
+[final] vt49 vqa_test mismatched: acc=0.309 (6s)
+[final] vt49 vqa_test none: acc=0.369 (5s)
+[final] vt49: summary written

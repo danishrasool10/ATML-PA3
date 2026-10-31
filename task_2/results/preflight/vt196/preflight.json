@@ -1,0 +1,201 @@
+{
+  "rows": [
+    {
+      "update": 1,
+      "stage": 1,
+      "loss": 4.818824291229248,
+      "grad_norm": NaN,
+      "grad_norm_finite": false,
+      "skipped": true,
+      "loss_scale": 32768.0,
+      "lr": {
+        "connector_w": 8.849557522123894e-06,
+        "connector_b": 8.849557522123894e-06
+      },
+      "mix": {
+        "caption": 16
+      },
+      "supervised_tokens": 205,
+      "seconds": 2.2758800983428955,
+      "peak_mem_gib": 1.4369759559631348
+    },
+    {
+      "update": 2,
+      "stage": 1,
+      "loss": 5.04535436630249,
+      "grad_norm": NaN,
+      "grad_norm_finite": false,
+      "skipped": true,
+      "loss_scale": 16384.0,
+      "lr": {
+        "connector_w": 1.7699115044247787e-05,
+        "connector_b": 1.7699115044247787e-05
+      },
+      "mix": {
+        "caption": 16
+      },
+      "supervised_tokens": 199,
+      "seconds": 1.0888638496398926,
+      "peak_mem_gib": 1.4369759559631348
+    },
+    {
+      "update": 3,
+      "stage": 1,
+      "loss": 5.607134103775024,
+      "grad_norm": 86.96044158935547,
+      "grad_norm_finite": true,
+      "skipped": false,
+      "loss_scale": 16384.0,
+      "lr": {
+        "connector_w": 2.6548672566371683e-05,
+        "connector_b": 2.6548672566371683e-05
+      },
+      "mix": {
+        "caption": 16
+      },
+      "supervised_tokens": 194,
+      "seconds": 1.1396911144256592,
+      "peak_mem_gib": 1.4408135414123535
+    },
+    {
+      "update": 4,
+      "stage": 2,
+      "loss": 4.657961368560791,
+      "grad_norm": NaN,
+      "grad_norm_finite": false,
+      "skipped": true,
+      "loss_scale": 8192.0,
+      "lr": {
+        "connector_w": 1.3333333333333334e-06,
+        "connector_b": 1.3333333333333334e-06,
+        "lora": 2.6666666666666667e-07
+      },
+      "mix": {
+        "counting": 2,
+        "caption": 4,
+        "presence": 10
+      },
+      "supervised_tokens": 78,
+      "seconds": 1.2580220699310303,
+      "peak_mem_gib": 1.4521026611328125
+    },
+    {
+      "update": 5,
+      "stage": 2,
+      "loss": 3.705522298812866,
+      "grad_norm": NaN,
+      "grad_norm_finite": false,
+      "skipped": true,
+      "loss_scale": 4096.0,
+      "lr": {
+        "connector_w": 2.666666666666667e-06,
+        "connector_b": 2.666666666666667e-06,
+        "lora": 5.333333333333333e-07
+      },
+      "mix": {
+        "counting": 6,
+        "presence": 6,
+        "caption": 4
+      },
+      "supervised_tokens": 72,
+      "seconds": 1.2315165996551514,
+      "peak_mem_gib": 1.4541215896606445
+    },
+    {
+      "update": 6,
+      "stage": 2,
+      "loss": 4.916375398635864,
+      "grad_norm": NaN,
+      "grad_norm_finite": false,
+      "skipped": true,
+      "loss_scale": 2048.0,
+      "lr": {
+        "connector_w": 4.000000000000001e-06,
+        "connector_b": 4.000000000000001e-06,
+        "lora": 8.000000000000001e-07
+      },
+      "mix": {
+        "presence": 14,
+        "caption": 2
+      },
+      "supervised_tokens": 54,
+      "seconds": 1.2315847873687744,
+      "peak_mem_gib": 1.4541215896606445
+    },
+    {
+      "update": 7,
+      "stage": 3,
+      "loss": 5.0700600147247314,
+      "grad_norm": 409.65496826171875,
+      "grad_norm_finite": true,
+      "skipped": false,
+      "loss_scale": 2048.0,
+      "lr": {
+        "connector_w": 1.3157894736842106e-06,
+        "connector_b": 1.3157894736842106e-06,
+        "lora": 2.6315789473684213e-07
+      },
+      "mix": {
+        "counting": 2,
+        "vqa": 12,
+        "caption": 2
+      },
+      "supervised_tokens": 61,
+      "seconds": 1.2584609985351562,
+      "peak_mem_gib": 1.460294246673584
+    },
+    {
+      "update": 8,
+      "stage": 3,
+      "loss": 5.88386869430542,
+      "grad_norm": 330.6540832519531,
+      "grad_norm_finite": true,
+      "skipped": false,
+      "loss_scale": 2048.0,
+      "lr": {
+        "connector_w": 2.631578947368421e-06,
+        "connector_b": 2.631578947368421e-06,
+        "lora": 5.263157894736843e-07
+      },
+      "mix": {
+        "vqa": 14,
+        "counting": 2
+      },
+      "supervised_tokens": 33,
+      "seconds": 1.4554243087768555,
+      "peak_mem_gib": 1.5033001899719238
+    },
+    {
+      "update": 9,
+      "stage": 3,
+      "loss": 3.8387465476989746,
+      "grad_norm": 323.21173095703125,
+      "grad_norm_finite": true,
+      "skipped": false,
+      "loss_scale": 2048.0,
+      "lr": {
+        "connector_w": 3.947368421052632e-06,
+        "connector_b": 3.947368421052632e-06,
+        "lora": 7.894736842105264e-07
+      },
+      "mix": {
+        "vqa": 10,
+        "presence": 4,
+        "counting": 2
+      },
+      "supervised_tokens": 34,
+      "seconds": 1.2459917068481445,
+      "peak_mem_gib": 1.5033001899719238
+    }
+  ],
+  "memory": {
+    "peak_alloc_gib": 1.5033001899719238,
+    "peak_reserved_gib": 1.6328125,
+    "total_gib": 14.56219482421875
+  },
+  "s_per_update": {
+    "stage1": 1.1396911144256592,
+    "stage2": 1.2315847873687744,
+    "stage3": 1.2459917068481445
+  }
+}

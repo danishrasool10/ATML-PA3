@@ -1,0 +1,1769 @@
+{
+  "rule": "Qualitative complementary-pair examples with a selection rule fixed before looking at outputs.\n\nRule: for each suite, classify every test pair (main run) into buckets using the correct and swap\nconditions, then pick up to K pairs per bucket with a seeded RNG (seed 6304) from the bucket's pairs\nsorted by pair id:\n  grounded   : both answers right with the correct images AND both follow the partner's answer when swapped\n  same_answer: identical answer for both images of the pair (correct condition)\n  unsupported: at least one swapped prediction matches neither the own nor the partner reference\nA pair may fall into several buckets; each pair is shown at most once (first bucket in this order).\n",
+  "examples": [
+    {
+      "suite": "grounding",
+      "pair_id": "grounding_test-0002",
+      "bucket": "grounded",
+      "conditions": {
+        "correct": {
+          "0": {
+            "question": "Does this image contain a bed?",
+            "image_used": "val2014:229653",
+            "own_image": "val2014:229653",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "yes",
+            "pred_norm": "yes",
+            "score": 1.0,
+            "answers": null
+          },
+          "1": {
+            "question": "Does this image contain a bed?",
+            "image_used": "val2014:8483",
+            "own_image": "val2014:8483",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 1.0,
+            "answers": null
+          }
+        },
+        "mismatched": {
+          "0": {
+            "question": "Does this image contain a bed?",
+            "image_used": "val2014:54358",
+            "own_image": "val2014:229653",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 0.0,
+            "answers": null
+          },
+          "1": {
+            "question": "Does this image contain a bed?",
+            "image_used": "val2014:493435",
+            "own_image": "val2014:8483",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 1.0,
+            "answers": null
+          }
+        },
+        "none": {
+          "0": {
+            "question": "Does this image contain a bed?",
+            "image_used": null,
+            "own_image": "val2014:229653",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 0.0,
+            "answers": null
+          },
+          "1": {
+            "question": "Does this image contain a bed?",
+            "image_used": null,
+            "own_image": "val2014:8483",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 1.0,
+            "answers": null
+          }
+        },
+        "swap": {
+          "0": {
+            "question": "Does this image contain a bed?",
+            "image_used": "val2014:8483",
+            "own_image": "val2014:229653",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 0.0,
+            "answers": null
+          },
+          "1": {
+            "question": "Does this image contain a bed?",
+            "image_used": "val2014:229653",
+            "own_image": "val2014:8483",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "yes",
+            "pred_norm": "yes",
+            "score": 0.0,
+            "answers": null
+          }
+        }
+      }
+    },
+    {
+      "suite": "grounding",
+      "pair_id": "grounding_test-0028",
+      "bucket": "grounded",
+      "conditions": {
+        "correct": {
+          "0": {
+            "question": "Does this image contain a baseball glove?",
+            "image_used": "val2014:569825",
+            "own_image": "val2014:569825",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "yes",
+            "pred_norm": "yes",
+            "score": 1.0,
+            "answers": null
+          },
+          "1": {
+            "question": "Does this image contain a baseball glove?",
+            "image_used": "val2014:50956",
+            "own_image": "val2014:50956",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 1.0,
+            "answers": null
+          }
+        },
+        "mismatched": {
+          "0": {
+            "question": "Does this image contain a baseball glove?",
+            "image_used": "val2014:279984",
+            "own_image": "val2014:569825",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 0.0,
+            "answers": null
+          },
+          "1": {
+            "question": "Does this image contain a baseball glove?",
+            "image_used": "val2014:373344",
+            "own_image": "val2014:50956",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 1.0,
+            "answers": null
+          }
+        },
+        "none": {
+          "0": {
+            "question": "Does this image contain a baseball glove?",
+            "image_used": null,
+            "own_image": "val2014:569825",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 0.0,
+            "answers": null
+          },
+          "1": {
+            "question": "Does this image contain a baseball glove?",
+            "image_used": null,
+            "own_image": "val2014:50956",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 1.0,
+            "answers": null
+          }
+        },
+        "swap": {
+          "0": {
+            "question": "Does this image contain a baseball glove?",
+            "image_used": "val2014:50956",
+            "own_image": "val2014:569825",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 0.0,
+            "answers": null
+          },
+          "1": {
+            "question": "Does this image contain a baseball glove?",
+            "image_used": "val2014:569825",
+            "own_image": "val2014:50956",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "yes",
+            "pred_norm": "yes",
+            "score": 0.0,
+            "answers": null
+          }
+        }
+      }
+    },
+    {
+      "suite": "grounding",
+      "pair_id": "grounding_test-0010",
+      "bucket": "same_answer",
+      "conditions": {
+        "correct": {
+          "0": {
+            "question": "Does this image contain a handbag?",
+            "image_used": "val2014:462687",
+            "own_image": "val2014:462687",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "yes",
+            "pred_norm": "yes",
+            "score": 1.0,
+            "answers": null
+          },
+          "1": {
+            "question": "Does this image contain a handbag?",
+            "image_used": "val2014:400161",
+            "own_image": "val2014:400161",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "yes",
+            "pred_norm": "yes",
+            "score": 0.0,
+            "answers": null
+          }
+        },
+        "mismatched": {
+          "0": {
+            "question": "Does this image contain a handbag?",
+            "image_used": "val2014:261712",
+            "own_image": "val2014:462687",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 0.0,
+            "answers": null
+          },
+          "1": {
+            "question": "Does this image contain a handbag?",
+            "image_used": "val2014:13991",
+            "own_image": "val2014:400161",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 1.0,
+            "answers": null
+          }
+        },
+        "none": {
+          "0": {
+            "question": "Does this image contain a handbag?",
+            "image_used": null,
+            "own_image": "val2014:462687",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "yes",
+            "pred_norm": "yes",
+            "score": 1.0,
+            "answers": null
+          },
+          "1": {
+            "question": "Does this image contain a handbag?",
+            "image_used": null,
+            "own_image": "val2014:400161",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "yes",
+            "pred_norm": "yes",
+            "score": 0.0,
+            "answers": null
+          }
+        },
+        "swap": {
+          "0": {
+            "question": "Does this image contain a handbag?",
+            "image_used": "val2014:400161",
+            "own_image": "val2014:462687",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "yes",
+            "pred_norm": "yes",
+            "score": 1.0,
+            "answers": null
+          },
+          "1": {
+            "question": "Does this image contain a handbag?",
+            "image_used": "val2014:462687",
+            "own_image": "val2014:400161",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "yes",
+            "pred_norm": "yes",
+            "score": 0.0,
+            "answers": null
+          }
+        }
+      }
+    },
+    {
+      "suite": "grounding",
+      "pair_id": "grounding_test-0050",
+      "bucket": "same_answer",
+      "conditions": {
+        "correct": {
+          "0": {
+            "question": "How many bicycles can you see?",
+            "image_used": "val2014:551383",
+            "own_image": "val2014:551383",
+            "target": "2",
+            "canonical": "2",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": null
+          },
+          "1": {
+            "question": "How many bicycles can you see?",
+            "image_used": "val2014:83045",
+            "own_image": "val2014:83045",
+            "target": "1",
+            "canonical": "1",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 1.0,
+            "answers": null
+          }
+        },
+        "mismatched": {
+          "0": {
+            "question": "How many bicycles can you see?",
+            "image_used": "val2014:386224",
+            "own_image": "val2014:551383",
+            "target": "2",
+            "canonical": "2",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": null
+          },
+          "1": {
+            "question": "How many bicycles can you see?",
+            "image_used": "val2014:461715",
+            "own_image": "val2014:83045",
+            "target": "1",
+            "canonical": "1",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 1.0,
+            "answers": null
+          }
+        },
+        "none": {
+          "0": {
+            "question": "How many bicycles can you see?",
+            "image_used": null,
+            "own_image": "val2014:551383",
+            "target": "2",
+            "canonical": "2",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": null
+          },
+          "1": {
+            "question": "How many bicycles can you see?",
+            "image_used": null,
+            "own_image": "val2014:83045",
+            "target": "1",
+            "canonical": "1",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 1.0,
+            "answers": null
+          }
+        },
+        "swap": {
+          "0": {
+            "question": "How many bicycles can you see?",
+            "image_used": "val2014:83045",
+            "own_image": "val2014:551383",
+            "target": "2",
+            "canonical": "2",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": null
+          },
+          "1": {
+            "question": "How many bicycles can you see?",
+            "image_used": "val2014:551383",
+            "own_image": "val2014:83045",
+            "target": "1",
+            "canonical": "1",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 1.0,
+            "answers": null
+          }
+        }
+      }
+    },
+    {
+      "suite": "grounding",
+      "pair_id": "grounding_test-0049",
+      "bucket": "unsupported",
+      "conditions": {
+        "correct": {
+          "0": {
+            "question": "How many dogs can you see?",
+            "image_used": "val2014:89188",
+            "own_image": "val2014:89188",
+            "target": "4",
+            "canonical": "4",
+            "pred_raw": "3",
+            "pred_norm": "3",
+            "score": 0.0,
+            "answers": null
+          },
+          "1": {
+            "question": "How many dogs can you see?",
+            "image_used": "val2014:421902",
+            "own_image": "val2014:421902",
+            "target": "3",
+            "canonical": "3",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": null
+          }
+        },
+        "mismatched": {
+          "0": {
+            "question": "How many dogs can you see?",
+            "image_used": "val2014:375840",
+            "own_image": "val2014:89188",
+            "target": "4",
+            "canonical": "4",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": null
+          },
+          "1": {
+            "question": "How many dogs can you see?",
+            "image_used": "val2014:409221",
+            "own_image": "val2014:421902",
+            "target": "3",
+            "canonical": "3",
+            "pred_raw": "0",
+            "pred_norm": "0",
+            "score": 0.0,
+            "answers": null
+          }
+        },
+        "none": {
+          "0": {
+            "question": "How many dogs can you see?",
+            "image_used": null,
+            "own_image": "val2014:89188",
+            "target": "4",
+            "canonical": "4",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": null
+          },
+          "1": {
+            "question": "How many dogs can you see?",
+            "image_used": null,
+            "own_image": "val2014:421902",
+            "target": "3",
+            "canonical": "3",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": null
+          }
+        },
+        "swap": {
+          "0": {
+            "question": "How many dogs can you see?",
+            "image_used": "val2014:421902",
+            "own_image": "val2014:89188",
+            "target": "4",
+            "canonical": "4",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": null
+          },
+          "1": {
+            "question": "How many dogs can you see?",
+            "image_used": "val2014:89188",
+            "own_image": "val2014:421902",
+            "target": "3",
+            "canonical": "3",
+            "pred_raw": "3",
+            "pred_norm": "3",
+            "score": 1.0,
+            "answers": null
+          }
+        }
+      }
+    },
+    {
+      "suite": "grounding",
+      "pair_id": "grounding_test-0058",
+      "bucket": "unsupported",
+      "conditions": {
+        "correct": {
+          "0": {
+            "question": "How many buses can you see?",
+            "image_used": "val2014:36522",
+            "own_image": "val2014:36522",
+            "target": "1",
+            "canonical": "1",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 1.0,
+            "answers": null
+          },
+          "1": {
+            "question": "How many buses can you see?",
+            "image_used": "val2014:383112",
+            "own_image": "val2014:383112",
+            "target": "4",
+            "canonical": "4",
+            "pred_raw": "3",
+            "pred_norm": "3",
+            "score": 0.0,
+            "answers": null
+          }
+        },
+        "mismatched": {
+          "0": {
+            "question": "How many buses can you see?",
+            "image_used": "val2014:570353",
+            "own_image": "val2014:36522",
+            "target": "1",
+            "canonical": "1",
+            "pred_raw": "0",
+            "pred_norm": "0",
+            "score": 0.0,
+            "answers": null
+          },
+          "1": {
+            "question": "How many buses can you see?",
+            "image_used": "val2014:385719",
+            "own_image": "val2014:383112",
+            "target": "4",
+            "canonical": "4",
+            "pred_raw": "2",
+            "pred_norm": "2",
+            "score": 0.0,
+            "answers": null
+          }
+        },
+        "none": {
+          "0": {
+            "question": "How many buses can you see?",
+            "image_used": null,
+            "own_image": "val2014:36522",
+            "target": "1",
+            "canonical": "1",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 1.0,
+            "answers": null
+          },
+          "1": {
+            "question": "How many buses can you see?",
+            "image_used": null,
+            "own_image": "val2014:383112",
+            "target": "4",
+            "canonical": "4",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": null
+          }
+        },
+        "swap": {
+          "0": {
+            "question": "How many buses can you see?",
+            "image_used": "val2014:383112",
+            "own_image": "val2014:36522",
+            "target": "1",
+            "canonical": "1",
+            "pred_raw": "3",
+            "pred_norm": "3",
+            "score": 0.0,
+            "answers": null
+          },
+          "1": {
+            "question": "How many buses can you see?",
+            "image_used": "val2014:36522",
+            "own_image": "val2014:383112",
+            "target": "4",
+            "canonical": "4",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": null
+          }
+        }
+      }
+    },
+    {
+      "suite": "vqa",
+      "pair_id": "vqa_test-0048",
+      "bucket": "grounded",
+      "conditions": {
+        "correct": {
+          "0": {
+            "question": "What animal is shown?",
+            "image_used": "val2014:243418",
+            "own_image": "val2014:243418",
+            "target": "elephant",
+            "canonical": "elephant",
+            "pred_raw": "elephant",
+            "pred_norm": "elephant",
+            "score": 1.0,
+            "answers": [
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "1"
+            ]
+          },
+          "1": {
+            "question": "What animal is shown?",
+            "image_used": "val2014:291305",
+            "own_image": "val2014:291305",
+            "target": "horse",
+            "canonical": "horse",
+            "pred_raw": "horse",
+            "pred_norm": "horse",
+            "score": 1.0,
+            "answers": [
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse"
+            ]
+          }
+        },
+        "mismatched": {
+          "0": {
+            "question": "What animal is shown?",
+            "image_used": "val2014:90572",
+            "own_image": "val2014:243418",
+            "target": "elephant",
+            "canonical": "elephant",
+            "pred_raw": "cat",
+            "pred_norm": "cat",
+            "score": 0.0,
+            "answers": [
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "1"
+            ]
+          },
+          "1": {
+            "question": "What animal is shown?",
+            "image_used": "val2014:325347",
+            "own_image": "val2014:291305",
+            "target": "horse",
+            "canonical": "horse",
+            "pred_raw": "cat",
+            "pred_norm": "cat",
+            "score": 0.0,
+            "answers": [
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse"
+            ]
+          }
+        },
+        "none": {
+          "0": {
+            "question": "What animal is shown?",
+            "image_used": null,
+            "own_image": "val2014:243418",
+            "target": "elephant",
+            "canonical": "elephant",
+            "pred_raw": "lion",
+            "pred_norm": "lion",
+            "score": 0.0,
+            "answers": [
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "1"
+            ]
+          },
+          "1": {
+            "question": "What animal is shown?",
+            "image_used": null,
+            "own_image": "val2014:291305",
+            "target": "horse",
+            "canonical": "horse",
+            "pred_raw": "lion",
+            "pred_norm": "lion",
+            "score": 0.0,
+            "answers": [
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse"
+            ]
+          }
+        },
+        "swap": {
+          "0": {
+            "question": "What animal is shown?",
+            "image_used": "val2014:291305",
+            "own_image": "val2014:243418",
+            "target": "elephant",
+            "canonical": "elephant",
+            "pred_raw": "horse",
+            "pred_norm": "horse",
+            "score": 0.0,
+            "answers": [
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "elephant",
+              "1"
+            ]
+          },
+          "1": {
+            "question": "What animal is shown?",
+            "image_used": "val2014:243418",
+            "own_image": "val2014:291305",
+            "target": "horse",
+            "canonical": "horse",
+            "pred_raw": "elephant",
+            "pred_norm": "elephant",
+            "score": 0.0,
+            "answers": [
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse",
+              "horse"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "suite": "vqa",
+      "pair_id": "vqa_test-0083",
+      "bucket": "grounded",
+      "conditions": {
+        "correct": {
+          "0": {
+            "question": "Are there any trees shown?",
+            "image_used": "val2014:419048",
+            "own_image": "val2014:419048",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "yes",
+            "pred_norm": "yes",
+            "score": 1.0,
+            "answers": [
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "1",
+              "yes",
+              "yes",
+              "yes",
+              "yes"
+            ]
+          },
+          "1": {
+            "question": "Are there any trees shown?",
+            "image_used": "val2014:58492",
+            "own_image": "val2014:58492",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 1.0,
+            "answers": [
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no"
+            ]
+          }
+        },
+        "mismatched": {
+          "0": {
+            "question": "Are there any trees shown?",
+            "image_used": "val2014:497626",
+            "own_image": "val2014:419048",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 0.0,
+            "answers": [
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "1",
+              "yes",
+              "yes",
+              "yes",
+              "yes"
+            ]
+          },
+          "1": {
+            "question": "Are there any trees shown?",
+            "image_used": "val2014:532761",
+            "own_image": "val2014:58492",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 1.0,
+            "answers": [
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no"
+            ]
+          }
+        },
+        "none": {
+          "0": {
+            "question": "Are there any trees shown?",
+            "image_used": null,
+            "own_image": "val2014:419048",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "yes",
+            "pred_norm": "yes",
+            "score": 1.0,
+            "answers": [
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "1",
+              "yes",
+              "yes",
+              "yes",
+              "yes"
+            ]
+          },
+          "1": {
+            "question": "Are there any trees shown?",
+            "image_used": null,
+            "own_image": "val2014:58492",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "yes",
+            "pred_norm": "yes",
+            "score": 0.0,
+            "answers": [
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no"
+            ]
+          }
+        },
+        "swap": {
+          "0": {
+            "question": "Are there any trees shown?",
+            "image_used": "val2014:58492",
+            "own_image": "val2014:419048",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 0.0,
+            "answers": [
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "1",
+              "yes",
+              "yes",
+              "yes",
+              "yes"
+            ]
+          },
+          "1": {
+            "question": "Are there any trees shown?",
+            "image_used": "val2014:419048",
+            "own_image": "val2014:58492",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "yes",
+            "pred_norm": "yes",
+            "score": 0.0,
+            "answers": [
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "suite": "vqa",
+      "pair_id": "vqa_test-0016",
+      "bucket": "same_answer",
+      "conditions": {
+        "correct": {
+          "0": {
+            "question": "What is Longoria's number on Jersey?",
+            "image_used": "val2014:388056",
+            "own_image": "val2014:388056",
+            "target": "3",
+            "canonical": "3",
+            "pred_raw": "10",
+            "pred_norm": "10",
+            "score": 0.0,
+            "answers": [
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3"
+            ]
+          },
+          "1": {
+            "question": "What is Longoria's number on Jersey?",
+            "image_used": "val2014:36911",
+            "own_image": "val2014:36911",
+            "target": "9",
+            "canonical": "9",
+            "pred_raw": "10",
+            "pred_norm": "10",
+            "score": 0.0,
+            "answers": [
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9"
+            ]
+          }
+        },
+        "mismatched": {
+          "0": {
+            "question": "What is Longoria's number on Jersey?",
+            "image_used": "val2014:318161",
+            "own_image": "val2014:388056",
+            "target": "3",
+            "canonical": "3",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": [
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3"
+            ]
+          },
+          "1": {
+            "question": "What is Longoria's number on Jersey?",
+            "image_used": "val2014:538963",
+            "own_image": "val2014:36911",
+            "target": "9",
+            "canonical": "9",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": [
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9"
+            ]
+          }
+        },
+        "none": {
+          "0": {
+            "question": "What is Longoria's number on Jersey?",
+            "image_used": null,
+            "own_image": "val2014:388056",
+            "target": "3",
+            "canonical": "3",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": [
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3"
+            ]
+          },
+          "1": {
+            "question": "What is Longoria's number on Jersey?",
+            "image_used": null,
+            "own_image": "val2014:36911",
+            "target": "9",
+            "canonical": "9",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": [
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9"
+            ]
+          }
+        },
+        "swap": {
+          "0": {
+            "question": "What is Longoria's number on Jersey?",
+            "image_used": "val2014:36911",
+            "own_image": "val2014:388056",
+            "target": "3",
+            "canonical": "3",
+            "pred_raw": "10",
+            "pred_norm": "10",
+            "score": 0.0,
+            "answers": [
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3",
+              "3"
+            ]
+          },
+          "1": {
+            "question": "What is Longoria's number on Jersey?",
+            "image_used": "val2014:388056",
+            "own_image": "val2014:36911",
+            "target": "9",
+            "canonical": "9",
+            "pred_raw": "10",
+            "pred_norm": "10",
+            "score": 0.0,
+            "answers": [
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9",
+              "9"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "suite": "vqa",
+      "pair_id": "vqa_test-0092",
+      "bucket": "same_answer",
+      "conditions": {
+        "correct": {
+          "0": {
+            "question": "Were there originally six donuts in the box?",
+            "image_used": "val2014:102589",
+            "own_image": "val2014:102589",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 0.0,
+            "answers": [
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "box",
+              "yes",
+              "yes",
+              "yes",
+              "yes"
+            ]
+          },
+          "1": {
+            "question": "Were there originally six donuts in the box?",
+            "image_used": "val2014:183217",
+            "own_image": "val2014:183217",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 1.0,
+            "answers": [
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no"
+            ]
+          }
+        },
+        "mismatched": {
+          "0": {
+            "question": "Were there originally six donuts in the box?",
+            "image_used": "val2014:526940",
+            "own_image": "val2014:102589",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 0.0,
+            "answers": [
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "box",
+              "yes",
+              "yes",
+              "yes",
+              "yes"
+            ]
+          },
+          "1": {
+            "question": "Were there originally six donuts in the box?",
+            "image_used": "val2014:417023",
+            "own_image": "val2014:183217",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 1.0,
+            "answers": [
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no"
+            ]
+          }
+        },
+        "none": {
+          "0": {
+            "question": "Were there originally six donuts in the box?",
+            "image_used": null,
+            "own_image": "val2014:102589",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 0.0,
+            "answers": [
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "box",
+              "yes",
+              "yes",
+              "yes",
+              "yes"
+            ]
+          },
+          "1": {
+            "question": "Were there originally six donuts in the box?",
+            "image_used": null,
+            "own_image": "val2014:183217",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 1.0,
+            "answers": [
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no"
+            ]
+          }
+        },
+        "swap": {
+          "0": {
+            "question": "Were there originally six donuts in the box?",
+            "image_used": "val2014:183217",
+            "own_image": "val2014:102589",
+            "target": "yes",
+            "canonical": "yes",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 0.0,
+            "answers": [
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "box",
+              "yes",
+              "yes",
+              "yes",
+              "yes"
+            ]
+          },
+          "1": {
+            "question": "Were there originally six donuts in the box?",
+            "image_used": "val2014:102589",
+            "own_image": "val2014:183217",
+            "target": "no",
+            "canonical": "no",
+            "pred_raw": "no",
+            "pred_norm": "no",
+            "score": 1.0,
+            "answers": [
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "suite": "vqa",
+      "pair_id": "vqa_test-0008",
+      "bucket": "unsupported",
+      "conditions": {
+        "correct": {
+          "0": {
+            "question": "How many horses are there?",
+            "image_used": "val2014:214753",
+            "own_image": "val2014:214753",
+            "target": "2",
+            "canonical": "2",
+            "pred_raw": "2",
+            "pred_norm": "2",
+            "score": 1.0,
+            "answers": [
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2"
+            ]
+          },
+          "1": {
+            "question": "How many horses are there?",
+            "image_used": "val2014:112608",
+            "own_image": "val2014:112608",
+            "target": "5",
+            "canonical": "5",
+            "pred_raw": "4",
+            "pred_norm": "4",
+            "score": 0.6,
+            "answers": [
+              "5",
+              "5",
+              "5",
+              "5",
+              "5",
+              "4",
+              "5",
+              "4",
+              "5",
+              "5"
+            ]
+          }
+        },
+        "mismatched": {
+          "0": {
+            "question": "How many horses are there?",
+            "image_used": "val2014:273878",
+            "own_image": "val2014:214753",
+            "target": "2",
+            "canonical": "2",
+            "pred_raw": "0",
+            "pred_norm": "0",
+            "score": 0.0,
+            "answers": [
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2"
+            ]
+          },
+          "1": {
+            "question": "How many horses are there?",
+            "image_used": "val2014:53909",
+            "own_image": "val2014:112608",
+            "target": "5",
+            "canonical": "5",
+            "pred_raw": "0",
+            "pred_norm": "0",
+            "score": 0.0,
+            "answers": [
+              "5",
+              "5",
+              "5",
+              "5",
+              "5",
+              "4",
+              "5",
+              "4",
+              "5",
+              "5"
+            ]
+          }
+        },
+        "none": {
+          "0": {
+            "question": "How many horses are there?",
+            "image_used": null,
+            "own_image": "val2014:214753",
+            "target": "2",
+            "canonical": "2",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": [
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2"
+            ]
+          },
+          "1": {
+            "question": "How many horses are there?",
+            "image_used": null,
+            "own_image": "val2014:112608",
+            "target": "5",
+            "canonical": "5",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": [
+              "5",
+              "5",
+              "5",
+              "5",
+              "5",
+              "4",
+              "5",
+              "4",
+              "5",
+              "5"
+            ]
+          }
+        },
+        "swap": {
+          "0": {
+            "question": "How many horses are there?",
+            "image_used": "val2014:112608",
+            "own_image": "val2014:214753",
+            "target": "2",
+            "canonical": "2",
+            "pred_raw": "4",
+            "pred_norm": "4",
+            "score": 0.0,
+            "answers": [
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2"
+            ]
+          },
+          "1": {
+            "question": "How many horses are there?",
+            "image_used": "val2014:214753",
+            "own_image": "val2014:112608",
+            "target": "5",
+            "canonical": "5",
+            "pred_raw": "2",
+            "pred_norm": "2",
+            "score": 0.0,
+            "answers": [
+              "5",
+              "5",
+              "5",
+              "5",
+              "5",
+              "4",
+              "5",
+              "4",
+              "5",
+              "5"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "suite": "vqa",
+      "pair_id": "vqa_test-0009",
+      "bucket": "unsupported",
+      "conditions": {
+        "correct": {
+          "0": {
+            "question": "How many tusks does the elephant have?",
+            "image_used": "val2014:224391",
+            "own_image": "val2014:224391",
+            "target": "2",
+            "canonical": "2",
+            "pred_raw": "4",
+            "pred_norm": "4",
+            "score": 0.0,
+            "answers": [
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2"
+            ]
+          },
+          "1": {
+            "question": "How many tusks does the elephant have?",
+            "image_used": "val2014:140713",
+            "own_image": "val2014:140713",
+            "target": "0",
+            "canonical": "0",
+            "pred_raw": "4",
+            "pred_norm": "4",
+            "score": 0.0,
+            "answers": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "2",
+              "0",
+              "0"
+            ]
+          }
+        },
+        "mismatched": {
+          "0": {
+            "question": "How many tusks does the elephant have?",
+            "image_used": "val2014:349622",
+            "own_image": "val2014:224391",
+            "target": "2",
+            "canonical": "2",
+            "pred_raw": "1",
+            "pred_norm": "1",
+            "score": 0.0,
+            "answers": [
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2"
+            ]
+          },
+          "1": {
+            "question": "How many tusks does the elephant have?",
+            "image_used": "val2014:553141",
+            "own_image": "val2014:140713",
+            "target": "0",
+            "canonical": "0",
+            "pred_raw": "0",
+            "pred_norm": "0",
+            "score": 1.0,
+            "answers": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "2",
+              "0",
+              "0"
+            ]
+          }
+        },
+        "none": {
+          "0": {
+            "question": "How many tusks does the elephant have?",
+            "image_used": null,
+            "own_image": "val2014:224391",
+            "target": "2",
+            "canonical": "2",
+            "pred_raw": "2",
+            "pred_norm": "2",
+            "score": 1.0,
+            "answers": [
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2"
+            ]
+          },
+          "1": {
+            "question": "How many tusks does the elephant have?",
+            "image_used": null,
+            "own_image": "val2014:140713",
+            "target": "0",
+            "canonical": "0",
+            "pred_raw": "2",
+            "pred_norm": "2",
+            "score": 0.3,
+            "answers": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "2",
+              "0",
+              "0"
+            ]
+          }
+        },
+        "swap": {
+          "0": {
+            "question": "How many tusks does the elephant have?",
+            "image_used": "val2014:140713",
+            "own_image": "val2014:224391",
+            "target": "2",
+            "canonical": "2",
+            "pred_raw": "4",
+            "pred_norm": "4",
+            "score": 0.0,
+            "answers": [
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2",
+              "2"
+            ]
+          },
+          "1": {
+            "question": "How many tusks does the elephant have?",
+            "image_used": "val2014:224391",
+            "own_image": "val2014:140713",
+            "target": "0",
+            "canonical": "0",
+            "pred_raw": "4",
+            "pred_norm": "4",
+            "score": 0.0,
+            "answers": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "2",
+              "0",
+              "0"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

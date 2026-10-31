@@ -1,0 +1,17 @@
+
+===== 2026-10-30 19:57:15 $ /usr/bin/python3 -m pa3vlm.prefetch
+
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+Fetching 7 files:  14%|█▍        | 1/7 [00:00<00:01,  4.65it/s]
+Fetching 7 files:  86%|████████▌ | 6/7 [00:00<00:00,  7.95it/s]
+Fetching 7 files: 100%|██████████| 7/7 [00:10<00:00,  1.97s/it]
+Fetching 7 files: 100%|██████████| 7/7 [00:10<00:00,  1.45s/it]
+[prefetch] Qwen/Qwen3-0.6B -> /root/.cache/huggingface/hub/models--Qwen--Qwen3-0.6B/snapshots/c1899de289a04d12100db370d81485cdf75e47ca
+
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]
+Fetching 7 files:  29%|██▊       | 2/7 [00:00<00:00, 15.89it/s]
+Fetching 7 files:  86%|████████▌ | 6/7 [00:01<00:00,  3.22it/s]
+Fetching 7 files: 100%|██████████| 7/7 [00:05<00:00,  1.03s/it]
+Fetching 7 files: 100%|██████████| 7/7 [00:05<00:00,  1.28it/s]
+[prefetch] google/siglip-base-patch16-224 -> /root/.cache/huggingface/hub/models--google--siglip-base-patch16-224/snapshots/7fd15f0689c79d79e38b1c2e2e2370a7bf2761ed

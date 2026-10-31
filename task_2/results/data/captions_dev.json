@@ -1,0 +1,674 @@
+[
+  {
+    "ex_id": "cap_dev-000",
+    "image": "val2014:6854",
+    "image_id": 6854,
+    "ann_id": 401504,
+    "caption": "a picture of the letter s and a sandwich"
+  },
+  {
+    "ex_id": "cap_dev-001",
+    "image": "val2014:8045",
+    "image_id": 8045,
+    "ann_id": 12111,
+    "caption": "A bathroom with a shower combination tub and sink."
+  },
+  {
+    "ex_id": "cap_dev-002",
+    "image": "val2014:14248",
+    "image_id": 14248,
+    "ann_id": 717133,
+    "caption": "A child smiles at the camera while laying on a bed."
+  },
+  {
+    "ex_id": "cap_dev-003",
+    "image": "val2014:15050",
+    "image_id": 15050,
+    "ann_id": 749974,
+    "caption": "A person that is on skis standing in the snow."
+  },
+  {
+    "ex_id": "cap_dev-004",
+    "image": "val2014:19157",
+    "image_id": 19157,
+    "ann_id": 149027,
+    "caption": "A black and white photo of people standing around a cow."
+  },
+  {
+    "ex_id": "cap_dev-005",
+    "image": "val2014:19667",
+    "image_id": 19667,
+    "ann_id": 422036,
+    "caption": "A man in blue and white and a man in white are near a soccer ball on a field."
+  },
+  {
+    "ex_id": "cap_dev-006",
+    "image": "val2014:30607",
+    "image_id": 30607,
+    "ann_id": 286696,
+    "caption": "A cat is laying on a bed next to some pillows."
+  },
+  {
+    "ex_id": "cap_dev-007",
+    "image": "val2014:35429",
+    "image_id": 35429,
+    "ann_id": 461798,
+    "caption": "A child feeding a leaf to a giraffe with its tongue stuck out."
+  },
+  {
+    "ex_id": "cap_dev-008",
+    "image": "val2014:52803",
+    "image_id": 52803,
+    "ann_id": 729348,
+    "caption": "A young person rides a snowboard at night."
+  },
+  {
+    "ex_id": "cap_dev-009",
+    "image": "val2014:54305",
+    "image_id": 54305,
+    "ann_id": 103809,
+    "caption": "A giraffe walks through a line of cars in a parking lot."
+  },
+  {
+    "ex_id": "cap_dev-010",
+    "image": "val2014:67569",
+    "image_id": 67569,
+    "ann_id": 736790,
+    "caption": "A plane equipped for water landing sits on a runway."
+  },
+  {
+    "ex_id": "cap_dev-011",
+    "image": "val2014:73702",
+    "image_id": 73702,
+    "ann_id": 767799,
+    "caption": "A man with an umbrella hat stands next to another man."
+  },
+  {
+    "ex_id": "cap_dev-012",
+    "image": "val2014:76211",
+    "image_id": 76211,
+    "ann_id": 181989,
+    "caption": "The side of the building has a large clock and several windows."
+  },
+  {
+    "ex_id": "cap_dev-013",
+    "image": "val2014:85390",
+    "image_id": 85390,
+    "ann_id": 557218,
+    "caption": "a man is holding up a mug and taking a picture"
+  },
+  {
+    "ex_id": "cap_dev-014",
+    "image": "val2014:86625",
+    "image_id": 86625,
+    "ann_id": 301093,
+    "caption": "There is a man that is looking inside of the fridge"
+  },
+  {
+    "ex_id": "cap_dev-015",
+    "image": "val2014:91615",
+    "image_id": 91615,
+    "ann_id": 528907,
+    "caption": "A kitchen is shown with stainless steel appliances."
+  },
+  {
+    "ex_id": "cap_dev-016",
+    "image": "val2014:102872",
+    "image_id": 102872,
+    "ann_id": 420188,
+    "caption": "a person walking with a cake in a box plate"
+  },
+  {
+    "ex_id": "cap_dev-017",
+    "image": "val2014:105866",
+    "image_id": 105866,
+    "ann_id": 2042,
+    "caption": "Two queen size beds in a white room with white sheets"
+  },
+  {
+    "ex_id": "cap_dev-018",
+    "image": "val2014:109992",
+    "image_id": 109992,
+    "ann_id": 239828,
+    "caption": "A young boy rides his board in the snow."
+  },
+  {
+    "ex_id": "cap_dev-019",
+    "image": "val2014:113836",
+    "image_id": 113836,
+    "ann_id": 500739,
+    "caption": "Two made beds, a nightstand with a lamp, and framed art on the wall."
+  },
+  {
+    "ex_id": "cap_dev-020",
+    "image": "val2014:115266",
+    "image_id": 115266,
+    "ann_id": 663322,
+    "caption": "Sparse grass grows in the sandy area between the train tracks."
+  },
+  {
+    "ex_id": "cap_dev-021",
+    "image": "val2014:116750",
+    "image_id": 116750,
+    "ann_id": 765968,
+    "caption": "a long blue train is sitting on some tracks"
+  },
+  {
+    "ex_id": "cap_dev-022",
+    "image": "val2014:118615",
+    "image_id": 118615,
+    "ann_id": 800587,
+    "caption": "A warning sign among the tall evergreen trees."
+  },
+  {
+    "ex_id": "cap_dev-023",
+    "image": "val2014:124629",
+    "image_id": 124629,
+    "ann_id": 523843,
+    "caption": "Kids and an old woman playing in the street"
+  },
+  {
+    "ex_id": "cap_dev-024",
+    "image": "val2014:132182",
+    "image_id": 132182,
+    "ann_id": 45098,
+    "caption": "A boy up to bat while others look towards the outfield."
+  },
+  {
+    "ex_id": "cap_dev-025",
+    "image": "val2014:137402",
+    "image_id": 137402,
+    "ann_id": 739321,
+    "caption": "A clean bathroom is displayed in this image."
+  },
+  {
+    "ex_id": "cap_dev-026",
+    "image": "val2014:138246",
+    "image_id": 138246,
+    "ann_id": 149217,
+    "caption": "some horses grazing in front of a church"
+  },
+  {
+    "ex_id": "cap_dev-027",
+    "image": "val2014:139490",
+    "image_id": 139490,
+    "ann_id": 34605,
+    "caption": "A box lunch with sushi, fruit and drink."
+  },
+  {
+    "ex_id": "cap_dev-028",
+    "image": "val2014:146614",
+    "image_id": 146614,
+    "ann_id": 367883,
+    "caption": "A living room filled with lots of furniture and seats."
+  },
+  {
+    "ex_id": "cap_dev-029",
+    "image": "val2014:153205",
+    "image_id": 153205,
+    "ann_id": 588132,
+    "caption": "Some skiers in the snow pulling some small sleds."
+  },
+  {
+    "ex_id": "cap_dev-030",
+    "image": "val2014:154931",
+    "image_id": 154931,
+    "ann_id": 111474,
+    "caption": "A table full of Greek food lunch at a small cafe"
+  },
+  {
+    "ex_id": "cap_dev-031",
+    "image": "val2014:158806",
+    "image_id": 158806,
+    "ann_id": 778467,
+    "caption": "The dog is being handed a sandwich on a plate"
+  },
+  {
+    "ex_id": "cap_dev-032",
+    "image": "val2014:159606",
+    "image_id": 159606,
+    "ann_id": 278529,
+    "caption": "A elegant bedroom featuring natural wood and a large window."
+  },
+  {
+    "ex_id": "cap_dev-033",
+    "image": "val2014:162543",
+    "image_id": 162543,
+    "ann_id": 548813,
+    "caption": "Many elephants in a cage stand together."
+  },
+  {
+    "ex_id": "cap_dev-034",
+    "image": "val2014:166096",
+    "image_id": 166096,
+    "ann_id": 787645,
+    "caption": "A skyscraper rises high into the sky in front of a clock tower."
+  },
+  {
+    "ex_id": "cap_dev-035",
+    "image": "val2014:174091",
+    "image_id": 174091,
+    "ann_id": 454766,
+    "caption": "A pizza sitting on top of a white plate."
+  },
+  {
+    "ex_id": "cap_dev-036",
+    "image": "val2014:186956",
+    "image_id": 186956,
+    "ann_id": 132278,
+    "caption": "The Grand Central train parked at the train station."
+  },
+  {
+    "ex_id": "cap_dev-037",
+    "image": "val2014:189245",
+    "image_id": 189245,
+    "ann_id": 455067,
+    "caption": "A bench in some grass near some trees."
+  },
+  {
+    "ex_id": "cap_dev-038",
+    "image": "val2014:194790",
+    "image_id": 194790,
+    "ann_id": 89414,
+    "caption": "A group of people gather round and enjoy some pizza."
+  },
+  {
+    "ex_id": "cap_dev-039",
+    "image": "val2014:196378",
+    "image_id": 196378,
+    "ann_id": 297664,
+    "caption": "Girls posing of a picture one holding a tennis racket the other wearing a crown."
+  },
+  {
+    "ex_id": "cap_dev-040",
+    "image": "val2014:210777",
+    "image_id": 210777,
+    "ann_id": 529665,
+    "caption": "A kid eats a sandwich on a picnic bench."
+  },
+  {
+    "ex_id": "cap_dev-041",
+    "image": "val2014:215356",
+    "image_id": 215356,
+    "ann_id": 554103,
+    "caption": "there is a corner store on the corner of an intersection. its sign reads, \"COMMERCE\"."
+  },
+  {
+    "ex_id": "cap_dev-042",
+    "image": "val2014:225686",
+    "image_id": 225686,
+    "ann_id": 341095,
+    "caption": "A man and a bike on the side of the street."
+  },
+  {
+    "ex_id": "cap_dev-043",
+    "image": "val2014:251181",
+    "image_id": 251181,
+    "ann_id": 364247,
+    "caption": "a yellow car sits parked behind a sign"
+  },
+  {
+    "ex_id": "cap_dev-044",
+    "image": "val2014:273450",
+    "image_id": 273450,
+    "ann_id": 305787,
+    "caption": "Person giving the middle finger to a parking meter."
+  },
+  {
+    "ex_id": "cap_dev-045",
+    "image": "val2014:280036",
+    "image_id": 280036,
+    "ann_id": 348901,
+    "caption": "A child is standing on a beach looking up at a kite."
+  },
+  {
+    "ex_id": "cap_dev-046",
+    "image": "val2014:288579",
+    "image_id": 288579,
+    "ann_id": 478344,
+    "caption": "A dog standing on top of a dry grass field."
+  },
+  {
+    "ex_id": "cap_dev-047",
+    "image": "val2014:288882",
+    "image_id": 288882,
+    "ann_id": 356025,
+    "caption": "Two large giraffes inside a fenced area interact with one another"
+  },
+  {
+    "ex_id": "cap_dev-048",
+    "image": "val2014:295675",
+    "image_id": 295675,
+    "ann_id": 460425,
+    "caption": "there is a small train that is stopped on the tracks"
+  },
+  {
+    "ex_id": "cap_dev-049",
+    "image": "val2014:303718",
+    "image_id": 303718,
+    "ann_id": 524473,
+    "caption": "A glazed piece of cake is on a white plate."
+  },
+  {
+    "ex_id": "cap_dev-050",
+    "image": "val2014:303738",
+    "image_id": 303738,
+    "ann_id": 433028,
+    "caption": "a man is sitting on his atv in the parking lot"
+  },
+  {
+    "ex_id": "cap_dev-051",
+    "image": "val2014:307989",
+    "image_id": 307989,
+    "ann_id": 550187,
+    "caption": "two baby kittens at the feeding bowls one is drinking"
+  },
+  {
+    "ex_id": "cap_dev-052",
+    "image": "val2014:322714",
+    "image_id": 322714,
+    "ann_id": 269757,
+    "caption": "A dog is standing on a doormat by some shoes."
+  },
+  {
+    "ex_id": "cap_dev-053",
+    "image": "val2014:324155",
+    "image_id": 324155,
+    "ann_id": 682293,
+    "caption": "A man performs skateboard tricks among other skateboarders."
+  },
+  {
+    "ex_id": "cap_dev-054",
+    "image": "val2014:333557",
+    "image_id": 333557,
+    "ann_id": 233956,
+    "caption": "A refrigerator with one of the doors open."
+  },
+  {
+    "ex_id": "cap_dev-055",
+    "image": "val2014:341487",
+    "image_id": 341487,
+    "ann_id": 388141,
+    "caption": "A man in street holding a sign that reads \"smile.\""
+  },
+  {
+    "ex_id": "cap_dev-056",
+    "image": "val2014:342006",
+    "image_id": 342006,
+    "ann_id": 612358,
+    "caption": "The enveloping of an outside town in the picture."
+  },
+  {
+    "ex_id": "cap_dev-057",
+    "image": "val2014:342394",
+    "image_id": 342394,
+    "ann_id": 761417,
+    "caption": "Three giraffes standing in an enclosure overlooking Sydney, Australia."
+  },
+  {
+    "ex_id": "cap_dev-058",
+    "image": "val2014:350111",
+    "image_id": 350111,
+    "ann_id": 325397,
+    "caption": "A sea shore with a lot of kites flying in the air"
+  },
+  {
+    "ex_id": "cap_dev-059",
+    "image": "val2014:352684",
+    "image_id": 352684,
+    "ann_id": 370541,
+    "caption": "A group of people gathered in the lobby of a building."
+  },
+  {
+    "ex_id": "cap_dev-060",
+    "image": "val2014:355057",
+    "image_id": 355057,
+    "ann_id": 265806,
+    "caption": "An airplane's wing is gliding over a mountain."
+  },
+  {
+    "ex_id": "cap_dev-061",
+    "image": "val2014:359458",
+    "image_id": 359458,
+    "ann_id": 828550,
+    "caption": "This is a large group of zebras roaming on a grassy plane."
+  },
+  {
+    "ex_id": "cap_dev-062",
+    "image": "val2014:361901",
+    "image_id": 361901,
+    "ann_id": 583525,
+    "caption": "a couple of sandwiches are sitting on a table"
+  },
+  {
+    "ex_id": "cap_dev-063",
+    "image": "val2014:367398",
+    "image_id": 367398,
+    "ann_id": 355895,
+    "caption": "Black and white photograph of a man with a Nintendo Wii controller."
+  },
+  {
+    "ex_id": "cap_dev-064",
+    "image": "val2014:374241",
+    "image_id": 374241,
+    "ann_id": 563230,
+    "caption": "a directory next to some snow covered benches"
+  },
+  {
+    "ex_id": "cap_dev-065",
+    "image": "val2014:376441",
+    "image_id": 376441,
+    "ann_id": 481904,
+    "caption": "Two men fist bump on the beach while one holds a surfboard."
+  },
+  {
+    "ex_id": "cap_dev-066",
+    "image": "val2014:379259",
+    "image_id": 379259,
+    "ann_id": 129174,
+    "caption": "A man with an umbrella walking in the rain"
+  },
+  {
+    "ex_id": "cap_dev-067",
+    "image": "val2014:383450",
+    "image_id": 383450,
+    "ann_id": 691694,
+    "caption": "three circular object laying on their side with a section sliced out"
+  },
+  {
+    "ex_id": "cap_dev-068",
+    "image": "val2014:385877",
+    "image_id": 385877,
+    "ann_id": 162845,
+    "caption": "A man in a canoe with one oar and a Frisbee in his hand."
+  },
+  {
+    "ex_id": "cap_dev-069",
+    "image": "val2014:393225",
+    "image_id": 393225,
+    "ann_id": 481891,
+    "caption": "A bowl of soup that has some carrots, shrimp, and noodles in it."
+  },
+  {
+    "ex_id": "cap_dev-070",
+    "image": "val2014:395512",
+    "image_id": 395512,
+    "ann_id": 353810,
+    "caption": "A kitchen with marble counter tops covered in appliances."
+  },
+  {
+    "ex_id": "cap_dev-071",
+    "image": "val2014:397354",
+    "image_id": 397354,
+    "ann_id": 141214,
+    "caption": "A kitchen with a lot of people inside of it."
+  },
+  {
+    "ex_id": "cap_dev-072",
+    "image": "val2014:405196",
+    "image_id": 405196,
+    "ann_id": 173989,
+    "caption": "The vegetables and other groceries are collected in the white pale."
+  },
+  {
+    "ex_id": "cap_dev-073",
+    "image": "val2014:423396",
+    "image_id": 423396,
+    "ann_id": 157647,
+    "caption": "A clock adorned with angel sculptures mounted below a bright double lamp."
+  },
+  {
+    "ex_id": "cap_dev-074",
+    "image": "val2014:437540",
+    "image_id": 437540,
+    "ann_id": 108993,
+    "caption": "A man standing on a paddle board riding a wave in the ocean."
+  },
+  {
+    "ex_id": "cap_dev-075",
+    "image": "val2014:437618",
+    "image_id": 437618,
+    "ann_id": 434098,
+    "caption": "A room with large desks and chairs with two television monitors."
+  },
+  {
+    "ex_id": "cap_dev-076",
+    "image": "val2014:442463",
+    "image_id": 442463,
+    "ann_id": 303728,
+    "caption": "Young person on the street skateboarding wearing a helmet."
+  },
+  {
+    "ex_id": "cap_dev-077",
+    "image": "val2014:448113",
+    "image_id": 448113,
+    "ann_id": 13833,
+    "caption": "A man eating with chopsticks in a Japanese restaurant."
+  },
+  {
+    "ex_id": "cap_dev-078",
+    "image": "val2014:462954",
+    "image_id": 462954,
+    "ann_id": 617724,
+    "caption": "a building a sign some cars and traffic and street lights"
+  },
+  {
+    "ex_id": "cap_dev-079",
+    "image": "val2014:473057",
+    "image_id": 473057,
+    "ann_id": 459903,
+    "caption": "A bed and a desk with a computer are shown here."
+  },
+  {
+    "ex_id": "cap_dev-080",
+    "image": "val2014:485288",
+    "image_id": 485288,
+    "ann_id": 529431,
+    "caption": "There are three single sized pizzas on the table."
+  },
+  {
+    "ex_id": "cap_dev-081",
+    "image": "val2014:485307",
+    "image_id": 485307,
+    "ann_id": 342097,
+    "caption": "Little girl sitting on the couch playing the Wii"
+  },
+  {
+    "ex_id": "cap_dev-082",
+    "image": "val2014:496450",
+    "image_id": 496450,
+    "ann_id": 644237,
+    "caption": "A line of horse pulled carriages on a road."
+  },
+  {
+    "ex_id": "cap_dev-083",
+    "image": "val2014:497009",
+    "image_id": 497009,
+    "ann_id": 821167,
+    "caption": "The man is drinking at the table outside."
+  },
+  {
+    "ex_id": "cap_dev-084",
+    "image": "val2014:498758",
+    "image_id": 498758,
+    "ann_id": 583036,
+    "caption": "A man riding on the back of a motorcycle down a street."
+  },
+  {
+    "ex_id": "cap_dev-085",
+    "image": "val2014:502168",
+    "image_id": 502168,
+    "ann_id": 347842,
+    "caption": "a fleet of naval ships in the ocean"
+  },
+  {
+    "ex_id": "cap_dev-086",
+    "image": "val2014:503101",
+    "image_id": 503101,
+    "ann_id": 689594,
+    "caption": "The angry man is upset with the message left on his cell phone."
+  },
+  {
+    "ex_id": "cap_dev-087",
+    "image": "val2014:511906",
+    "image_id": 511906,
+    "ann_id": 424985,
+    "caption": "Sandwich with mixed vegetables sitting on top of a white napkin."
+  },
+  {
+    "ex_id": "cap_dev-088",
+    "image": "val2014:515642",
+    "image_id": 515642,
+    "ann_id": 609156,
+    "caption": "A an opened book with book mark next to a DirectTV remote."
+  },
+  {
+    "ex_id": "cap_dev-089",
+    "image": "val2014:522137",
+    "image_id": 522137,
+    "ann_id": 36685,
+    "caption": "A group of vans traveling over a bridge next to train tracks."
+  },
+  {
+    "ex_id": "cap_dev-090",
+    "image": "val2014:539302",
+    "image_id": 539302,
+    "ann_id": 356122,
+    "caption": "Two giraffes tower over the deer in the jungle like setting."
+  },
+  {
+    "ex_id": "cap_dev-091",
+    "image": "val2014:545385",
+    "image_id": 545385,
+    "ann_id": 269448,
+    "caption": "Just a small dessert shouldn't be too fattening, should it?"
+  },
+  {
+    "ex_id": "cap_dev-092",
+    "image": "val2014:546500",
+    "image_id": 546500,
+    "ann_id": 637091,
+    "caption": "the table has a bowl as well as knife on it"
+  },
+  {
+    "ex_id": "cap_dev-093",
+    "image": "val2014:554021",
+    "image_id": 554021,
+    "ann_id": 683464,
+    "caption": "A man is using a blow dryer on a blue checked piece of clothing."
+  },
+  {
+    "ex_id": "cap_dev-094",
+    "image": "val2014:571029",
+    "image_id": 571029,
+    "ann_id": 803374,
+    "caption": "A person in the middle of diving to catch a frisbee."
+  },
+  {
+    "ex_id": "cap_dev-095",
+    "image": "val2014:581062",
+    "image_id": 581062,
+    "ann_id": 278920,
+    "caption": "A guy rides a skateboard in an overflow ditch"
+  }
+]

@@ -39,5 +39,9 @@ tests/          CPU tests (tiny 28-layer Qwen3, synthetic COCO/VQA, orchestrator
 `/kaggle/working/results_task2.zip` — made by the notebook's last cell (everything except resumable
 checkpoints), with a download link printed under the cell.
 
+## Results of the Kaggle run
+`results/` holds the complete output of the run (manifests, logs, per-condition generations, summaries, figures,
+connector + LoRA weights); see `results/README.md`.
+
 ## CPU tests
 `PA3_TEST_TOKENIZER=<dir with the Qwen3 tokenizer> python -m pytest task_2/tests -q` (defaults to the hub id).

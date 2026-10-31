@@ -1,0 +1,6 @@
+{"update": 0, "event": "start", "resumed_from": null, "device": "cuda:0", "gpu": "Tesla T4", "setup_seconds": 13.748315572738647}
+{"update": 0, "event": "stage_start", "stage": 1, "name": "caption", "trainable_params": 1837056, "connector_params": 1837056, "lora_params": 0, "frozen_params": 596049920}
+{"update": 2250, "event": "lora_attached", "n_lora_params": 4587520}
+{"update": 2250, "event": "stage_start", "stage": 2, "name": "instruct", "trainable_params": 6424576, "connector_params": 1837056, "lora_params": 4587520, "frozen_params": 596049920}
+{"update": 3750, "event": "stage_start", "stage": 3, "name": "vqa", "trainable_params": 6424576, "connector_params": 1837056, "lora_params": 4587520, "frozen_params": 596049920}
+{"update": 4500, "event": "finished", "timing": {"train_s": 5870.204477787018, "dev_s": 172.60228204727173, "ckpt_s": 1.6236686706542969}, "memory": {"peak_alloc_gib": 1.573613166809082, "peak_reserved_gib": 2.2265625, "total_gib": 14.56219482421875}, "wall_s_this_session": 6061.167595148087}

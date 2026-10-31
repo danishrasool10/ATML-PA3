@@ -1,0 +1,2364 @@
+{
+  "n_pairs": 88,
+  "flags": [],
+  "examples": [
+    {
+      "pair_id": "grounding_dev-0000",
+      "kind": "presence",
+      "category": "toaster",
+      "image": "val2014:229837",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        17398
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0000",
+      "kind": "presence",
+      "category": "toaster",
+      "image": "val2014:227582",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0001",
+      "kind": "presence",
+      "category": "scissors",
+      "image": "val2014:264769",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        2212
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0001",
+      "kind": "presence",
+      "category": "scissors",
+      "image": "val2014:483999",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0002",
+      "kind": "presence",
+      "category": "chair",
+      "image": "val2014:263014",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0002",
+      "kind": "presence",
+      "category": "chair",
+      "image": "val2014:384625",
+      "target": "yes",
+      "n_noncrowd": 8,
+      "n_crowd": 0,
+      "areas": [
+        236,
+        240,
+        576,
+        704,
+        1618,
+        2354,
+        3379,
+        4326
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0003",
+      "kind": "presence",
+      "category": "skateboard",
+      "image": "val2014:465180",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0003",
+      "kind": "presence",
+      "category": "skateboard",
+      "image": "val2014:392382",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        11362
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0004",
+      "kind": "presence",
+      "category": "keyboard",
+      "image": "val2014:545289",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0004",
+      "kind": "presence",
+      "category": "keyboard",
+      "image": "val2014:125076",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        2446
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0005",
+      "kind": "presence",
+      "category": "car",
+      "image": "val2014:221864",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0005",
+      "kind": "presence",
+      "category": "car",
+      "image": "val2014:503232",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        2940
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0006",
+      "kind": "presence",
+      "category": "refrigerator",
+      "image": "val2014:262476",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        15268
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0006",
+      "kind": "presence",
+      "category": "refrigerator",
+      "image": "val2014:261777",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0007",
+      "kind": "presence",
+      "category": "remote",
+      "image": "val2014:208830",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0007",
+      "kind": "presence",
+      "category": "remote",
+      "image": "val2014:205370",
+      "target": "yes",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        475,
+        549,
+        1045
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0008",
+      "kind": "presence",
+      "category": "person",
+      "image": "val2014:124601",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0008",
+      "kind": "presence",
+      "category": "person",
+      "image": "val2014:356427",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        24934
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0009",
+      "kind": "presence",
+      "category": "sheep",
+      "image": "val2014:499143",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0009",
+      "kind": "presence",
+      "category": "sheep",
+      "image": "val2014:32587",
+      "target": "yes",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        16113,
+        18198,
+        29723
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0010",
+      "kind": "presence",
+      "category": "bicycle",
+      "image": "val2014:566324",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0010",
+      "kind": "presence",
+      "category": "bicycle",
+      "image": "val2014:154830",
+      "target": "yes",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        191,
+        198,
+        2672
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0011",
+      "kind": "presence",
+      "category": "cake",
+      "image": "val2014:541478",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0011",
+      "kind": "presence",
+      "category": "cake",
+      "image": "val2014:292769",
+      "target": "yes",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        21352,
+        36836
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0012",
+      "kind": "counting",
+      "category": "toaster",
+      "image": "val2014:514294",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        1676,
+        1948
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0012",
+      "kind": "counting",
+      "category": "toaster",
+      "image": "val2014:181179",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        1822
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0013",
+      "kind": "counting",
+      "category": "chair",
+      "image": "val2014:61967",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        3241
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0013",
+      "kind": "counting",
+      "category": "chair",
+      "image": "val2014:399791",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        2457,
+        11038,
+        18491
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0014",
+      "kind": "counting",
+      "category": "skateboard",
+      "image": "val2014:34597",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        4144,
+        4278,
+        7008,
+        7760
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0014",
+      "kind": "counting",
+      "category": "skateboard",
+      "image": "val2014:366484",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        26386
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0015",
+      "kind": "counting",
+      "category": "keyboard",
+      "image": "val2014:325838",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        1916,
+        2563,
+        3090
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0015",
+      "kind": "counting",
+      "category": "keyboard",
+      "image": "val2014:488401",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        7889,
+        12161
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0016",
+      "kind": "counting",
+      "category": "car",
+      "image": "val2014:424641",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        1144,
+        1389,
+        6765,
+        11735
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0016",
+      "kind": "counting",
+      "category": "car",
+      "image": "val2014:472598",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        1846,
+        42345
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0017",
+      "kind": "counting",
+      "category": "refrigerator",
+      "image": "val2014:556030",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        24267,
+        41527,
+        81509
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0017",
+      "kind": "counting",
+      "category": "refrigerator",
+      "image": "val2014:180274",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        22820,
+        58589,
+        70360,
+        89077
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0018",
+      "kind": "counting",
+      "category": "remote",
+      "image": "val2014:444304",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        5678,
+        8021
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0018",
+      "kind": "counting",
+      "category": "remote",
+      "image": "val2014:382309",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        17303
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0019",
+      "kind": "counting",
+      "category": "person",
+      "image": "val2014:381895",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        78785
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0019",
+      "kind": "counting",
+      "category": "person",
+      "image": "val2014:78858",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        13991,
+        17115,
+        30669
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0020",
+      "kind": "counting",
+      "category": "sheep",
+      "image": "val2014:169683",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        6653
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0020",
+      "kind": "counting",
+      "category": "sheep",
+      "image": "val2014:459437",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        1580,
+        10304,
+        13361,
+        59808
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0021",
+      "kind": "counting",
+      "category": "bicycle",
+      "image": "val2014:70774",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        3614,
+        5301,
+        5824
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0021",
+      "kind": "counting",
+      "category": "bicycle",
+      "image": "val2014:534887",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        1267,
+        9582
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0022",
+      "kind": "counting",
+      "category": "cake",
+      "image": "val2014:570471",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        1620,
+        2218,
+        4318,
+        5473
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0022",
+      "kind": "counting",
+      "category": "cake",
+      "image": "val2014:381382",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        20917,
+        70048
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_dev-0023",
+      "kind": "counting",
+      "category": "toilet",
+      "image": "val2014:292810",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        12076,
+        26743,
+        43008,
+        51380
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_dev-0023",
+      "kind": "counting",
+      "category": "toilet",
+      "image": "val2014:485628",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        5365,
+        10859,
+        22802
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0000",
+      "kind": "presence",
+      "category": "motorcycle",
+      "image": "val2014:390704",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0000",
+      "kind": "presence",
+      "category": "motorcycle",
+      "image": "val2014:279806",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        42981
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0001",
+      "kind": "presence",
+      "category": "stop sign",
+      "image": "val2014:473728",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0001",
+      "kind": "presence",
+      "category": "stop sign",
+      "image": "val2014:297343",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        25609
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0002",
+      "kind": "presence",
+      "category": "bed",
+      "image": "val2014:229653",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        109951
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0002",
+      "kind": "presence",
+      "category": "bed",
+      "image": "val2014:8483",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0003",
+      "kind": "presence",
+      "category": "chair",
+      "image": "val2014:242852",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0003",
+      "kind": "presence",
+      "category": "chair",
+      "image": "val2014:231589",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        17764
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0004",
+      "kind": "presence",
+      "category": "scissors",
+      "image": "val2014:485368",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        22821
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0004",
+      "kind": "presence",
+      "category": "scissors",
+      "image": "val2014:203345",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0005",
+      "kind": "presence",
+      "category": "cake",
+      "image": "val2014:354242",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0005",
+      "kind": "presence",
+      "category": "cake",
+      "image": "val2014:172513",
+      "target": "yes",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        1092,
+        4084
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0006",
+      "kind": "presence",
+      "category": "tie",
+      "image": "val2014:501281",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0006",
+      "kind": "presence",
+      "category": "tie",
+      "image": "val2014:340844",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        2037
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0007",
+      "kind": "presence",
+      "category": "microwave",
+      "image": "val2014:128372",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0007",
+      "kind": "presence",
+      "category": "microwave",
+      "image": "val2014:337662",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        2517
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0008",
+      "kind": "presence",
+      "category": "keyboard",
+      "image": "val2014:412437",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0008",
+      "kind": "presence",
+      "category": "keyboard",
+      "image": "val2014:526321",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        8457
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0009",
+      "kind": "presence",
+      "category": "traffic light",
+      "image": "val2014:141616",
+      "target": "yes",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        646,
+        659,
+        1825,
+        10403
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0009",
+      "kind": "presence",
+      "category": "traffic light",
+      "image": "val2014:381332",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0010",
+      "kind": "presence",
+      "category": "handbag",
+      "image": "val2014:462687",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        1164
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0010",
+      "kind": "presence",
+      "category": "handbag",
+      "image": "val2014:400161",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0011",
+      "kind": "presence",
+      "category": "banana",
+      "image": "val2014:190853",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        71222
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0011",
+      "kind": "presence",
+      "category": "banana",
+      "image": "val2014:103603",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0012",
+      "kind": "presence",
+      "category": "donut",
+      "image": "val2014:253452",
+      "target": "yes",
+      "n_noncrowd": 6,
+      "n_crowd": 0,
+      "areas": [
+        1956,
+        3167,
+        3181,
+        4473,
+        5848,
+        8325
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0012",
+      "kind": "presence",
+      "category": "donut",
+      "image": "val2014:396224",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0013",
+      "kind": "presence",
+      "category": "cow",
+      "image": "val2014:120544",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0013",
+      "kind": "presence",
+      "category": "cow",
+      "image": "val2014:133778",
+      "target": "yes",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        42012,
+        65815
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0014",
+      "kind": "presence",
+      "category": "toilet",
+      "image": "val2014:541613",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0014",
+      "kind": "presence",
+      "category": "toilet",
+      "image": "val2014:231236",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        1794
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0015",
+      "kind": "presence",
+      "category": "elephant",
+      "image": "val2014:274399",
+      "target": "yes",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        20640,
+        31603
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0015",
+      "kind": "presence",
+      "category": "elephant",
+      "image": "val2014:196574",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0016",
+      "kind": "presence",
+      "category": "carrot",
+      "image": "val2014:575822",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        8798
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0016",
+      "kind": "presence",
+      "category": "carrot",
+      "image": "val2014:193050",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0017",
+      "kind": "presence",
+      "category": "couch",
+      "image": "val2014:53744",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0017",
+      "kind": "presence",
+      "category": "couch",
+      "image": "val2014:193968",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        19848
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0018",
+      "kind": "presence",
+      "category": "zebra",
+      "image": "val2014:83960",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        16980
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0018",
+      "kind": "presence",
+      "category": "zebra",
+      "image": "val2014:423410",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0019",
+      "kind": "presence",
+      "category": "bear",
+      "image": "val2014:250917",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0019",
+      "kind": "presence",
+      "category": "bear",
+      "image": "val2014:192676",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        193536
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0020",
+      "kind": "presence",
+      "category": "parking meter",
+      "image": "val2014:536795",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        22078
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0020",
+      "kind": "presence",
+      "category": "parking meter",
+      "image": "val2014:544044",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0021",
+      "kind": "presence",
+      "category": "cell phone",
+      "image": "val2014:384335",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        77644
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0021",
+      "kind": "presence",
+      "category": "cell phone",
+      "image": "val2014:260363",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0022",
+      "kind": "presence",
+      "category": "dog",
+      "image": "val2014:279984",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0022",
+      "kind": "presence",
+      "category": "dog",
+      "image": "val2014:373344",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        6740
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0023",
+      "kind": "presence",
+      "category": "bicycle",
+      "image": "val2014:551849",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        6234
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0023",
+      "kind": "presence",
+      "category": "bicycle",
+      "image": "val2014:277710",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0024",
+      "kind": "presence",
+      "category": "kite",
+      "image": "val2014:240589",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0024",
+      "kind": "presence",
+      "category": "kite",
+      "image": "val2014:137408",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        196095
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0025",
+      "kind": "presence",
+      "category": "giraffe",
+      "image": "val2014:261712",
+      "target": "yes",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        3405,
+        7111
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0025",
+      "kind": "presence",
+      "category": "giraffe",
+      "image": "val2014:13991",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0026",
+      "kind": "presence",
+      "category": "tennis racket",
+      "image": "val2014:322261",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0026",
+      "kind": "presence",
+      "category": "tennis racket",
+      "image": "val2014:166165",
+      "target": "yes",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        708,
+        3526
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0027",
+      "kind": "presence",
+      "category": "bench",
+      "image": "val2014:54358",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0027",
+      "kind": "presence",
+      "category": "bench",
+      "image": "val2014:493435",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        70461
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0028",
+      "kind": "presence",
+      "category": "baseball glove",
+      "image": "val2014:569825",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        2047
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0028",
+      "kind": "presence",
+      "category": "baseball glove",
+      "image": "val2014:50956",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0029",
+      "kind": "presence",
+      "category": "frisbee",
+      "image": "val2014:375840",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0029",
+      "kind": "presence",
+      "category": "frisbee",
+      "image": "val2014:409221",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        5844
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0030",
+      "kind": "presence",
+      "category": "surfboard",
+      "image": "val2014:371683",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0030",
+      "kind": "presence",
+      "category": "surfboard",
+      "image": "val2014:579822",
+      "target": "yes",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        315,
+        357,
+        1111
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0031",
+      "kind": "presence",
+      "category": "umbrella",
+      "image": "val2014:416193",
+      "target": "no",
+      "n_noncrowd": 0,
+      "n_crowd": 0,
+      "areas": [],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0031",
+      "kind": "presence",
+      "category": "umbrella",
+      "image": "val2014:237558",
+      "target": "yes",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        4432
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0032",
+      "kind": "counting",
+      "category": "motorcycle",
+      "image": "val2014:316332",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        2213
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0032",
+      "kind": "counting",
+      "category": "motorcycle",
+      "image": "val2014:443351",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        16597,
+        24963
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0033",
+      "kind": "counting",
+      "category": "stop sign",
+      "image": "val2014:418092",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        6322
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0033",
+      "kind": "counting",
+      "category": "stop sign",
+      "image": "val2014:348379",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        18695,
+        23478,
+        37028
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0034",
+      "kind": "counting",
+      "category": "bed",
+      "image": "val2014:237917",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        142805
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0034",
+      "kind": "counting",
+      "category": "bed",
+      "image": "val2014:345068",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        1199,
+        2193,
+        10410,
+        19586
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0035",
+      "kind": "counting",
+      "category": "chair",
+      "image": "val2014:411070",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        4511,
+        5106
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0035",
+      "kind": "counting",
+      "category": "chair",
+      "image": "val2014:457986",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        1079,
+        3875,
+        7629
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0036",
+      "kind": "counting",
+      "category": "cake",
+      "image": "val2014:163710",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        2780,
+        7094
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0036",
+      "kind": "counting",
+      "category": "cake",
+      "image": "val2014:227031",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        3027,
+        3683,
+        3846,
+        7177
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0037",
+      "kind": "counting",
+      "category": "keyboard",
+      "image": "val2014:570353",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        2157,
+        2680,
+        4073
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0037",
+      "kind": "counting",
+      "category": "keyboard",
+      "image": "val2014:385719",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        1661,
+        2596,
+        4253,
+        4274
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0038",
+      "kind": "counting",
+      "category": "traffic light",
+      "image": "val2014:539768",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        2686,
+        8816
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0038",
+      "kind": "counting",
+      "category": "traffic light",
+      "image": "val2014:449895",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        44326
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0039",
+      "kind": "counting",
+      "category": "handbag",
+      "image": "val2014:386224",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        5403,
+        5677,
+        6453
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0039",
+      "kind": "counting",
+      "category": "handbag",
+      "image": "val2014:461715",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        4886
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0040",
+      "kind": "counting",
+      "category": "donut",
+      "image": "val2014:342614",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        155081
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0040",
+      "kind": "counting",
+      "category": "donut",
+      "image": "val2014:174740",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        3631,
+        7338,
+        8423,
+        9629
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0041",
+      "kind": "counting",
+      "category": "cow",
+      "image": "val2014:357081",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        14572,
+        54158
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0041",
+      "kind": "counting",
+      "category": "cow",
+      "image": "val2014:400046",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        1064,
+        12232,
+        23734
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0042",
+      "kind": "counting",
+      "category": "toilet",
+      "image": "val2014:510606",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        9376,
+        21710
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0042",
+      "kind": "counting",
+      "category": "toilet",
+      "image": "val2014:57454",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        5735,
+        7166,
+        10103,
+        19699
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0043",
+      "kind": "counting",
+      "category": "elephant",
+      "image": "val2014:160220",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        5571,
+        13357,
+        17791
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0043",
+      "kind": "counting",
+      "category": "elephant",
+      "image": "val2014:65465",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        3715,
+        33241,
+        37072,
+        69621
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0044",
+      "kind": "counting",
+      "category": "couch",
+      "image": "val2014:285558",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        5842
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0044",
+      "kind": "counting",
+      "category": "couch",
+      "image": "val2014:184902",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        19271,
+        33338
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0045",
+      "kind": "counting",
+      "category": "zebra",
+      "image": "val2014:486020",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        6186,
+        26447,
+        29697
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0045",
+      "kind": "counting",
+      "category": "zebra",
+      "image": "val2014:565691",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        70384
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0046",
+      "kind": "counting",
+      "category": "bear",
+      "image": "val2014:218960",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        5559
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0046",
+      "kind": "counting",
+      "category": "bear",
+      "image": "val2014:357219",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        1550,
+        4009,
+        4261,
+        4723
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0047",
+      "kind": "counting",
+      "category": "parking meter",
+      "image": "val2014:133636",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        24146,
+        52338
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0047",
+      "kind": "counting",
+      "category": "parking meter",
+      "image": "val2014:147866",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        7667,
+        8652,
+        12880
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0048",
+      "kind": "counting",
+      "category": "cell phone",
+      "image": "val2014:161169",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        12456,
+        24757,
+        48599,
+        79718
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0048",
+      "kind": "counting",
+      "category": "cell phone",
+      "image": "val2014:315403",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        1489,
+        2937
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0049",
+      "kind": "counting",
+      "category": "dog",
+      "image": "val2014:89188",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        3439,
+        11083,
+        13905,
+        15170
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0049",
+      "kind": "counting",
+      "category": "dog",
+      "image": "val2014:421902",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        1771,
+        3611,
+        21185
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0050",
+      "kind": "counting",
+      "category": "bicycle",
+      "image": "val2014:551383",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        4547,
+        5833
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0050",
+      "kind": "counting",
+      "category": "bicycle",
+      "image": "val2014:83045",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        23817
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0051",
+      "kind": "counting",
+      "category": "kite",
+      "image": "val2014:158922",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        70003
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0051",
+      "kind": "counting",
+      "category": "kite",
+      "image": "val2014:153865",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        5749,
+        22933,
+        27008
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0052",
+      "kind": "counting",
+      "category": "giraffe",
+      "image": "val2014:67455",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        5935,
+        8110,
+        9212,
+        22074
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0052",
+      "kind": "counting",
+      "category": "giraffe",
+      "image": "val2014:214701",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        27957
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0053",
+      "kind": "counting",
+      "category": "tennis racket",
+      "image": "val2014:444028",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        1612,
+        3643
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0053",
+      "kind": "counting",
+      "category": "tennis racket",
+      "image": "val2014:185095",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        1741,
+        7577,
+        9243
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0054",
+      "kind": "counting",
+      "category": "bench",
+      "image": "val2014:313627",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        5637,
+        12874
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0054",
+      "kind": "counting",
+      "category": "bench",
+      "image": "val2014:260099",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        1259,
+        1566,
+        3425,
+        4793
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0055",
+      "kind": "counting",
+      "category": "frisbee",
+      "image": "val2014:289640",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        1598,
+        2863,
+        5842,
+        7721
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0055",
+      "kind": "counting",
+      "category": "frisbee",
+      "image": "val2014:100238",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        3732,
+        3850,
+        4145
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0056",
+      "kind": "counting",
+      "category": "surfboard",
+      "image": "val2014:237463",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        15120,
+        24192
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0056",
+      "kind": "counting",
+      "category": "surfboard",
+      "image": "val2014:221095",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        28981
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0057",
+      "kind": "counting",
+      "category": "umbrella",
+      "image": "val2014:469635",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        2570,
+        8495,
+        32983
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0057",
+      "kind": "counting",
+      "category": "umbrella",
+      "image": "val2014:440400",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        57853
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0058",
+      "kind": "counting",
+      "category": "bus",
+      "image": "val2014:36522",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        65892
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0058",
+      "kind": "counting",
+      "category": "bus",
+      "image": "val2014:383112",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        3040,
+        3727,
+        16929,
+        34580
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0059",
+      "kind": "counting",
+      "category": "oven",
+      "image": "val2014:289714",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        1719,
+        4242
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0059",
+      "kind": "counting",
+      "category": "oven",
+      "image": "val2014:192458",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        2306,
+        14612,
+        48839
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0060",
+      "kind": "counting",
+      "category": "wine glass",
+      "image": "val2014:93435",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        2083,
+        2817,
+        2958,
+        3346
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0060",
+      "kind": "counting",
+      "category": "wine glass",
+      "image": "val2014:214274",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        1235,
+        2820
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0061",
+      "kind": "counting",
+      "category": "apple",
+      "image": "val2014:83565",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        13358,
+        17313,
+        18364
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0061",
+      "kind": "counting",
+      "category": "apple",
+      "image": "val2014:254828",
+      "target": "4",
+      "n_noncrowd": 4,
+      "n_crowd": 0,
+      "areas": [
+        8640,
+        11494,
+        12274,
+        62026
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0062",
+      "kind": "counting",
+      "category": "refrigerator",
+      "image": "val2014:301977",
+      "target": "2",
+      "n_noncrowd": 2,
+      "n_crowd": 0,
+      "areas": [
+        14564,
+        27492
+      ],
+      "caption_mentions_category": false
+    },
+    {
+      "pair_id": "grounding_test-0062",
+      "kind": "counting",
+      "category": "refrigerator",
+      "image": "val2014:267942",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        154414
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0063",
+      "kind": "counting",
+      "category": "remote",
+      "image": "val2014:371749",
+      "target": "3",
+      "n_noncrowd": 3,
+      "n_crowd": 0,
+      "areas": [
+        1029,
+        1093,
+        1465
+      ],
+      "caption_mentions_category": true
+    },
+    {
+      "pair_id": "grounding_test-0063",
+      "kind": "counting",
+      "category": "remote",
+      "image": "val2014:181449",
+      "target": "1",
+      "n_noncrowd": 1,
+      "n_crowd": 0,
+      "areas": [
+        26451
+      ],
+      "caption_mentions_category": true
+    }
+  ]
+}

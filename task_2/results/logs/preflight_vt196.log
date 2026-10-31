@@ -1,0 +1,13 @@
+
+===== 2026-10-30 20:04:19 GPU0 $ /usr/bin/python3 -m pa3vlm.train.loop --config vt196 --preflight 3
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:   0%|          | 1/311 [00:00<03:55,  1.32it/s]Loading weights:  65%|██████▍   | 202/311 [00:00<00:00, 310.93it/s]Loading weights:  97%|█████████▋| 303/311 [00:01<00:00, 371.66it/s]Loading weights: 100%|██████████| 311/311 [00:01<00:00, 287.61it/s]
+[train] calibration scale s = 0.0541103
+[preflight] stage 1 update 1: loss 4.819 2.28s
+[preflight] stage 1 update 2: loss 5.045 1.09s
+[preflight] stage 1 update 3: loss 5.607 1.14s
+[preflight] stage 2 update 1: loss 4.658 1.26s
+[preflight] stage 2 update 2: loss 3.706 1.23s
+[preflight] stage 2 update 3: loss 4.916 1.23s
+[preflight] stage 3 update 1: loss 5.070 1.26s
+[preflight] stage 3 update 2: loss 5.884 1.46s
+[preflight] stage 3 update 3: loss 3.839 1.25s

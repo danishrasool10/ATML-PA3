@@ -1,0 +1,12 @@
+{
+  "memory": {
+    "peak_alloc_gib": 1.4076309204101562,
+    "peak_reserved_gib": 1.521484375,
+    "total_gib": 14.56219482421875
+  },
+  "weights": "final.pt",
+  "meta": {
+    "update": 4500
+  },
+  "gpu": "Tesla T4"
+}

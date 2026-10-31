@@ -1,0 +1,31 @@
+
+===== 2026-10-30 19:57:32 $ /usr/bin/python3 -m pa3vlm.data.splits
+[data] downloading http://images.cocodataset.org/annotations/annotations_trainval2014.zip
+[data] loading /kaggle/temp/pa3_task2_scratch/raw/captions_val2014.json
+[data] loading /kaggle/temp/pa3_task2_scratch/raw/instances_val2014.json
+[data] downloading https://cvmlp.s3.amazonaws.com/vqa/mscoco/vqa/v2_Questions_Val_mscoco.zip
+[data] loading /kaggle/temp/pa3_task2_scratch/raw/v2_OpenEnded_mscoco_val2014_questions.json
+[data] downloading https://cvmlp.s3.amazonaws.com/vqa/mscoco/vqa/v2_Annotations_Val_mscoco.zip
+[data] loading /kaggle/temp/pa3_task2_scratch/raw/v2_mscoco_val2014_annotations.json
+[data] downloading https://cvmlp.s3.amazonaws.com/vqa/mscoco/vqa/v2_Complementary_Pairs_Val_mscoco.zip
+[data] loading /kaggle/temp/pa3_task2_scratch/raw/v2_mscoco_val2014_complementary_pairs.json
+[data] loading /kaggle/temp/pa3_task2_scratch/raw/captions_train2014.json
+[data] downloading https://cvmlp.s3.amazonaws.com/vqa/mscoco/vqa/v2_Questions_Train_mscoco.zip
+[data] loading /kaggle/temp/pa3_task2_scratch/raw/v2_OpenEnded_mscoco_train2014_questions.json
+[data] downloading https://cvmlp.s3.amazonaws.com/vqa/mscoco/vqa/v2_Annotations_Train_mscoco.zip
+[data] loading /kaggle/temp/pa3_task2_scratch/raw/v2_mscoco_train2014_annotations.json
+[data] downloading https://cvmlp.s3.amazonaws.com/vqa/mscoco/vqa/v2_Complementary_Pairs_Train_mscoco.zip
+[data] loading /kaggle/temp/pa3_task2_scratch/raw/v2_mscoco_train2014_complementary_pairs.json
+[data] loading /kaggle/temp/pa3_task2_scratch/raw/instances_train2014.json
+[data] manifests written (225s): {'vqa_test': 96, 'vqa_dev': 32, 'grounding_test': 64, 'grounding_dev': 24, 'captions_dev': 96, 'captions_train': 18000, 'vqa_train': 1536, 'presence_pool': 14849, 'counting_pool': 12169}
+[data] downloading 9291 images (0 attached)
+[data]   1000/9291 images
+[data]   2000/9291 images
+[data]   3000/9291 images
+[data]   4000/9291 images
+[data]   5000/9291 images
+[data]   6000/9291 images
+[data]   7000/9291 images
+[data]   8000/9291 images
+[data]   9000/9291 images
+[data] images ready: {'n_images': 9291, 'attached': 0, 'downloaded': 9291, 'seconds': 71.77367949485779}
