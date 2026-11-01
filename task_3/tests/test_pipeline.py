@@ -28,6 +28,8 @@ def test_end_to_end(env):
     _run_all()
     out = env["out"]
     # ---- data: join despite shuffled rows, alignment, zero-length rollout, undefined v
+    for f in (out / "data").glob("*.json"):
+        assert f.stat().st_size < 50_000, f"{f.name} is {f.stat().st_size} bytes (arrays leaked into a report?)"
     ali = read_json(out / "data" / "math_alignment.json")
     assert ali["alignment"]["misaligned_measurements"] == 0 and ali["alignment"]["zero_length_rollouts"] == 1
     assert ali["alignment"]["token_ids_len_minus_T"] == {"1": 16 * 32}

@@ -18,17 +18,21 @@ from .io import pin_cpus, read_json, write_json
 
 
 def stage_data(cfg):
-    from .data.discover import find_model_dirs, find_readme
+    from .config import scratch
+    from .data.discover import find_readme, find_tables
     from .data.load import load_dataset
 
-    dirs = find_model_dirs(cfg["data_root"])
-    rd = find_readme(dirs)
+    tables = find_tables(cfg["data_root"], cfg.get("data_fallback_root", "/kaggle/input"), scratch=scratch(),
+                         hf_repo=cfg.get("data_hf_repo"), listing_path=odir("data") / "input_listing.txt")
+    for ds in DATASETS:
+        print(f"[data] {ds}: {tables[ds]}", flush=True)
+    rd = find_readme(tables)
     if rd:
         shutil.copy(rd, odir("data") / "README_supplied.md")
         print(f"[data] README found: {rd}", flush=True)
-    out = {"model_dirs": {k: str(v) for k, v in dirs.items()}, "readme": str(rd) if rd else None}
+    out = {"tables": tables, "readme": str(rd) if rd else None}
     for ds in DATASETS:
-        rep = load_dataset(dirs[ds], ds, cfg)
+        rep = load_dataset(tables[ds], ds, cfg)
         out[ds] = {"n_questions": rep["n_questions"], "alignment": rep["alignment"], "columns": rep["columns"]}
         print(f"[data] {ds}: {out[ds]}", flush=True)
     return out

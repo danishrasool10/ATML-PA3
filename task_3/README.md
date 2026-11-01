@@ -11,6 +11,12 @@ otherwise found anywhere under `/kaggle/input`), **GPU T4 ×2**, **Internet on**
 Only GPU0 is used (live generation, in the background); the offline stages run at the same time on the other CPU
 cores. The last cell writes `/kaggle/working/results_task3.zip` and shows a download link, also after a failure.
 
+The **DATA CHECK** cell (runs ~1 min after start) lists everything under `/kaggle/input` and the tables it will use;
+if the data is not found it stops there, writes `data/input_listing.txt` into the results zip and the run ends with an
+error (it no longer "finishes" with nothing done). Accepted layouts: the task's file names, shard files/folders,
+both models in one folder with `math_`/`mathvista_` prefixes, an unextracted .zip/.tar, or a Hugging Face dataset repo
+(`data_hf_repo` in the config). Any failed stage makes the final cell raise after the zip is written.
+
 Column names are auto-detected (`outputs/data/<ds>_columns.json` shows what was picked and every column in the
 files). If a pick is wrong, set it in `configs/task3.yaml → columns`, e.g. `columns: {math: {text: response}}`.
 

@@ -41,9 +41,11 @@ finished stages and live calls are kept and only the remaining calls are generat
 
 SETTINGS = f'''# ============================ SETTINGS ============================
 import os, time, json
+from pathlib import Path
 os.environ.setdefault("PA3_SESSION_START", str(time.time()))   # the session budget starts now
 BUDGET_HOURS = 11.25                          # stop cleanly before Kaggle's 12 h limit
 DATA_ROOT = "/kaggle/input/atml-pa3-data"     # searched recursively; /kaggle/input is the fallback
+DATA_HF_REPO = None                           # optional Hugging Face dataset repo id
 RUN_LIVE = True                               # Step 4 live generation on GPU0
 RUN_CPU_TESTS = False                         # run the CPU test suite first (~1 min)
 CODE_DIR = "{CODE_DIR}"   # fixed: the %%writefile cells below write here
@@ -70,18 +72,41 @@ except Exception as ex:  # noqa: BLE001
     traceback.print_exc()
     SETUP_ERROR = ex'''
 
+DATACHECK = '''# ============================ DATA CHECK ============================
+# Shows what is attached under /kaggle/input and which tables the pipeline will use (fails fast if none).
+if SETUP_ERROR is None:
+    try:
+        from pa3ttc.data.discover import find_tables, listing
+        print(listing([Path("/kaggle/input")], max_lines=120))
+        _t = find_tables(DATA_ROOT, "/kaggle/input", scratch=Path(OUTPUT_ROOT) / "_scratch",
+                         hf_repo=DATA_HF_REPO)
+        for _k, _v in _t.items():
+            print(f"\\n{_k}: folder {_v['folder']}")
+            for _r in ("gen", "prob", "attn"):
+                print(f"   {_r}: {_v.get(_r)}")
+    except Exception as ex:  # noqa: BLE001
+        print("!! DATA NOT FOUND:", ex)
+        SETUP_ERROR = ex
+        os.makedirs(f"{OUTPUT_ROOT}/data", exist_ok=True)       # so the results zip shows what was attached
+        Path(f"{OUTPUT_ROOT}/data/input_listing.txt").write_text(
+            listing([Path("/kaggle/input")], max_lines=3000) + "\\n\\n" + str(ex))'''
+
 RUN = '''# ============================ RUN ============================
 # Errors are caught so the RESULTS and DOWNLOAD cells still run (the error is re-raised at the very end).
 import traceback
 RUN_ERROR = SETUP_ERROR
 if RUN_ERROR is None:
     os.chdir(f"{CODE_DIR}/task_3")
-    os.environ["PA3_CONFIG_OVERRIDES"] = json.dumps({"data_root": DATA_ROOT})
+    os.environ["PA3_CONFIG_OVERRIDES"] = json.dumps({"data_root": DATA_ROOT, "data_hf_repo": DATA_HF_REPO})
     try:
         from pa3ttc import orchestrate as O
         info = O.setup_env(OUTPUT_ROOT, budget_hours=BUDGET_HOURS)
         result = O.stage_auto(run_cpu_tests=RUN_CPU_TESTS, run_live=RUN_LIVE)
         print(json.dumps(result, indent=1))
+        if result["failed"]:      # make a failed stage visible: the DOWNLOAD cell zips, then raises
+            RUN_ERROR = RuntimeError(f"stages failed: {result['failed']} (skipped: {result['skipped']}) — "
+                                     f"see {OUTPUT_ROOT}/logs/<stage>.log and data/input_listing.txt")
+            print("!!", RUN_ERROR)
     except Exception as ex:  # noqa: BLE001
         traceback.print_exc()
         RUN_ERROR = ex
@@ -169,7 +194,7 @@ def build() -> dict:
              "    print(SETUP_ERROR)\n"
              "else:\n"
              "    print(f'{len(EXPECTED)} files written and verified')")
-    cells += [_cell("code", check), _cell("code", INSTALL), _cell("code", RUN), _cell("code", SHOW),
+    cells += [_cell("code", check), _cell("code", INSTALL), _cell("code", DATACHECK), _cell("code", RUN), _cell("code", SHOW),
               _cell("code", DOWNLOAD)]
     return {"cells": cells,
             "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},

@@ -12,6 +12,7 @@ rollout ID), tokens.npz (offsets, logp, kl[, v]), questions.parquet, texts.parqu
 from __future__ import annotations
 
 import re
+
 from pathlib import Path
 
 import numpy as np
@@ -100,7 +101,7 @@ def list_column(arr: pa.Array | pa.ChunkedArray, lengths_only: bool = False):
         vals = segment_sum(inner.flatten().to_numpy(zero_copy_only=False), ilens)
     else:
         vals = inner.to_numpy(zero_copy_only=False)
-    vals = np.asarray(vals, dtype=np.float64)
+    vals = np.asarray(vals, dtype=np.float32)
     assert lens.sum() == len(vals), "list offsets inconsistent"
     return vals, lens
 
@@ -115,18 +116,36 @@ def gather(vals: np.ndarray, lens: np.ndarray, rows: np.ndarray, take: np.ndarra
     return vals[idx]
 
 
+def _files(src) -> list[str]:
+    if isinstance(src, (list, tuple)):
+        return [str(x) for x in src]
+    p = Path(src)
+    return sorted(str(f) for f in p.glob("*.parquet")) if p.is_dir() else [str(p)]
+
+
+def read_schema(src) -> pa.Schema:
+    """src: a parquet file, a folder of shards, or a list of shard files."""
+    return pq.read_schema(_files(src)[0])
+
+
+def read_table(src, columns: list[str]) -> pa.Table:
+    """Memory-mapped, single-threaded read, shard by shard (avoids the batch-buffer copy of a dataset scan)."""
+    parts = [pq.read_table(f, columns=columns, memory_map=True, use_threads=False) for f in _files(src)]
+    return parts[0] if len(parts) == 1 else pa.concat_tables(parts)
+
+
 def _keys_str(df: pd.DataFrame, ds: str) -> pd.DataFrame:
     out = pd.DataFrame({k: df[k].astype(str) if k in df else ds for k in KEYS})
     return out
 
 
-def read_token_table(path: Path, roles: dict[str, str], ds: str) -> tuple[pd.DataFrame, dict]:
+def read_token_table(path, roles: dict[str, str], ds: str) -> tuple[pd.DataFrame, dict]:
     """-> (keys frame with column _row, {role: (vals, lens)}) in the table's row order (or key order for the
     long format)."""
-    schema = pq.read_schema(path)
+    schema = read_schema(path)
     cols = [c for c in roles.values()]
     key_cols = [k for k in KEYS if k in schema.names]
-    tbl = pq.read_table(path, columns=key_cols + cols)
+    tbl = read_table(path, columns=key_cols + cols)
     if all(_is_list(schema.field(c).type) for c in cols):
         keys = _keys_str(tbl.select(key_cols).to_pandas(), ds)
         data = {r: list_column(tbl.column(c)) for r, c in roles.items()}
@@ -134,15 +153,15 @@ def read_token_table(path: Path, roles: dict[str, str], ds: str) -> tuple[pd.Dat
     else:  # long format: one row per token
         pos = resolve(schema.names, "pos", required=False) or next((p for p in POS_ALIASES if p in schema.names), None)
         if pos is None:
-            raise KeyError(f"{path.name}: scalar token columns {cols} but no token-position column")
-        tbl = pq.read_table(path, columns=key_cols + [pos] + cols)
+            raise KeyError(f"{path}: scalar token columns {cols} but no token-position column")
+        tbl = read_table(path, columns=key_cols + [pos] + cols)
         df = tbl.to_pandas()
         k = _keys_str(df, ds)
         df = pd.concat([k, df[[pos] + cols].reset_index(drop=True)], axis=1).sort_values(KEYS + [pos], kind="stable")
         g = df.groupby(KEYS, sort=False).size()
         keys = g.index.to_frame(index=False)
         lens = np.append(g.to_numpy().astype(np.int64), 0)      # extra empty segment for rollouts with no rows
-        data = {r: (df[c].to_numpy(np.float64), lens) for r, c in roles.items()}
+        data = {r: (df[c].to_numpy(np.float32), lens) for r, c in roles.items()}
         layout = f"long(pos={pos})"
     keys["_row"] = np.arange(len(keys))
     return keys, {"_layout": layout, **data}
@@ -161,14 +180,13 @@ def _scalar_str(v) -> str | None:
     return s if s.strip() and s.strip().lower() not in ("none", "nan", "null") else None
 
 
-def load_dataset(model_dir: Path, ds: str, cfg: dict) -> dict:
-    """Join + verify one model folder and write the cache.  Returns the alignment report."""
-    model_dir = Path(model_dir)
+def load_dataset(src: dict, ds: str, cfg: dict) -> dict:
+    """Join + verify one model's tables and write the cache.  `src` = {"folder", "gen": [files], "prob": [files],
+    "attn": [files]} from data.discover.find_tables.  Returns the alignment report."""
     ov = (cfg.get("columns") or {}).get(ds, {}) or {}
     n_roll = int(cfg["n_rollouts"])
-    gpath, ppath, apath = (model_dir / "generations.parquet", model_dir / "probability_metrics.parquet",
-                           model_dir / "attention_metrics.parquet")
-    gschema = pq.read_schema(gpath)
+    gpath, ppath, apath = src["gen"], src["prob"], src.get("attn")
+    gschema = read_schema(gpath)
     gcols = gschema.names
     colmap = {"generations": {}, "probability_metrics": {}, "attention_metrics": {}}
     gold = resolve(gcols, "gold", ov.get("gold"))
@@ -182,7 +200,7 @@ def load_dataset(model_dir: Path, ds: str, cfg: dict) -> dict:
     meta_cols = [c for c in MV_META if c in gcols] if ds == "mathvista" else []
     scal = [c for c in {gold, extracted, text, ntok, problem, *meta_cols} if c]
     key_cols = [k for k in KEYS if k in gcols]
-    gtbl = pq.read_table(gpath, columns=key_cols + scal + ([tok] if tok else []))
+    gtbl = read_table(gpath, columns=key_cols + scal + ([tok] if tok else []))
     gdf = pd.concat([_keys_str(gtbl.select(key_cols).to_pandas(), ds),
                      gtbl.select(scal).to_pandas()], axis=1)
     gdf["_n_token_ids"] = list_column(gtbl.column(tok), lengths_only=True)[1] if tok and _is_list(
@@ -190,13 +208,13 @@ def load_dataset(model_dir: Path, ds: str, cfg: dict) -> dict:
     del gtbl
     gdf["_grow"] = np.arange(len(gdf))
 
-    pschema = pq.read_schema(ppath).names
+    pschema = read_schema(ppath).names
     proles = {"logp": resolve(pschema, "logp", ov.get("logp")), "kl": resolve(pschema, "kl", ov.get("kl"))}
     colmap["probability_metrics"] = dict(proles)
     pkeys, pdat = read_token_table(ppath, proles, ds)
     tables = {"probability_metrics": (pkeys, pdat)}
     if ds == "mathvista":
-        aschema = pq.read_schema(apath).names
+        aschema = read_schema(apath).names
         img = resolve(aschema, "attn_image", ov.get("attn_image"))
         gen = resolve(aschema, "attn_generated", ov.get("attn_generated"), exclude=(img,))
         prm = resolve(aschema, "attn_prompt", ov.get("attn_prompt"), exclude=(img, gen))
@@ -205,7 +223,7 @@ def load_dataset(model_dir: Path, ds: str, cfg: dict) -> dict:
         tables["attention_metrics"] = read_token_table(apath, aroles, ds)
 
     # ---- join on (dataset, sample_id, rollout_id)
-    report: dict = {"dataset": ds, "model_dir": str(model_dir), "columns": colmap, "rows": {"generations": len(gdf)}}
+    report: dict = {"dataset": ds, "source_files": src, "columns": colmap, "rows": {"generations": len(gdf)}}
     m = gdf
     for name, (keys, dat) in tables.items():
         report["rows"][name] = len(keys)
@@ -313,7 +331,7 @@ def load_dataset(model_dir: Path, ds: str, cfg: dict) -> dict:
     np.savez(cd / "tokens.npz", **arrays)
     write_json(odir("data") / f"{ds}_alignment.json", report)
     write_json(odir("data") / f"{ds}_columns.json", {"generations": gcols, "probability_metrics": pschema,
-                                                      "attention_metrics": pq.read_schema(apath).names
+                                                      "attention_metrics": read_schema(apath).names
                                                       if ds == "mathvista" else None, "resolved": colmap})
     return report
 

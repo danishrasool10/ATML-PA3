@@ -29,7 +29,7 @@ OUT_NAME = "pa3_task3_outputs"
 STATE: dict = {}
 DEPS = {"data": [], "splits": ["data"], "scorer": ["data"], "signals": ["splits"], "offline": ["scorer", "signals"],
         "analysis": ["offline"], "adaptive": ["offline"], "compute": ["offline"], "live_eval": ["splits"],
-        "qualitative": ["offline"], "report": []}
+        "qualitative": ["offline"], "report": ["data"]}
 
 
 def _env(cores: list[int] | None = None) -> dict:
@@ -135,7 +135,11 @@ def stage_auto(run_cpu_tests: bool = False, run_live: bool = True) -> dict:
         rc = sh([PY, "-m", "pytest", "-q", "-x", str(TASK / "tests")], STATE["logs"] / "cpu_tests.log", env=_env(),
                 cwd=TASK)
         _status("cpu_tests", "done" if rc == 0 else "failed", rc=rc)
-    _stage("data")
+    if not _stage("data"):
+        log = STATE["logs"] / "data.log"
+        tail = log.read_text(errors="ignore").splitlines()[-60:] if log.exists() else []
+        print("\n" + "!" * 100 + "\n!! DATA STAGE FAILED — nothing else can run. Last lines of logs/data.log:\n"
+              + "\n".join(tail) + "\n" + "!" * 100, flush=True)
     _stage("splits")
     live = None
     live_done = (STATE["root"] / "live" / "status.json").exists() and json.loads(
@@ -158,7 +162,10 @@ def stage_auto(run_cpu_tests: bool = False, run_live: bool = True) -> dict:
             _marker(s).unlink()                 # cheap; always rebuilt from the latest outputs
         _stage(s)
     states = {k: v["state"] for k, v in STATE["steps"].items()}
-    final = {"steps": states, "state": "done" if all(v in ("done",) for k, v in states.items() if k != "cpu_tests")
-             else "incomplete"}
-    _status("pipeline", final["state"])
+    failed = [k for k, v in states.items() if v == "failed"]
+    state = "failed" if failed else ("done" if all(v == "done" for k, v in states.items() if k != "cpu_tests")
+                                     else "incomplete")
+    final = {"steps": states, "state": state, "failed": failed,
+             "skipped": [k for k, v in states.items() if v == "skipped"]}
+    _status("pipeline", state, failed=failed)
     return final

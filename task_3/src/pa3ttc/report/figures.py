@@ -231,7 +231,7 @@ def summary_md() -> None:
 
 
 def run(cfg: dict) -> dict:
-    done, failed = [], {}
+    done, failed, skipped = [], {}, []
     jobs = [("acc_math", lambda: acc_curves("math")), ("acc_mathvista", lambda: acc_curves("mathvista")),
             ("decomp_math", lambda: decomposition("math")), ("decomp_mathvista", lambda: decomposition("mathvista")),
             ("marginal", marginal), ("stopping", stopping), ("quartiles", quartiles), ("conf_vision", conf_vision),
@@ -240,8 +240,10 @@ def run(cfg: dict) -> dict:
         try:
             fn()
             done.append(name)
+        except FileNotFoundError as ex:          # an upstream stage did not run: nothing to draw
+            skipped.append(f"{name} (missing {Path(ex.filename or '').name})")
         except Exception as ex:  # noqa: BLE001
             failed[name] = f"{type(ex).__name__}: {ex}"
             traceback.print_exc()
-    print(f"[report] done={done} failed={list(failed)}", flush=True)
-    return {"done": done, "failed": failed}
+    print(f"[report] done={done} skipped={skipped} failed={list(failed)}", flush=True)
+    return {"done": done, "skipped": skipped, "failed": failed}

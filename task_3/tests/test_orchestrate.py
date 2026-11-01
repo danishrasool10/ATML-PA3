@@ -36,4 +36,5 @@ def test_failure_isolation(env, monkeypatch):
     st = read_json(env["out"] / "status.json")["steps"]
     assert st["scorer"]["state"] == "failed" and st["signals"]["state"] == "done"
     assert st["offline"]["state"] == "skipped" and st["analysis"]["state"] == "skipped"
-    assert st["live_generation"]["state"] == "skipped" and res["state"] == "incomplete"
+    assert st["live_generation"]["state"] == "skipped"
+    assert res["state"] == "failed" and res["failed"] == ["scorer"] and "offline" in res["skipped"]
