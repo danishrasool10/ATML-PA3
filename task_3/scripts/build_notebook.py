@@ -22,9 +22,11 @@ INTRO = r"""# ATML PA3 · Task 3 — Test-Time Compute: Sampling, Selection and 
 ### Before running
 1. **Add Input → the `ATML-PA3-Data` dataset** (expected at `/kaggle/input/atml-pa3-data`; any folder under
    `/kaggle/input` that contains the two model folders is found automatically).
-2. **Settings → Accelerator: GPU T4 ×2** (only GPU0 is used, for the 50-question live run), **Internet: On**
+2. Always run **from the top** (Run All, or Restart & Run All after a session restart): later cells use the
+   SETTINGS cell's variables.
+3. **Settings → Accelerator: GPU T4 ×2** (only GPU0 is used, for the 50-question live run), **Internet: On**
    (Qwen2.5-3B-Instruct download; MathVista metadata from the Hub only if the supplied files lack it).
-3. **Save Version → Save & Run All (Commit)**.
+4. **Save Version → Save & Run All (Commit)**.
 
 ### What happens (`AUTO`)
 data join + alignment checks → dev/held-out splits (seed 6304) + 10 candidate orders per question → **live generation
@@ -45,12 +47,34 @@ from pathlib import Path
 os.environ.setdefault("PA3_SESSION_START", str(time.time()))   # the session budget starts now
 BUDGET_HOURS = 11.25                          # stop cleanly before Kaggle's 12 h limit
 DATA_ROOT = "/kaggle/input/atml-pa3-data"     # searched recursively; /kaggle/input is the fallback
-DATA_HF_REPO = None                           # optional Hugging Face dataset repo id
+DATA_URL = ""        # only if the data is NOT attached: a Google Drive / direct .zip link to ATML-PA3-Data
+DATA_HF_REPO = ""    # ... or a Hugging Face dataset repo id holding it
 RUN_LIVE = True                               # Step 4 live generation on GPU0
 RUN_CPU_TESTS = False                         # run the CPU test suite first (~1 min)
 CODE_DIR = "{CODE_DIR}"   # fixed: the %%writefile cells below write here
 OUTPUT_ROOT = "/kaggle/working/pa3_task3_outputs"
-SETUP_ERROR = None'''
+SETUP_ERROR = None
+
+# %%writefile cannot create folders. Create them all now, and make %%writefile create its parent folder itself,
+# so the code cells work even if a cell is run on its own or after a session restart (which empties /kaggle/working).
+for _d in __DIRS__:
+    os.makedirs(_d, exist_ok=True)
+try:
+    from IPython.core.magic import register_cell_magic
+
+    @register_cell_magic
+    def writefile(line, cell):
+        import shlex
+        args = shlex.split(line)
+        append = "-a" in args or "--append" in args
+        fn = os.path.expanduser([a for a in args if not a.startswith("-")][0])
+        os.makedirs(os.path.dirname(fn) or ".", exist_ok=True)
+        existed = os.path.exists(fn)
+        with open(fn, "a" if append else "w", encoding="utf-8") as fh:
+            fh.write(cell)
+        print(("Appending to " if append else "Overwriting " if existed else "Writing ") + fn)
+except Exception as _ex:  # noqa: BLE001  (not running under IPython)
+    print("note: %%writefile not patched:", _ex)'''
 
 INSTALL = '''# ============================ DEPENDENCIES ============================
 import sys, subprocess, traceback
@@ -78,8 +102,9 @@ if SETUP_ERROR is None:
     try:
         from pa3ttc.data.discover import find_tables, listing
         print(listing([Path("/kaggle/input")], max_lines=120))
-        _t = find_tables(DATA_ROOT, "/kaggle/input", scratch=Path(OUTPUT_ROOT) / "_scratch",
-                         hf_repo=DATA_HF_REPO)
+        from pa3common.kaggle import scratch_root
+        _t = find_tables(DATA_ROOT, "/kaggle/input", scratch=scratch_root("pa3_task3_scratch"),
+                         url=DATA_URL or None, hf_repo=DATA_HF_REPO or None)
         for _k, _v in _t.items():
             print(f"\\n{_k}: folder {_v['folder']}")
             for _r in ("gen", "prob", "attn"):
@@ -97,7 +122,8 @@ import traceback
 RUN_ERROR = SETUP_ERROR
 if RUN_ERROR is None:
     os.chdir(f"{CODE_DIR}/task_3")
-    os.environ["PA3_CONFIG_OVERRIDES"] = json.dumps({"data_root": DATA_ROOT, "data_hf_repo": DATA_HF_REPO})
+    os.environ["PA3_CONFIG_OVERRIDES"] = json.dumps({"data_root": DATA_ROOT, "data_url": DATA_URL or None,
+                                                     "data_hf_repo": DATA_HF_REPO or None})
     try:
         from pa3ttc import orchestrate as O
         info = O.setup_env(OUTPUT_ROOT, budget_hours=BUDGET_HOURS)
@@ -175,7 +201,7 @@ def build() -> dict:
     mk = ("# ============================ WRITE THE CODE ============================\n"
           "import os\nfor d in " + json.dumps(dirs, indent=1) + ":\n    os.makedirs(d, exist_ok=True)\n"
           f"print('writing {len(fl)} files under {CODE_DIR}')")
-    cells = [_cell("markdown", INTRO), _cell("code", SETTINGS), _cell("code", mk)]
+    cells = [_cell("markdown", INTRO), _cell("code", SETTINGS.replace("__DIRS__", json.dumps(dirs))), _cell("code", mk)]
     sums = {}
     for rel, p in fl:
         txt = p.read_text()

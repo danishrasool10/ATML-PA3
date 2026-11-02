@@ -7,6 +7,8 @@ Accepted layouts (searched with symlinks followed, under data_root first, then a
   * both models' tables in one folder, told apart by "vista"/"vl" in the file names
   * the same inside a .zip / .tar(.gz) archive (extracted to scratch disk)
   * optionally a Hugging Face dataset repo (config `data_hf_repo`), downloaded to scratch disk
+  * optionally a download link (config `data_url`: Google Drive file/folder link, or any http(s)/file URL to a
+    .zip/.tar(.gz)/.parquet), downloaded to scratch disk and unpacked
 The VLM table set is the one with an attention table.  A listing of the searched folders is always written to
 data/input_listing.txt so a failure can be diagnosed from the results zip.
 """
@@ -144,8 +146,30 @@ def _extract_archives(root: Path, dest: Path) -> list[Path]:
     return out
 
 
+def download(url: str, dest: Path) -> Path:
+    """Fetch `url` into dest/ (Google Drive via gdown, otherwise urllib); unpack archives.  Returns the folder."""
+    dest = Path(dest)
+    dest.mkdir(parents=True, exist_ok=True)
+    if "drive.google.com" in url or "docs.google.com" in url:
+        import gdown  # noqa: PLC0415  (preinstalled on Kaggle; pip install gdown otherwise)
+
+        if "/folders/" in url:
+            gdown.download_folder(url, output=str(dest), quiet=False)
+        else:
+            gdown.download(url, output=str(dest) + "/", quiet=False, fuzzy=True)
+    else:
+        import urllib.request  # noqa: PLC0415
+
+        name = re.sub(r"[^A-Za-z0-9_.-]", "_", url.rstrip("/").split("/")[-1].split("?")[0]) or "download"
+        print(f"[data] downloading {url} -> {dest / name}", flush=True)
+        urllib.request.urlretrieve(url, dest / name)
+    _extract_archives(dest, dest / "unpacked")
+    return dest
+
+
 def find_tables(preferred: str | Path, fallback: str | Path = "/kaggle/input", scratch: Path | None = None,
-                hf_repo: str | None = None, listing_path: Path | None = None) -> dict[str, dict]:
+                hf_repo: str | None = None, listing_path: Path | None = None,
+                url: str | None = None) -> dict[str, dict]:
     roots = [Path(preferred)] + ([Path(fallback)] if Path(fallback) != Path(preferred) else [])
     if listing_path is not None:
         listing_path.parent.mkdir(parents=True, exist_ok=True)
@@ -175,10 +199,18 @@ def find_tables(preferred: str | Path, fallback: str | Path = "/kaggle/input", s
             found = _resolve_groups(scan(local))
             if {"math", "mathvista"} <= set(found):
                 return found
+        if url:
+            local = Path(scratch) / "url_data"
+            if not local.exists() or not _resolve_groups(scan(local)):
+                download(url, local)
+            tried.append(f"url:{url}")
+            found = _resolve_groups(scan(local))
+            if {"math", "mathvista"} <= set(found):
+                return found
     raise FileNotFoundError(
         f"ATML-PA3-Data not found (searched {tried or [str(r) for r in roots]}). Need, for each model, a "
         "generations table and a probability_metrics table (parquet), plus an attention_metrics table for the VLM. "
-        "Is the dataset attached (Add Input)? What was found is listed in data/input_listing.txt:\n"
+        "Is the dataset attached (Add Input)? Otherwise set DATA_URL (download link) in the SETTINGS cell. What was found is listed in data/input_listing.txt:\n"
         + (listing(roots, max_lines=80)))
 
 

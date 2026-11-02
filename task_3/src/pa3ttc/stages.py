@@ -23,7 +23,8 @@ def stage_data(cfg):
     from .data.load import load_dataset
 
     tables = find_tables(cfg["data_root"], cfg.get("data_fallback_root", "/kaggle/input"), scratch=scratch(),
-                         hf_repo=cfg.get("data_hf_repo"), listing_path=odir("data") / "input_listing.txt")
+                         hf_repo=cfg.get("data_hf_repo"), listing_path=odir("data") / "input_listing.txt",
+                         url=cfg.get("data_url"))
     for ds in DATASETS:
         print(f"[data] {ds}: {tables[ds]}", flush=True)
     rd = find_readme(tables)

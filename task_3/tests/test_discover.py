@@ -92,3 +92,20 @@ def test_not_found_is_diagnosable(tmp_path):
         find_tables(tmp_path / "input" / "atml-pa3-data", tmp_path / "input", scratch=tmp_path / "s", listing_path=lp)
     txt = lp.read_text()
     assert "does not exist" in txt and "x.parquet" in txt
+
+
+def test_download_url(tmp_path, monkeypatch):
+    std = _std(tmp_path)
+    z = tmp_path / "pub" / "ATML-PA3-Data.zip"
+    z.parent.mkdir()
+    with zipfile.ZipFile(z, "w") as zf:
+        for f in std.rglob("*"):
+            if f.is_file():
+                zf.write(f, Path("ATML-PA3-Data") / f.relative_to(std))
+    empty = tmp_path / "input"
+    empty.mkdir()
+    found = find_tables(empty / "atml-pa3-data", empty, scratch=tmp_path / "scr", url=z.as_uri())
+    assert set(found) == {"math", "mathvista"} and "attn" in found["mathvista"]
+    # a second call reuses the download
+    again = find_tables(empty / "atml-pa3-data", empty, scratch=tmp_path / "scr", url="file:///nonexistent.zip")
+    assert again["math"]["gen"] == found["math"]["gen"]

@@ -3,6 +3,7 @@ seed: 6304
 data_root: /kaggle/input/atml-pa3-data      # searched recursively (symlinks followed); then data_fallback_root
 data_fallback_root: /kaggle/input
 data_hf_repo: null                          # optional: HF dataset repo id holding ATML-PA3-Data (downloaded if not found)
+data_url: null                              # optional: download link (Google Drive / http .zip / .tar.gz) if not attached
 n_rollouts: 32
 n_questions_expected: 1000
 n_dev: 200
