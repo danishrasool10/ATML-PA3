@@ -1,94 +1,68 @@
-"""Generate task_3/notebooks/pa3_task3_kaggle.ipynb — a self-contained Kaggle notebook.
+"""Generate task_3/notebooks/pa3_task3_kaggle.ipynb — a short Kaggle notebook (Task 1 style).
 
-Every source file of task_3/ (configs, src, scripts, tests, README) and the shared common/pa3common modules it uses
-is embedded as a `%%writefile` cell, followed by an integrity check (sha256 of each written file), dependency
-installation, the AUTO pipeline, a results view and the download cell.  Setup errors are caught so the last cell
-(zip + download link) always runs.
+The notebook clones github.com/danishrasool10/ATML-PA3 (or uses a copy of the repo attached as a Kaggle dataset),
+checks that the clone carries the same code version as this notebook (pa3ttc.__version__), installs the pinned
+dependencies, shows which data folders it found, runs the pipeline and zips the results with a download link.
 """
 from __future__ import annotations
 
-import hashlib
 import json
+import re
 from pathlib import Path
 
 TASK = Path(__file__).resolve().parents[1]
-REPO = TASK.parent
-CODE_DIR = "/kaggle/working/ATML-PA3"
-COMMON_FILES = ["__init__.py", "kaggle.py"]
+VERSION = re.search(r'__version__ = "([^"]+)"', (TASK / "src" / "pa3ttc" / "__init__.py").read_text()).group(1)
 
 INTRO = r"""# ATML PA3 · Task 3 — Test-Time Compute: Sampling, Selection and Adaptive Inference
-**CS-6304 / EE-5102 · Danish Rasool (28100233)** · self-contained notebook (all code is written to disk by the cells below)
+**CS-6304 / EE-5102 · Danish Rasool (28100233)** · code: `task_3/` of the ATML-PA3 repo (cloned below)
 
-### Before running
-1. **Add Input → the `ATML-PA3-Data` dataset** (expected at `/kaggle/input/atml-pa3-data`; any folder under
-   `/kaggle/input` that contains the two model folders is found automatically).
-2. Always run **from the top** (Run All, or Restart & Run All after a session restart): later cells use the
-   SETTINGS cell's variables.
-3. **Settings → Accelerator: GPU T4 ×2** (only GPU0 is used, for the 50-question live run), **Internet: On**
-   (Qwen2.5-3B-Instruct download; MathVista metadata from the Hub only if the supplied files lack it).
-4. **Save Version → Save & Run All (Commit)**.
+**Before running:** push the repo to GitHub · *Add Input* → your **ATML-PA3-Data** dataset · *Settings* → **GPU T4 ×2**,
+**Internet on** · then **Save Version → Save & Run All**. Always run from the top.
 
-### What happens (`AUTO`)
-data join + alignment checks → dev/held-out splits (seed 6304) + 10 candidate orders per question → **live generation
-starts in the background on GPU0** (single 3,072 / parallel 3×1,024 / refinement 1,024+2,048; FP16, batch 1,
-pinned to its own CPU cores) → in parallel on the other cores: answer grouping + grading (math-verify / MathVista
-rules, frozen with a manifest) → signals (log-prob, self-certainty, visual engagement, prefix-calibrated VisConf) →
-all selection rules at N ∈ {1,2,4,8,16,32} → signal analysis → adaptive stopping (dev-tuned, frozen, held-out) →
-compute allocation → live evaluation → qualitative cases → figures/tables. The last cell zips the outputs into
-`/kaggle/working/results_task3.zip` and prints a **download link** (also when something failed part-way).
-
-If `status.json` shows `live_generation: paused`, make this version's output a dataset, attach it and run again:
-finished stages and live calls are kept and only the remaining calls are generated.
-"""
+Offline analysis (Steps 1–3, 5, 6) takes ~10 min on the CPU; the 50-question live experiment (Step 4) runs at the same
+time on GPU0 and takes ~2–4 h. The last cell zips everything into `results_task3.zip` with a download link (also
+after a failure)."""
 
 SETTINGS = f'''# ============================ SETTINGS ============================
-import os, time, json
+import os, sys, time, json
 from pathlib import Path
 os.environ.setdefault("PA3_SESSION_START", str(time.time()))   # the session budget starts now
-BUDGET_HOURS = 11.25                          # stop cleanly before Kaggle's 12 h limit
-DATA_ROOT = "/kaggle/input/atml-pa3-data"     # searched recursively; /kaggle/input is the fallback
-DATA_URL = ""        # only if the data is NOT attached: a Google Drive / direct .zip link to ATML-PA3-Data
-DATA_HF_REPO = ""    # ... or a Hugging Face dataset repo id holding it
-RUN_LIVE = True                               # Step 4 live generation on GPU0
-RUN_CPU_TESTS = False                         # run the CPU test suite first (~1 min)
-CODE_DIR = "{CODE_DIR}"   # fixed: the %%writefile cells below write here
+REPO_URL = "https://github.com/danishrasool10/ATML-PA3.git"
+BRANCH = "main"
+EXPECTED_CODE_VERSION = "{VERSION}"   # must match task_3/src/pa3ttc/__init__.py in the pushed repo
+CODE_DIR = "/kaggle/working/ATML-PA3"
 OUTPUT_ROOT = "/kaggle/working/pa3_task3_outputs"
-SETUP_ERROR = None
+DATA_ROOT = "/kaggle/input"          # searched recursively for qwen25-math/ and qwen25vl-mathvista/
+BUDGET_HOURS = 11.25                 # stop cleanly before Kaggle's 12 h limit
+RUN_LIVE = True                      # Step 4 live generation on GPU0
+RUN_CPU_TESTS = False                # run the CPU test suite first (~3 min)
+SETUP_ERROR = None'''
 
-# %%writefile cannot create folders. Create them all now, and make %%writefile create its parent folder itself,
-# so the code cells work even if a cell is run on its own or after a session restart (which empties /kaggle/working).
-for _d in __DIRS__:
-    os.makedirs(_d, exist_ok=True)
+SETUP = '''# ============================ CODE + DEPENDENCIES ============================
+import glob, shutil, subprocess, traceback
 try:
-    from IPython.core.magic import register_cell_magic
-
-    @register_cell_magic
-    def writefile(line, cell):
-        import shlex
-        args = shlex.split(line)
-        append = "-a" in args or "--append" in args
-        fn = os.path.expanduser([a for a in args if not a.startswith("-")][0])
-        os.makedirs(os.path.dirname(fn) or ".", exist_ok=True)
-        existed = os.path.exists(fn)
-        with open(fn, "a" if append else "w", encoding="utf-8") as fh:
-            fh.write(cell)
-        print(("Appending to " if append else "Overwriting " if existed else "Writing ") + fn)
-except Exception as _ex:  # noqa: BLE001  (not running under IPython)
-    print("note: %%writefile not patched:", _ex)'''
-
-INSTALL = '''# ============================ DEPENDENCIES ============================
-import sys, subprocess, traceback
-sys.path[:0] = [f"{CODE_DIR}/common", f"{CODE_DIR}/task_3/src"]
-try:
+    shutil.rmtree(CODE_DIR, ignore_errors=True)
+    r = subprocess.run(["git", "clone", "--depth", "1", "-b", BRANCH, REPO_URL, CODE_DIR], capture_output=True, text=True)
+    if r.returncode != 0:          # no internet / private repo: use a copy of the repo attached as a dataset
+        found = glob.glob("/kaggle/input/**/task_3/src/pa3ttc/__init__.py", recursive=True)
+        if not found:
+            raise RuntimeError(f"git clone failed ({r.stderr.strip()[-300:]}) and no attached copy of the repo found")
+        shutil.copytree(Path(found[0]).parents[4], CODE_DIR)
+    sys.path[:0] = [f"{CODE_DIR}/common", f"{CODE_DIR}/task_3/src"]
+    import pa3ttc
+    commit = subprocess.run(["git", "-C", CODE_DIR, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+    print("code version:", pa3ttc.__version__, "| commit:", commit or "(attached copy)")
+    if pa3ttc.__version__ != EXPECTED_CODE_VERSION:
+        raise RuntimeError(f"the repo has code version {pa3ttc.__version__}, this notebook expects "
+                           f"{EXPECTED_CODE_VERSION}: push the latest task_3/ to GitHub and rerun")
     from pa3common.kaggle import pip_install
     import torch
     torch_before = torch.__version__
     pip_install(["transformers==5.21.0", "math-verify[antlr4_13_2]==0.9.0", "matplotlib", "pytest", "pyyaml", "scipy"])
-    out = subprocess.run([sys.executable, "-c", "import torch, transformers, math_verify, pyarrow; "
-                          "import importlib.metadata as m; print(torch.__version__, transformers.__version__, "
-                          "m.version('math-verify'), pyarrow.__version__)"], capture_output=True, text=True)
-    print("kernel torch:", torch_before, "| subprocess torch/transformers/math-verify/pyarrow:", out.stdout.strip(),
-          out.stderr[-400:])
+    out = subprocess.run([sys.executable, "-c", "import torch, transformers, importlib.metadata as m; "
+                          "print(torch.__version__, transformers.__version__, m.version('math-verify'))"],
+                         capture_output=True, text=True)
+    print("torch / transformers / math-verify:", out.stdout.strip(), out.stderr[-300:])
     assert out.stdout.split()[0] == torch_before, "pip changed torch — restart the kernel and rerun"
     print("GPUs:", [torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())],
           "| CPU cores:", len(os.sched_getaffinity(0)))
@@ -97,74 +71,57 @@ except Exception as ex:  # noqa: BLE001
     SETUP_ERROR = ex'''
 
 DATACHECK = '''# ============================ DATA CHECK ============================
-# Shows what is attached under /kaggle/input and which tables the pipeline will use (fails fast if none).
 if SETUP_ERROR is None:
+    from pa3ttc.data.discover import find_folders, listing
     try:
-        from pa3ttc.data.discover import find_tables, listing
-        print(listing([Path("/kaggle/input")], max_lines=120))
-        from pa3common.kaggle import scratch_root
-        _t = find_tables(DATA_ROOT, "/kaggle/input", scratch=scratch_root("pa3_task3_scratch"),
-                         url=DATA_URL or None, hf_repo=DATA_HF_REPO or None)
-        for _k, _v in _t.items():
-            print(f"\\n{_k}: folder {_v['folder']}")
-            for _r in ("gen", "prob", "attn"):
-                print(f"   {_r}: {_v.get(_r)}")
+        folders = find_folders(DATA_ROOT, "/kaggle/input")
+        for ds, d in folders.items():
+            print(f"{ds:10s} {d}: {sorted(p.name for p in d.glob('*.parquet'))}")
     except Exception as ex:  # noqa: BLE001
         print("!! DATA NOT FOUND:", ex)
         SETUP_ERROR = ex
-        os.makedirs(f"{OUTPUT_ROOT}/data", exist_ok=True)       # so the results zip shows what was attached
-        Path(f"{OUTPUT_ROOT}/data/input_listing.txt").write_text(
-            listing([Path("/kaggle/input")], max_lines=3000) + "\\n\\n" + str(ex))'''
+        os.makedirs(f"{OUTPUT_ROOT}/data", exist_ok=True)
+        Path(f"{OUTPUT_ROOT}/data/input_listing.txt").write_text(listing([Path("/kaggle/input")], 3000))'''
 
 RUN = '''# ============================ RUN ============================
 # Errors are caught so the RESULTS and DOWNLOAD cells still run (the error is re-raised at the very end).
-import traceback
 RUN_ERROR = SETUP_ERROR
 if RUN_ERROR is None:
     os.chdir(f"{CODE_DIR}/task_3")
-    os.environ["PA3_CONFIG_OVERRIDES"] = json.dumps({"data_root": DATA_ROOT, "data_url": DATA_URL or None,
-                                                     "data_hf_repo": DATA_HF_REPO or None})
+    os.environ["PA3_CONFIG_OVERRIDES"] = json.dumps({"data_root": DATA_ROOT})
     try:
         from pa3ttc import orchestrate as O
-        info = O.setup_env(OUTPUT_ROOT, budget_hours=BUDGET_HOURS)
+        O.setup_env(OUTPUT_ROOT, budget_hours=BUDGET_HOURS)
+        Path(OUTPUT_ROOT, "code_commit.txt").write_text(f"{commit or 'attached copy'}\\nversion {pa3ttc.__version__}\\n")
         result = O.stage_auto(run_cpu_tests=RUN_CPU_TESTS, run_live=RUN_LIVE)
         print(json.dumps(result, indent=1))
-        if result["failed"]:      # make a failed stage visible: the DOWNLOAD cell zips, then raises
-            RUN_ERROR = RuntimeError(f"stages failed: {result['failed']} (skipped: {result['skipped']}) — "
-                                     f"see {OUTPUT_ROOT}/logs/<stage>.log and data/input_listing.txt")
+        if result["failed"]:
+            RUN_ERROR = RuntimeError(f"stages failed: {result['failed']} — see {OUTPUT_ROOT}/logs/<stage>.log")
             print("!!", RUN_ERROR)
     except Exception as ex:  # noqa: BLE001
         traceback.print_exc()
         RUN_ERROR = ex
 else:
-    print("setup failed — skipping the pipeline:", repr(RUN_ERROR))'''
+    print("setup failed — pipeline not started:", repr(RUN_ERROR))'''
 
 SHOW = '''# ============================ RESULTS ============================
-from pathlib import Path
 from IPython.display import Markdown, Image, display
 R = Path(OUTPUT_ROOT)
 if (R / "status.json").exists():
-    print(json.dumps(json.loads((R / "status.json").read_text()), indent=1))
-for name in ("data/math_alignment.json", "data/mathvista_alignment.json"):
-    if (R / name).exists():
-        print(name, json.dumps(json.loads((R / name).read_text()).get("alignment"), indent=1))
-T, F = R / "report_assets/tables", R / "report_assets/figures"
-for t in sorted(T.glob("*.md")) if T.exists() else []:
+    print(json.dumps({k: v["state"] for k, v in json.loads((R / "status.json").read_text())["steps"].items()}, indent=1))
+for t in sorted((R / "report_assets/tables").glob("*.md")):
     display(Markdown(f"**{t.name}**\\n\\n" + t.read_text()))
-for f in sorted(F.glob("*.png")) if F.exists() else []:
+for f in sorted((R / "report_assets/figures").glob("*.png")):
     display(Image(filename=str(f)))'''
 
 DOWNLOAD = '''# ============================ DOWNLOAD RESULTS ============================
-# Zips everything in the outputs folder and shows a download link (also after a failure).
-import os, zipfile
-from pathlib import Path
+import zipfile
 from IPython.display import FileLink, display
-OUT = Path(globals().get("OUTPUT_ROOT", "/kaggle/working/pa3_task3_outputs"))
-ZIP = Path("/kaggle/working/results_task3.zip")
+OUT, ZIP = Path(OUTPUT_ROOT), Path("/kaggle/working/results_task3.zip")
 n = 0
 with zipfile.ZipFile(ZIP, "w", zipfile.ZIP_DEFLATED) as zf:
     for f in sorted(OUT.rglob("*")) if OUT.exists() else []:
-        if f.is_file() and "_scratch" not in f.parts and f.suffix not in (".tmp", ".part", ".zip"):
+        if f.is_file() and "_scratch" not in f.parts and f.suffix not in (".tmp", ".zip"):
             zf.write(f, f.relative_to(OUT.parent))
             n += 1
 print(f"{ZIP}: {n} files, {ZIP.stat().st_size / 2**20:.1f} MiB")
@@ -173,56 +130,17 @@ display(FileLink(ZIP.name))
 if globals().get("RUN_ERROR") is not None:
     raise RuntimeError("the pipeline failed earlier (see the RUN cell); partial results are in the zip") from RUN_ERROR'''
 
-_N = [0]
-
-
-def _cell(kind: str, src: str) -> dict:
-    _N[0] += 1
-    c = {"cell_type": kind, "id": f"cell-{_N[0]:03d}", "metadata": {}, "source": src.splitlines(keepends=True)}
-    if kind == "code":
-        c.update({"execution_count": None, "outputs": []})
-    return c
-
-
-def files() -> list[tuple[str, Path]]:
-    out = [(f"common/pa3common/{f}", REPO / "common" / "pa3common" / f) for f in COMMON_FILES]
-    for sub in ("configs", "src", "scripts", "tests"):
-        for p in sorted((TASK / sub).rglob("*")):
-            if p.is_file() and "__pycache__" not in p.parts and p.suffix in (".py", ".yaml"):
-                out.append((f"task_3/{p.relative_to(TASK).as_posix()}", p))
-    out.append(("task_3/README.md", TASK / "README.md"))
-    return out
-
 
 def build() -> dict:
-    _N[0] = 0
-    fl = files()
-    dirs = sorted({str(Path(CODE_DIR) / Path(rel).parent) for rel, _ in fl})
-    mk = ("# ============================ WRITE THE CODE ============================\n"
-          "import os\nfor d in " + json.dumps(dirs, indent=1) + ":\n    os.makedirs(d, exist_ok=True)\n"
-          f"print('writing {len(fl)} files under {CODE_DIR}')")
-    cells = [_cell("markdown", INTRO), _cell("code", SETTINGS.replace("__DIRS__", json.dumps(dirs))), _cell("code", mk)]
-    sums = {}
-    for rel, p in fl:
-        txt = p.read_text()
-        assert "\r" not in txt, rel
-        if not txt.endswith("\n"):
-            txt += "\n"
-        sums[rel] = hashlib.sha256(txt.rstrip("\n").encode()).hexdigest()   # robust to trailing-newline handling
-        cells.append(_cell("code", f"%%writefile {CODE_DIR}/{rel}\n{txt}"))
-    check = ("# ============================ INTEGRITY CHECK ============================\n"
-             "import hashlib, json\n"
-             f"EXPECTED = json.loads({json.dumps(json.dumps(sums))})\n"
-             "bad = [r for r, h in EXPECTED.items()\n"
-             f"       if hashlib.sha256(open('{CODE_DIR}/' + r, 'rb').read().rstrip(b'\\n')).hexdigest() != h]\n"
-             "if bad:\n"
-             "    SETUP_ERROR = RuntimeError(f'files differ from the embedded sources: {bad}')\n"
-             "    print(SETUP_ERROR)\n"
-             "else:\n"
-             "    print(f'{len(EXPECTED)} files written and verified')")
-    cells += [_cell("code", check), _cell("code", INSTALL), _cell("code", DATACHECK), _cell("code", RUN), _cell("code", SHOW),
-              _cell("code", DOWNLOAD)]
-    return {"cells": cells,
+    cells = [("markdown", INTRO), ("code", SETTINGS), ("code", SETUP), ("code", DATACHECK), ("code", RUN),
+             ("code", SHOW), ("code", DOWNLOAD)]
+    out = []
+    for i, (kind, src) in enumerate(cells, 1):
+        c = {"cell_type": kind, "id": f"cell-{i:02d}", "metadata": {}, "source": src.splitlines(keepends=True)}
+        if kind == "code":
+            c.update({"execution_count": None, "outputs": []})
+        out.append(c)
+    return {"cells": out,
             "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
                          "language_info": {"name": "python"},
                          "kaggle": {"accelerator": "nvidiaTeslaT4", "isInternetEnabled": True, "isGpuEnabled": True}},
@@ -230,8 +148,8 @@ def build() -> dict:
 
 
 if __name__ == "__main__":
-    out = TASK / "notebooks" / "pa3_task3_kaggle.ipynb"
-    out.parent.mkdir(exist_ok=True)
+    path = TASK / "notebooks" / "pa3_task3_kaggle.ipynb"
+    path.parent.mkdir(exist_ok=True)
     nb = build()
-    out.write_text(json.dumps(nb, indent=1, ensure_ascii=False) + "\n")
-    print(f"wrote {out} ({len(nb['cells'])} cells, {len(files())} embedded files)")
+    path.write_text(json.dumps(nb, indent=1, ensure_ascii=False) + "\n")
+    print(f"wrote {path} ({len(nb['cells'])} cells, code version {VERSION})")

@@ -1,4 +1,10 @@
-"""MathVista answer normalisation (official `normalize_extracted_answer` rules) and grouping.
+"""MathVista answer normalisation (official `normalize_extracted_answer` rules), question metadata, and grouping.
+
+Metadata per question: the choices are parsed from the export's question_text (it lists them as "A. ..." lines;
+no gold involved).  answer_type / precision / question_type come from the released testmini metadata
+(AI4Math/MathVista on the Hugging Face Hub, joined on pid = sample_id).  Only if that download fails are they
+derived from the question (choices -> multi_choice) and the gold answer's format (integer / decimals / list); the
+source used and the agreement between the two are recorded in the scorer manifest.
 
 multi_choice: "(X)" -> X; a letter within range -> that option; otherwise the closest choice by Levenshtein
   distance (official `get_most_similar`, approved decision 5).  Answers are represented as option letters.
@@ -124,3 +130,79 @@ def group_and_grade(answers: list, gold, meta: dict) -> dict:
     indiv = [False if g == NO_ANSWER else corr[g] for g in groups]
     return {"groups": groups, "group_answer": [k.split(":", 1)[1] for k in keys], "group_kind": kinds,
             "group_correct": corr, "indiv_correct": indiv, "rollout_kind": rkinds, "gold_key": gk}
+
+
+# ----------------------------------------------------------------------------- question metadata
+def parse_choices(question_text: str) -> list[str]:
+    """Trailing "A. x / B. y / ..." lines of the question (the last block starting at A, so a repeated list
+    such as question 287's is read once).  [] for free-form questions."""
+    got = []
+    for ln in reversed(str(question_text).rstrip().split("\n")):
+        m = re.match(r"^([A-Z])\.\s?(.*)$", ln.strip())
+        if not m:
+            break
+        got.append((m.group(1), m.group(2).strip()))
+        if m.group(1) == "A":
+            break
+    got = got[::-1]
+    if got and [c for c, _ in got] == [chr(ord("A") + i) for i in range(len(got))]:
+        return [t for _, t in got]
+    return []
+
+
+def derived_type(gold) -> tuple[str, int | None]:
+    g = str(gold).strip()
+    if re.fullmatch(r"-?\d+", g):
+        return "integer", None
+    if re.fullmatch(r"-?\d*\.\d+", g):
+        return "float", len(g.split(".")[1])
+    if g.startswith("["):
+        return "list", None
+    return "text", None
+
+
+def hf_testmini(repo: str):
+    """Released testmini metadata as a DataFrame indexed by pid (metadata columns only; no images)."""
+    import pandas as pd
+    import pyarrow.parquet as pq
+    from huggingface_hub import HfApi, hf_hub_download
+
+    files = [f for f in HfApi().list_repo_files(repo, repo_type="dataset")
+             if "testmini" in f and f.endswith(".parquet")]
+    if not files:
+        raise FileNotFoundError(f"no testmini parquet in {repo}")
+    want = ["pid", "question_type", "answer_type", "choices", "precision", "unit"]
+    parts = []
+    for f in files:
+        path = hf_hub_download(repo, f, repo_type="dataset")
+        names = pq.read_schema(path).names
+        parts.append(pq.read_table(path, columns=[c for c in want if c in names]).to_pandas())
+    df = pd.concat(parts, ignore_index=True)
+    df["pid"] = df["pid"].astype(str)
+    return df.set_index("pid"), files
+
+
+def build_metadata(qids: list[str], questions: list[str], golds: list, hf=None) -> tuple[list[dict], dict]:
+    metas, stats = [], {"source_hf": 0, "source_derived": 0, "qtype_disagree": 0, "atype_disagree": 0,
+                        "precision_disagree": 0, "choices_disagree": 0, "multi_choice": 0}
+    for qid, qt, gold in zip(qids, questions, golds):
+        ch = parse_choices(qt)
+        dq = "multi_choice" if ch else "free_form"
+        da, dp = ("text", None) if ch else derived_type(gold)
+        if hf is not None and qid in hf.index:
+            r = hf.loc[qid]
+            hch = as_list(r.get("choices"))
+            m = {"question_type": str(r.get("question_type")), "answer_type": str(r.get("answer_type")),
+                 "precision": _prec(r.get("precision")), "choices": hch or ch, "source": "hf"}
+            stats["source_hf"] += 1
+            stats["qtype_disagree"] += m["question_type"] != dq
+            if m["question_type"] != "multi_choice":
+                stats["atype_disagree"] += m["answer_type"] != da
+                stats["precision_disagree"] += m["answer_type"] == "float" and m["precision"] != dp
+            stats["choices_disagree"] += bool(hch) and [c.strip() for c in hch] != ch
+        else:
+            m = {"question_type": dq, "answer_type": da, "precision": dp, "choices": ch, "source": "derived"}
+            stats["source_derived"] += 1
+        stats["multi_choice"] += m["question_type"] == "multi_choice"
+        metas.append(m)
+    return metas, stats

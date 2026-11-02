@@ -5,28 +5,31 @@ MATH subset, Qwen2.5-VL-3B-Instruct on MathVista testmini) plus a 50-question li
 `Qwen/Qwen2.5-3B-Instruct` (FP16, batch 1). Approved design: see the Task 3 design summary (2026-10-31).
 
 ## Run on Kaggle
-Open `notebooks/pa3_task3_kaggle.ipynb` (self-contained: it writes every file of this folder and the needed
-`common/` modules with `%%writefile` cells). **Add Input → ATML-PA3-Data** (expected at `/kaggle/input/atml-pa3-data`,
-otherwise found anywhere under `/kaggle/input`), **GPU T4 ×2**, **Internet on**, then **Save & Run All (Commit)**.
-Only GPU0 is used (live generation, in the background); the offline stages run at the same time on the other CPU
-cores. The last cell writes `/kaggle/working/results_task3.zip` and shows a download link, also after a failure.
+1. Push this repo to GitHub (the notebook clones `danishrasool10/ATML-PA3` and refuses to run if the clone's
+   `pa3ttc.__version__` differs from the notebook's `EXPECTED_CODE_VERSION`, i.e. if the push was forgotten).
+2. Upload the supplied `ATML-PA3-Data` folder (README.MD, `qwen25-math/`, `qwen25vl-mathvista/`) as a Kaggle dataset and
+   attach it (*Add Input*). It is found anywhere under `/kaggle/input`.
+3. Open `notebooks/pa3_task3_kaggle.ipynb` (7 cells) → **GPU T4 ×2**, **Internet on** → **Save & Run All**.
 
-The **DATA CHECK** cell (runs ~1 min after start) lists everything under `/kaggle/input` and the tables it will use;
-if the data is not found it stops there, writes `data/input_listing.txt` into the results zip and the run ends with an
-error (it no longer "finishes" with nothing done). Accepted layouts: the task's file names, shard files/folders,
-both models in one folder with `math_`/`mathvista_` prefixes, an unextracted .zip/.tar, or a Hugging Face dataset repo
-(`data_hf_repo` in the config). Any failed stage makes the final cell raise after the zip is written.
+Offline Steps 1–3, 5, 6 take ~10 min on two CPU cores; the live Step 4 runs concurrently on GPU0 (~2–4 h).
+The last cell writes `/kaggle/working/results_task3.zip` with a download link, also after a failure.
+Regenerate the notebook after changing `__version__`: `python task_3/scripts/build_notebook.py`.
+CPU tests: `cd task_3 && python -m pytest -q tests` (~30 s).
 
-Column names are auto-detected (`outputs/data/<ds>_columns.json` shows what was picked and every column in the
-files). If a pick is wrong, set it in `configs/task3.yaml → columns`, e.g. `columns: {math: {text: response}}`.
-
-Regenerate the notebook after code changes: `python task_3/scripts/build_notebook.py`.
-CPU tests: `cd task_3 && python -m pytest -q tests` (~20 s; needs torch + transformers for the HF-backend test).
+## Data (ATML-PA3-Data/README.MD)
+Read with the exact documented schema (any missing column stops the data stage with a clear message):
+generations `question_text, generated_text, generated_token_ids, n_generated_text_tokens, hit_max_new_tokens,
+gold_answer, extracted_answer`; probability_metrics `logp, kl_u_p`; attention_metrics `img_attn_total,
+prompt_text_attn_total, generated_text_attn_total`; joined on `(dataset, sample_id, rollout_id)`. T =
+`n_generated_text_tokens` is verified against every per-token list. MathVista choices come from `question_text`
+(gold = option letter); answer type / precision from the released testmini metadata (AI4Math/MathVista on the Hub),
+with a recorded fallback to the gold format if the Hub is unreachable. Live generation uses the README's pinned
+model revision `aa8e72537993ba99e69dfaafa59ed015b17504d1` and its extraction rule (last literal `\boxed{`).
 
 ## Pipeline (`src/pa3ttc/orchestrate.py`, one subprocess per stage, `python -m pa3ttc.stages <stage>`)
 | stage | spec step | what it does |
 |---|---|---|
-| data | 1 | find the two model folders, join the 3 parquets on (dataset, sample_id, rollout_id), check token-list alignment, cache ragged token arrays |
+| data | 1 | find `qwen25-math/` and `qwen25vl-mathvista/`, join on (dataset, sample_id, rollout_id), verify token-list alignment, cache token arrays |
 | splits | — | sort IDs as strings, `default_rng(6304)` per dataset → 200 dev / 800 held-out; 10 orders per question (`default_rng([6304, d, q])`); first 50 MATH held-out IDs for the live run |
 | *live (background, GPU0)* | 4 | 5 seeded calls per question (parallel ×3, revision, single), resumable `responses.jsonl` |
 | scorer | 1 | answer groups + correctness (math-verify / MathVista rules), NO_ANSWER handling, frozen `scorer_manifest.json` |
@@ -42,8 +45,8 @@ CPU tests: `cd task_3 && python -m pytest -q tests` (~20 s; needs torch + transf
 ```
 configs/task3.yaml     seeds, budgets, grids, live settings, optional column overrides
 src/pa3ttc/
-  data/      discover (folders + README), load (column resolution, Arrow list → ragged arrays, join, alignment), splits
-  answers/   extract (balanced-brace last \boxed), math_equiv (math-verify grouping/grading), mathvista (official rules), scorer
+  data/      discover (finds the two folders + README), load (documented schema, join, alignment), splits
+  answers/   extract (README rule), math_equiv (math-verify grouping/grading), mathvista (official rules + metadata), scorer
   signals/   rollout (L, K, V), visconf (exact sorted-prefix-sum VisConf, no leakage), stage
   select/    rules (FirstAns, SC, argmax, shortest, RWC with average ranks, tie rules, vote margin)
   offline/   runner (methods × budgets × orders), bootstrap (paired, question-level)
@@ -52,8 +55,8 @@ src/pa3ttc/
   live/      backend (HF FP16 / fake), run (worker), evaluate
   report/    figures, qualitative
   stages.py  orchestrate.py
-scripts/build_notebook.py
-tests/      unit tests, end-to-end pipeline on synthetic exports, live resume, real HF generation with a tiny Qwen2
+scripts/build_notebook.py   writes the 7-cell notebook
+tests/      unit tests, end-to-end pipeline on synthetic exports with the real schema, live resume, real HF generation with a tiny Qwen2
 ```
 
 ## Outputs (`/kaggle/working/pa3_task3_outputs`)

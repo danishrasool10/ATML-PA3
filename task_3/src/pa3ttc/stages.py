@@ -18,23 +18,19 @@ from .io import pin_cpus, read_json, write_json
 
 
 def stage_data(cfg):
-    from .config import scratch
-    from .data.discover import find_readme, find_tables
+    from .data.discover import find_folders, find_readme
     from .data.load import load_dataset
 
-    tables = find_tables(cfg["data_root"], cfg.get("data_fallback_root", "/kaggle/input"), scratch=scratch(),
-                         hf_repo=cfg.get("data_hf_repo"), listing_path=odir("data") / "input_listing.txt",
-                         url=cfg.get("data_url"))
-    for ds in DATASETS:
-        print(f"[data] {ds}: {tables[ds]}", flush=True)
-    rd = find_readme(tables)
+    folders = find_folders(cfg["data_root"], cfg.get("data_fallback_root", "/kaggle/input"),
+                           listing_path=odir("data") / "input_listing.txt")
+    rd = find_readme(folders)
     if rd:
         shutil.copy(rd, odir("data") / "README_supplied.md")
-        print(f"[data] README found: {rd}", flush=True)
-    out = {"tables": tables, "readme": str(rd) if rd else None}
+    out = {"folders": {k: str(v) for k, v in folders.items()}, "readme": str(rd) if rd else None}
     for ds in DATASETS:
-        rep = load_dataset(tables[ds], ds, cfg)
-        out[ds] = {"n_questions": rep["n_questions"], "alignment": rep["alignment"], "columns": rep["columns"]}
+        print(f"[data] {ds}: {folders[ds]}", flush=True)
+        rep = load_dataset(folders[ds], ds, cfg)
+        out[ds] = {"n_questions": rep["n_questions"], "alignment": rep["alignment"]}
         print(f"[data] {ds}: {out[ds]}", flush=True)
     return out
 

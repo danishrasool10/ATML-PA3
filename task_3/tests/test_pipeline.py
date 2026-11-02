@@ -2,7 +2,6 @@
 the accounting rules (costs, N=1, oracle, consistency between offline SC and the adaptive fallback, live tokens)."""
 from __future__ import annotations
 
-import json
 
 import numpy as np
 import pandas as pd
@@ -30,23 +29,25 @@ def test_end_to_end(env):
     # ---- data: join despite shuffled rows, alignment, zero-length rollout, undefined v
     for f in (out / "data").glob("*.json"):
         assert f.stat().st_size < 50_000, f"{f.name} is {f.stat().st_size} bytes (arrays leaked into a report?)"
-    ali = read_json(out / "data" / "math_alignment.json")
-    assert ali["alignment"]["misaligned_measurements"] == 0 and ali["alignment"]["zero_length_rollouts"] == 1
-    assert ali["alignment"]["token_ids_len_minus_T"] == {"1": 16 * 32}
-    mv = read_json(out / "data" / "mathvista_alignment.json")
-    assert mv["columns"]["attention_metrics"] == {"img": "image_attention", "prm": "prompt_text_attention",
-                                                  "gen": "generated_text_attention"}
-    assert mv["alignment"]["attention_tokens_undefined_v"] == 1
+    ali = read_json(out / "data" / "math_alignment.json")["alignment"]
+    assert ali["zero_length_rollouts"] == 1 and ali["mismatch_logp_vs_T"] == 0
+    assert ali["mismatch_generated_token_ids_vs_T"] == 0 and ali["null_extractions"] == 3
+    mv = read_json(out / "data" / "mathvista_alignment.json")["alignment"]
+    assert mv["mismatch_img_attn_total_vs_T"] == 0 and mv["attention_tokens_undefined_v"] == 0
+    assert (out / "data" / "README_supplied.md").exists()
     pool = Pool("math")
-    assert pool.Q == 16 and pool.R == 32 and pool.rollout_ids[0].tolist() == [str(i) for i in range(32)]
+    assert pool.Q == 16 and pool.R == 32 and pool.rollout_ids[0].tolist() == list(range(32))
     # ---- scorer
     man = read_json(out / "answers" / "scorer_manifest.json")
-    assert man["math_verify"] and man["math"]["extractor_check"]["agreement"] == 1.0
+    assert man["math_verify"] and man["math"]["extractor_check"]["exact_agreement"] == 1.0
     lab = np.load(out / "answers" / "math" / "labels.npz")
-    q2 = pool.qids.index("test/algebra/2.json")                                # string order: index != 2
-    assert pool.qids[:3] == ["test/algebra/0.json", "test/algebra/1.json", "test/algebra/10.json"]
+    q2 = pool.qids.index("test:14")                                           # string order: "test:0" < "test:105"
+    assert pool.qids[:3] == ["test:0", "test:105", "test:14"]
     assert (lab["group"][q2, :3] == -1).all() and not lab["correct"][q2, :3].any()
-    assert man["mathvista"]["metadata_source"] == "supplied files"
+    md = man["mathvista"]["metadata"]
+    assert md["source_derived"] == 16 and md["multi_choice"] == 6 and "hf_error" in md
+    labv = np.load(out / "answers" / "mathvista" / "labels.npz")
+    assert (labv["group"][:, 7] == -1).all()                                  # rollout 7 never extracted
     # ---- offline
     po = pd.read_parquet(out / "offline" / "math" / "per_order.parquet")
     pqo = pd.read_parquet(out / "offline" / "math" / "per_question.parquet")
@@ -139,20 +140,3 @@ def test_live_resume_and_pause(env, monkeypatch):
     assert len(rows2) == len(rows) == 15
     key = lambda r: (r["qid"], r["slot"], r["seed"], r["response"])  # noqa: E731
     assert sorted(map(key, rows)) == sorted(map(key, rows2))
-
-
-def test_long_format_probability_table(tmp_path, monkeypatch):
-    from conftest import make_data
-
-    a = make_data(tmp_path / "a")
-    b = make_data(tmp_path / "b", long_format=True)
-    res = {}
-    for name, root in (("a", a), ("b", b)):
-        monkeypatch.setenv("PA3_OUTPUT_ROOT", str(tmp_path / f"out_{name}"))
-        monkeypatch.setenv("PA3_SCRATCH", str(tmp_path / f"scr_{name}"))
-        monkeypatch.setenv("PA3_CONFIG_OVERRIDES", json.dumps({"data_root": str(root), "n_questions_expected": 16}))
-        stages.main("data")
-        p = Pool("math")
-        res[name] = (p.T.copy(), p.kl.copy(), p.logp.copy())
-    for x, y in zip(res["a"], res["b"]):
-        np.testing.assert_array_equal(x, y)

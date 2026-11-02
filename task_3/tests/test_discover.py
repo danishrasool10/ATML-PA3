@@ -1,111 +1,81 @@
-"""Data discovery is tolerant to the upload layout, and a miss produces a diagnosable error + listing."""
+"""Finding the README layout wherever Kaggle mounts it, the strict schema check, and MathVista metadata."""
 from __future__ import annotations
 
-import json
 import os
-import shutil
-import zipfile
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
 import pytest
 
-from pa3ttc import stages
-from pa3ttc.data.discover import find_tables
-from pa3ttc.data.load import Pool
+from pa3ttc.answers import mathvista as mvn
+from pa3ttc.data.discover import find_folders
 
 
-def _std(tmp_path) -> Path:
+def test_find_folders_kaggle_mounts(tmp_path):
     from conftest import make_data
 
-    return make_data(tmp_path / "std")
-
-
-def _load(tmp_path, root, name, monkeypatch):
-    monkeypatch.setenv("PA3_OUTPUT_ROOT", str(tmp_path / f"out_{name}"))
-    monkeypatch.setenv("PA3_SCRATCH", str(tmp_path / f"scr_{name}"))
-    monkeypatch.setenv("PA3_CONFIG_OVERRIDES", json.dumps({"data_root": str(root), "data_fallback_root": str(root),
-                                                           "n_questions_expected": 16}))
-    assert stages.main("data") == 0
-    return Pool("math"), Pool("mathvista")
-
-
-def _same(a, b):
-    for x, y in zip(a, b):
-        np.testing.assert_array_equal(x.T, y.T)
-        np.testing.assert_array_equal(x.kl, y.kl)
-        assert x.qids == y.qids
-    assert np.array_equal(a[1].v, b[1].v, equal_nan=True)
-
-
-def test_layout_variants(tmp_path, monkeypatch):
-    std = _std(tmp_path)
-    ref = _load(tmp_path, std, "ref", monkeypatch)
-    math_dir, vl_dir = std / "Qwen2.5-3B-Instruct" / "MATH", std / "Qwen2.5-VL-3B-Instruct" / "MathVista"
-
-    # (a) both models in one folder, prefixed file names, generations split into two shards
-    flat = tmp_path / "flat" / "ATML-PA3-Data"
-    flat.mkdir(parents=True)
-    g = pq.read_table(math_dir / "generations.parquet")
-    pq.write_table(g.slice(0, 200), flat / "math_generations-00000-of-00002.parquet")
-    pq.write_table(g.slice(200), flat / "math_generations-00001-of-00002.parquet")
-    shutil.copy(math_dir / "probability_metrics.parquet", flat / "math_probability_metrics.parquet")
-    for f in ("generations", "probability_metrics", "attention_metrics"):
-        shutil.copy(vl_dir / f"{f}.parquet", flat / f"mathvista_{f}.parquet")
-    _same(ref, _load(tmp_path, tmp_path / "flat", "flat", monkeypatch))
-
-    # (b) shard folders named after the tables
-    sh = tmp_path / "shards"
-    for src, name in ((math_dir, "llm"), (vl_dir, "vlm")):
-        for f in src.glob("*.parquet"):
-            (sh / name / f.stem).mkdir(parents=True, exist_ok=True)
-            shutil.copy(f, sh / name / f.stem / "part-0.parquet")
-    _same(ref, _load(tmp_path, sh, "shards", monkeypatch))
-
-    # (c) a zipped upload that Kaggle did not unpack
-    zroot = tmp_path / "zipped"
-    zroot.mkdir()
-    with zipfile.ZipFile(zroot / "ATML-PA3-Data.zip", "w") as z:
-        for f in std.rglob("*"):
-            if f.is_file():
-                z.write(f, f.relative_to(std))
-    _same(ref, _load(tmp_path, zroot, "zip", monkeypatch))
-
-    # (d) dataset reached through a symlink
-    lroot = tmp_path / "linked"
-    lroot.mkdir()
+    data = make_data(tmp_path / "src")
+    # /kaggle/input/<slug>/ATML-PA3-Data/... and a symlinked mount; data_root that does not exist
+    inp = tmp_path / "input" / "atml-pa3-data"
+    inp.mkdir(parents=True)
     try:
-        os.symlink(std, lroot / "atml-pa3-data")
+        os.symlink(data / "ATML-PA3-Data", inp / "ATML-PA3-Data")
     except (OSError, NotImplementedError):
-        pass
-    else:
-        _same(ref, _load(tmp_path, lroot, "link", monkeypatch))
-
-
-def test_not_found_is_diagnosable(tmp_path):
-    (tmp_path / "input" / "some-other-dataset").mkdir(parents=True)
-    pd.DataFrame({"a": [1]}).to_parquet(tmp_path / "input" / "some-other-dataset" / "x.parquet")
+        pytest.skip("symlink creation requires Windows Developer Mode or elevated privileges")
     lp = tmp_path / "listing.txt"
+    f = find_folders(tmp_path / "nope", tmp_path / "input", listing_path=lp)
+    assert f["math"].name == "qwen25-math" and f["mathvista"].name == "qwen25vl-mathvista"
+    assert "does not exist" in lp.read_text()
+
+
+def test_not_found_message(tmp_path):
+    (tmp_path / "input" / "other").mkdir(parents=True)
+    pd.DataFrame({"a": [1]}).to_parquet(tmp_path / "input" / "other" / "x.parquet")
     with pytest.raises(FileNotFoundError, match="Is the dataset attached"):
-        find_tables(tmp_path / "input" / "atml-pa3-data", tmp_path / "input", scratch=tmp_path / "s", listing_path=lp)
-    txt = lp.read_text()
-    assert "does not exist" in txt and "x.parquet" in txt
+        find_folders(tmp_path / "input", tmp_path / "input")
 
 
-def test_download_url(tmp_path, monkeypatch):
-    std = _std(tmp_path)
-    z = tmp_path / "pub" / "ATML-PA3-Data.zip"
-    z.parent.mkdir()
-    with zipfile.ZipFile(z, "w") as zf:
-        for f in std.rglob("*"):
-            if f.is_file():
-                zf.write(f, Path("ATML-PA3-Data") / f.relative_to(std))
-    empty = tmp_path / "input"
-    empty.mkdir()
-    found = find_tables(empty / "atml-pa3-data", empty, scratch=tmp_path / "scr", url=z.as_uri())
-    assert set(found) == {"math", "mathvista"} and "attn" in found["mathvista"]
-    # a second call reuses the download
-    again = find_tables(empty / "atml-pa3-data", empty, scratch=tmp_path / "scr", url="file:///nonexistent.zip")
-    assert again["math"]["gen"] == found["math"]["gen"]
+def test_missing_column_is_reported(tmp_path, monkeypatch):
+    import json
+
+    from conftest import make_data
+    from pa3ttc import stages
+
+    data = make_data(tmp_path / "d")
+    p = data / "ATML-PA3-Data" / "qwen25vl-mathvista" / "attention_metrics.parquet"
+    t = pq.read_table(p)
+    pq.write_table(t.drop(["img_attn_total"]), p)
+    monkeypatch.setenv("PA3_OUTPUT_ROOT", str(tmp_path / "o"))
+    monkeypatch.setenv("PA3_SCRATCH", str(tmp_path / "s"))
+    monkeypatch.setenv("PA3_CONFIG_OVERRIDES", json.dumps({"data_root": str(data), "data_fallback_root": str(data)}))
+    with pytest.raises(KeyError, match="img_attn_total"):
+        stages.main("data")
+
+
+def test_parse_choices():
+    assert mvn.parse_choices("Find x\nA. 97\nB. 102\nC. 107\nD. 122") == ["97", "102", "107", "122"]
+    # question 287 of the export repeats its choice block: the last block starting at A is used
+    q287 = "Which region is larger? R1 or R2?\nA. R1\nB. R2\nA. R1\nB. R2\nC. R5\nD. R3\nE. R4"
+    assert mvn.parse_choices(q287) == ["R1", "R2", "R5", "R3", "R4"]
+    assert mvn.parse_choices("How many?") == []
+    assert mvn.parse_choices("Pick\nB. x\nC. y") == []            # must start at A
+
+
+def test_build_metadata_hf_and_derived():
+    qids, qts, golds = ["1", "2", "3", "4"], ["Q\nA. a\nB. b", "How many?", "Length?", "List?"], ["B", "5", "1.25", "[1, 2]"]
+    metas, st = mvn.build_metadata(qids, qts, golds, None)
+    assert [m["source"] for m in metas] == ["derived"] * 4
+    assert metas[0]["question_type"] == "multi_choice" and metas[0]["choices"] == ["a", "b"]
+    assert [(m["answer_type"], m["precision"]) for m in metas[1:]] == [("integer", None), ("float", 2), ("list", None)]
+    hf = pd.DataFrame({"pid": ["1", "2", "3"], "question_type": ["multi_choice", "free_form", "free_form"],
+                       "answer_type": ["text", "integer", "float"], "choices": [np.array(["a", "b"]), None, None],
+                       "precision": [np.nan, np.nan, 2.0]}).set_index("pid")
+    metas, st = mvn.build_metadata(qids, qts, golds, hf)
+    assert [m["source"] for m in metas] == ["hf", "hf", "hf", "derived"]
+    assert st["qtype_disagree"] == st["atype_disagree"] == st["precision_disagree"] == st["choices_disagree"] == 0
+    assert metas[2]["precision"] == 2
+    # a letter answer and the gold letter agree; an out-of-range letter is mapped by the official fuzzy rule
+    assert mvn.normalize("B", metas[0])[0] == mvn.gold_key("B", metas[0]) == "MC:B"
+    assert mvn.normalize("E", metas[0])[1] == "mc_fuzzy"
+    assert mvn.normalize("1.249", metas[2])[0] == mvn.gold_key("1.25", metas[2])

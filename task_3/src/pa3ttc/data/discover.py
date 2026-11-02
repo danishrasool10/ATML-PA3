@@ -1,36 +1,25 @@
-"""Find the supplied ATML-PA3-Data tables, tolerant to how the dataset was uploaded.
+"""Find the supplied ATML-PA3-Data folders (README.MD layout):
 
-Accepted layouts (searched with symlinks followed, under data_root first, then all of /kaggle/input):
-  * <dir>/generations.parquet + probability_metrics.parquet [+ attention_metrics.parquet]   (as in the task text)
-  * any file or shard folder whose name contains "generation" / "prob" / "atten|attn", e.g.
-    generations-00000-of-00002.parquet, generations/ (folder of parquet shards), mathvista_generations.parquet
-  * both models' tables in one folder, told apart by "vista"/"vl" in the file names
-  * the same inside a .zip / .tar(.gz) archive (extracted to scratch disk)
-  * optionally a Hugging Face dataset repo (config `data_hf_repo`), downloaded to scratch disk
-  * optionally a download link (config `data_url`: Google Drive file/folder link, or any http(s)/file URL to a
-    .zip/.tar(.gz)/.parquet), downloaded to scratch disk and unpacked
-The VLM table set is the one with an attention table.  A listing of the searched folders is always written to
-data/input_listing.txt so a failure can be diagnosed from the results zip.
+    ATML-PA3-Data/README.MD
+    ATML-PA3-Data/qwen25-math/{generations,probability_metrics}.parquet
+    ATML-PA3-Data/qwen25vl-mathvista/{generations,probability_metrics,attention_metrics}.parquet
+
+Searched under data_root, then under all of /kaggle/input (wherever Kaggle mounts the attached dataset), following
+symlinks.  The MathVista folder is the one with attention_metrics.parquet.  A listing of what was searched is
+written to data/input_listing.txt so a failure can be diagnosed from the results zip.
 """
 from __future__ import annotations
 
 import os
-import re
-import tarfile
-import zipfile
 from pathlib import Path
 
-ROLE_RE = {"attn": re.compile(r"atten|attn", re.I), "prob": re.compile(r"prob|logp", re.I),
-           "gen": re.compile(r"generation|rollout|completion", re.I)}
-PARQ = (".parquet", ".pq")
-ARCH = (".zip", ".tar", ".tar.gz", ".tgz")
+FILES = {"gen": "generations.parquet", "prob": "probability_metrics.parquet", "attn": "attention_metrics.parquet"}
+FOLDERS = {"math": "qwen25-math", "mathvista": "qwen25vl-mathvista"}
 
 
 def _walk(root: Path, max_depth: int = 8):
-    """os.walk with symlinks followed and cycle protection; yields (dirpath, dirnames, filenames)."""
     seen = set()
-    root = Path(root)
-    base = len(root.parts)
+    base = len(Path(root).parts)
     for dp, dns, fns in os.walk(root, followlinks=True):
         rp = os.path.realpath(dp)
         if rp in seen or len(Path(dp).parts) - base > max_depth:
@@ -41,188 +30,57 @@ def _walk(root: Path, max_depth: int = 8):
         yield Path(dp), dns, sorted(fns)
 
 
-def listing(roots: list[Path], max_lines: int = 600) -> str:
+def listing(roots: list[Path], max_lines: int = 400) -> str:
     out = []
-    for root in roots:
-        root = Path(root)
+    for root in map(Path, roots):
         if not root.exists():
             out.append(f"{root}  (does not exist)")
             continue
-        for dp, dns, fns in _walk(root, max_depth=6):
+        for dp, _, fns in _walk(root, max_depth=6):
             depth = len(dp.parts) - len(root.parts)
-            link = " -> " + os.path.realpath(dp) if dp.is_symlink() else ""
-            out.append("  " * depth + f"{dp.name or str(dp)}/{link}")
-            for f in fns[:40]:
+            out.append("  " * depth + f"{dp.name or dp}/")
+            for f in fns[:30]:
                 try:
-                    sz = (dp / f).stat().st_size
+                    out.append("  " * (depth + 1) + f"{f}  ({(dp / f).stat().st_size / 2**20:.1f} MiB)")
                 except OSError:
-                    sz = -1
-                out.append("  " * (depth + 1) + f"{f}  ({sz / 2**20:.1f} MiB)")
-            if len(fns) > 40:
-                out.append("  " * (depth + 1) + f"... {len(fns) - 40} more files")
+                    out.append("  " * (depth + 1) + f)
             if len(out) > max_lines:
-                out.append("... (listing truncated)")
-                return "\n".join(out)
+                return "\n".join(out + ["... (truncated)"])
     return "\n".join(out)
 
 
-def _role(name: str) -> str | None:
-    stem = name.lower()
-    for r in ("attn", "prob", "gen"):          # order matters: "probability" never matches gen
-        if ROLE_RE[r].search(stem):
-            return r
-    return None
-
-
-def _hint(name: str) -> str:
-    n = name.lower()
-    if "vista" in n or re.search(r"(^|[^a-z])vl([^a-z]|$)", n):
-        return "mathvista"
-    if "math" in n:
-        return "math"
-    return ""
-
-
-def _is_shard_dir(d: Path) -> bool:
-    try:
-        return any(f.suffix.lower() in PARQ for f in d.iterdir() if f.is_file())
-    except OSError:
-        return False
-
-
-def scan(root: Path) -> dict[tuple[str, str], dict[str, list[str]]]:
-    """-> {(folder, dataset-hint): {role: [parquet paths]}}"""
-    groups: dict[tuple[str, str], dict[str, list[str]]] = {}
-    for dp, dns, fns in _walk(root):
-        for f in fns:
-            if not f.lower().endswith(PARQ):
-                continue
-            r = _role(f)
-            if r is None:
-                # shard file inside a folder named after the role (generations/part-0.parquet)
-                r = _role(dp.name)
-                if r is None:
-                    continue
-                key = (str(dp.parent), _hint(dp.name) or _hint(dp.parent.name))
-            else:
-                key = (str(dp), _hint(f))
-            groups.setdefault(key, {}).setdefault(r, []).append(str(dp / f))
-    return groups
-
-
-def _resolve_groups(groups) -> dict[str, dict[str, list[str]]]:
-    found: dict[str, dict] = {}
-    for (folder, hint), roles in sorted(groups.items()):
-        if "gen" not in roles or "prob" not in roles:
-            continue
-        kind = "mathvista" if "attn" in roles else "math"
-        if hint and hint != kind:
-            continue
-        if kind in found:
-            raise ValueError(f"two candidate {kind} table sets: {found[kind]['folder']} and {folder}")
-        found[kind] = {"folder": folder, **{r: sorted(v) for r, v in roles.items()}}
-    return found
-
-
-def _extract_archives(root: Path, dest: Path) -> list[Path]:
-    out = []
-    for dp, dns, fns in _walk(root, max_depth=4):
-        for f in fns:
-            p = dp / f
-            low = f.lower()
-            if not low.endswith(ARCH):
-                continue
-            tgt = dest / re.sub(r"[^A-Za-z0-9_.-]", "_", f)
-            if not tgt.exists():
-                print(f"[data] extracting {p} -> {tgt}", flush=True)
-                tgt.mkdir(parents=True, exist_ok=True)
-                if low.endswith(".zip"):
-                    with zipfile.ZipFile(p) as z:
-                        z.extractall(tgt)
-                else:
-                    with tarfile.open(p) as t:
-                        t.extractall(tgt, filter="data")
-            out.append(tgt)
-    return out
-
-
-def download(url: str, dest: Path) -> Path:
-    """Fetch `url` into dest/ (Google Drive via gdown, otherwise urllib); unpack archives.  Returns the folder."""
-    dest = Path(dest)
-    dest.mkdir(parents=True, exist_ok=True)
-    if "drive.google.com" in url or "docs.google.com" in url:
-        import gdown  # noqa: PLC0415  (preinstalled on Kaggle; pip install gdown otherwise)
-
-        if "/folders/" in url:
-            gdown.download_folder(url, output=str(dest), quiet=False)
-        else:
-            gdown.download(url, output=str(dest) + "/", quiet=False, fuzzy=True)
-    else:
-        import urllib.request  # noqa: PLC0415
-
-        name = re.sub(r"[^A-Za-z0-9_.-]", "_", url.rstrip("/").split("/")[-1].split("?")[0]) or "download"
-        print(f"[data] downloading {url} -> {dest / name}", flush=True)
-        urllib.request.urlretrieve(url, dest / name)
-    _extract_archives(dest, dest / "unpacked")
-    return dest
-
-
-def find_tables(preferred: str | Path, fallback: str | Path = "/kaggle/input", scratch: Path | None = None,
-                hf_repo: str | None = None, listing_path: Path | None = None,
-                url: str | None = None) -> dict[str, dict]:
-    roots = [Path(preferred)] + ([Path(fallback)] if Path(fallback) != Path(preferred) else [])
+def find_folders(data_root: str | Path, fallback: str | Path = "/kaggle/input",
+                 listing_path: Path | None = None) -> dict[str, Path]:
+    roots = [Path(data_root)] + ([Path(fallback)] if Path(fallback) != Path(data_root) else [])
     if listing_path is not None:
         listing_path.parent.mkdir(parents=True, exist_ok=True)
         listing_path.write_text(listing(roots))
-    tried = []
     for root in roots:
         if not root.exists():
             continue
-        tried.append(str(root))
-        found = _resolve_groups(scan(root))
-        if {"math", "mathvista"} <= set(found):
-            return found
-    if scratch is not None:
-        for root in roots:
-            if root.exists():
-                for ex in _extract_archives(root, Path(scratch) / "extracted"):
-                    found = _resolve_groups(scan(ex))
-                    if {"math", "mathvista"} <= set(found):
-                        return found
-        if hf_repo:
-            from huggingface_hub import snapshot_download  # noqa: PLC0415
-
-            local = Path(scratch) / "hf_data"
-            print(f"[data] downloading {hf_repo} from the Hugging Face Hub -> {local}", flush=True)
-            snapshot_download(repo_id=hf_repo, repo_type="dataset", local_dir=str(local))
-            tried.append(f"hf:{hf_repo}")
-            found = _resolve_groups(scan(local))
-            if {"math", "mathvista"} <= set(found):
-                return found
-        if url:
-            local = Path(scratch) / "url_data"
-            if not local.exists() or not _resolve_groups(scan(local)):
-                download(url, local)
-            tried.append(f"url:{url}")
-            found = _resolve_groups(scan(local))
-            if {"math", "mathvista"} <= set(found):
-                return found
+        found: dict[str, list[Path]] = {"math": [], "mathvista": []}
+        for dp, _, fns in _walk(root):
+            if FILES["gen"] in fns and FILES["prob"] in fns:
+                found["mathvista" if FILES["attn"] in fns else "math"].append(dp)
+        if found["math"] and found["mathvista"]:
+            out = {}
+            for ds, cands in found.items():
+                named = [c for c in cands if c.name == FOLDERS[ds]]
+                pick = named or cands
+                if len(pick) > 1:
+                    raise ValueError(f"several {ds} folders found: {[str(c) for c in pick]}; set DATA_ROOT")
+                out[ds] = pick[0]
+            return out
     raise FileNotFoundError(
-        f"ATML-PA3-Data not found (searched {tried or [str(r) for r in roots]}). Need, for each model, a "
-        "generations table and a probability_metrics table (parquet), plus an attention_metrics table for the VLM. "
-        "Is the dataset attached (Add Input)? Otherwise set DATA_URL (download link) in the SETTINGS cell. What was found is listed in data/input_listing.txt:\n"
-        + (listing(roots, max_lines=80)))
+        "ATML-PA3-Data not found: need qwen25-math/ (generations + probability_metrics parquet) and "
+        "qwen25vl-mathvista/ (+ attention_metrics parquet). Is the dataset attached (Add Input)? Searched:\n"
+        + listing(roots, max_lines=60))
 
 
-def find_readme(tables: dict[str, dict]) -> Path | None:
-    seen = set()
-    for t in tables.values():
-        d = Path(t["folder"])
-        for base in (d, d.parent, d.parent.parent):
-            if base in seen:
-                continue
-            seen.add(base)
+def find_readme(folders: dict[str, Path]) -> Path | None:
+    for d in folders.values():
+        for base in (d.parent, d):
             for p in sorted(base.glob("*")):
-                if p.is_file() and p.name.lower().startswith("readme"):
+                if p.is_file() and p.name.lower() == "readme.md":
                     return p
     return None

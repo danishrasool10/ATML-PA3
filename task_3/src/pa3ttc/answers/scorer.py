@@ -48,24 +48,23 @@ def _version(pkg: str) -> str | None:
         return None
 
 
-def mathvista_meta(pool: Pool, cfg: dict) -> tuple[list[dict], str]:
+def mathvista_meta(pool: Pool, cfg: dict) -> tuple[list[dict], dict]:
     q = pool.questions
-    need = ["question_type", "answer_type", "choices", "precision"]
-    if all(c in q.columns for c in need[:2]):
-        return [{c: r.get(c) for c in need} for r in q.to_dict("records")], "supplied files"
-    from datasets import load_dataset  # noqa: PLC0415
+    hf, info = None, {"hf_repo": cfg.get("mathvista_metadata_hf")}
+    try:
+        if not info["hf_repo"]:
+            raise RuntimeError("mathvista_metadata_hf not set")
+        from pa3common.kaggle import retry  # noqa: PLC0415
 
-    from pa3common.kaggle import retry  # noqa: PLC0415
-
-    d = retry(lambda: load_dataset(cfg["mathvista_metadata_hf"], split="testmini"), 4, 20, "MathVista metadata")
-    keep = [c for c in ("pid", "question_type", "answer_type", "choices", "precision", "answer") if c in d.column_names]
-    d = d.select_columns(keep).to_pandas()
-    d["pid"] = d["pid"].astype(str)
-    by = d.set_index("pid").to_dict("index")
-    miss = [x for x in pool.qids if x not in by]
-    if miss:
-        raise KeyError(f"{len(miss)} MathVista question IDs not found as HF pid, e.g. {miss[:5]}")
-    return [{c: by[x].get(c) for c in need} for x in pool.qids], f"HF {cfg['mathvista_metadata_hf']} testmini"
+        hf, files = retry(lambda: mathvista.hf_testmini(cfg["mathvista_metadata_hf"]), 3, 15, "MathVista metadata")
+        info["hf_files"] = files
+    except Exception as ex:  # noqa: BLE001
+        info["hf_error"] = f"{type(ex).__name__}: {str(ex)[:300]}"
+        print(f"!! MathVista metadata download failed ({info['hf_error']}); deriving answer types", flush=True)
+    metas, stats = mathvista.build_metadata(q["qid"].tolist(), q["problem"].tolist(), q["gold"].tolist(), hf)
+    write_json(odir("answers", "mathvista") / "question_metadata.json",
+               {qid: m for qid, m in zip(q["qid"].tolist(), metas)})
+    return metas, {**info, **stats}
 
 
 def score_dataset(ds: str, cfg: dict, workers: int) -> dict:
@@ -122,21 +121,23 @@ def score_dataset(ds: str, cfg: dict, workers: int) -> dict:
         rk = pd.Series([k for r in res for k in r["rollout_kind"]]).value_counts().to_dict()
         stats["rollout_kinds"] = {str(k): int(v) for k, v in rk.items()}
         stats["gold_unmatched_questions"] = int(sum(r["gold_key"] is None for r in res))
-        stats["metadata_source"] = meta_src
+        stats["metadata"] = meta_src
     return stats
 
 
-def extractor_check(ds: str) -> dict:
-    """Compare our balanced-brace extractor on the stored texts with the supplied extractions."""
-    pool = Pool(ds)
+def extractor_check() -> dict:
+    """MATH only: our README extractor (used for the live run) re-applied to the stored generated_text must
+    reproduce the supplied extracted_answer exactly.  (MathVista used the export's own dataset_default extractor.)"""
+    pool = Pool("math")
     t = pool.texts()
-    ours = [math_equiv.norm_str(last_boxed(x)) for x in t["text"].tolist()]
-    theirs = [math_equiv.norm_str(x) for x in pool.meta["extracted"].tolist()]
+    ours = [last_boxed(x) for x in t["text"].tolist()]
+    theirs = [None if (x is None or (isinstance(x, float) and np.isnan(x))) else x
+              for x in pool.meta["extracted"].tolist()]
     same = np.array([a == b for a, b in zip(ours, theirs)])
-    ex = [{"rollout": f"{q}/{r}", "ours": a, "supplied": b}
-          for q, r, a, b, s in zip(t["qid"], t["rollout_id"], ours, theirs, same) if not s][:15]
-    return {"agreement": float(same.mean()), "n": int(len(same)), "examples_of_mismatch": ex,
-            "both_missing": int(sum(a is None and b is None for a, b in zip(ours, theirs)))}
+    ex = [{"qid": q, "rollout_id": int(r), "ours": a, "supplied": b}
+          for q, r, a, b, s in zip(t["qid"], t["rollout_id"], ours, theirs, same) if not s][:10]
+    return {"exact_agreement": float(same.mean()), "n": int(len(same)), "mismatches": int((~same).sum()),
+            "examples": ex}
 
 
 def run(cfg: dict) -> dict:
@@ -146,10 +147,8 @@ def run(cfg: dict) -> dict:
            "rules": {"math": math_equiv.__doc__.strip(), "mathvista": mathvista.__doc__.strip()}}
     for ds in ("math", "mathvista"):
         man[ds] = score_dataset(ds, cfg, workers)
-        try:
-            man[ds]["extractor_check"] = extractor_check(ds)
-        except Exception as ex:  # noqa: BLE001
-            man[ds]["extractor_check"] = {"error": repr(ex)}
+        if ds == "math":
+            man[ds]["extractor_check"] = extractor_check()
         print(f"[scorer] {ds}: {man[ds]}", flush=True)
     write_json(odir("answers") / "scorer_manifest.json", man)
     return man

@@ -16,15 +16,17 @@ from pa3ttc.signals.visconf import VisConfIndex, naive_scores
 
 
 # ----------------------------------------------------------------------------- extraction
-@pytest.mark.parametrize("text,ans", [
+@pytest.mark.parametrize("text,ans", [          # the README.MD rule: last literal "\\boxed{", balanced braces
     ("so $\\boxed{\\frac{1}{2}}$.", "\\frac{1}{2}"),
     ("\\boxed{1} then \\boxed{\\sqrt{x^{2}}}", "\\sqrt{x^{2}}"),
-    ("\\boxed{a} and finally \\boxed{b", None),            # last box cut off by the cap
-    ("answer \\boxed 5 done", "5"),
-    ("\\fbox{7}", "7"),
+    ("\\boxed{a} and finally \\boxed{b", None),            # unclosed last box -> null (no fallback to "a")
+    ("answer \\boxed 5 done", None),                       # not a literal "\\boxed{"
+    ("\\fbox{7}", None),
     ("no box here", None),
     ("\\boxed{}", None),
+    ("\\boxed{   }", None),                                # empty after stripping
     ("<think>\\boxed{2}</think> \\boxed{ {3} }", "{3}"),
+    ("\\boxed{\\text{(A)}\\ 5}", "\\text{(A)}\\ 5"),
 ])
 def test_last_boxed(text, ans):
     assert last_boxed(text) == ans

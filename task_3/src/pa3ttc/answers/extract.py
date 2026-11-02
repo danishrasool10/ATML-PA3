@@ -1,37 +1,29 @@
-"""Last \\boxed{...} answer with balanced braces (the Hendrycks-MATH `last_boxed_only_string` rule, plus the
-`\\boxed 5` space form).  An unclosed last box (e.g. cut off by the token cap) gives None."""
+"""Answer extraction, exactly the rule in ATML-PA3-Data/README.MD (used for the live generations; the stored
+rollouts already carry `extracted_answer` made with the same rule for MATH):
+
+    find the last literal "\\boxed{", scan balanced braces (nested LaTeX preserved), strip surrounding whitespace;
+    an absent, empty or unclosed last box gives None; there is no numeric fallback.
+"""
 from __future__ import annotations
+
+OPEN = "\\boxed{"
 
 
 def last_boxed(text: str | None) -> str | None:
     if not text:
         return None
-    idx = text.rfind("\\boxed")
-    cmd = "\\boxed"
-    if idx < 0:
-        idx = text.rfind("\\fbox")
-        cmd = "\\fbox"
-        if idx < 0:
-            return None
-    i = idx + len(cmd)
-    while i < len(text) and text[i] in " \t":
-        i += 1
-    if i < len(text) and text[i] == "{":
-        depth = 0
-        for j in range(i, len(text)):
-            c = text[j]
-            if c == "{":
-                depth += 1
-            elif c == "}":
-                depth -= 1
-                if depth == 0:
-                    ans = text[i + 1:j].strip()
-                    return ans if ans else None
+    i = text.rfind(OPEN)
+    if i < 0:
         return None
-    if i > idx + len(cmd):   # "\boxed 5" form: up to whitespace or '$'
-        j = i
-        while j < len(text) and text[j] not in " \t\n$":
-            j += 1
-        ans = text[i:j].strip()
-        return ans if ans else None
+    start = i + len(OPEN)
+    depth = 1
+    for j in range(start, len(text)):
+        c = text[j]
+        if c == "{":
+            depth += 1
+        elif c == "}":
+            depth -= 1
+            if depth == 0:
+                ans = text[start:j].strip()
+                return ans or None
     return None
